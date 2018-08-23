@@ -43,10 +43,10 @@ Bool_t THSHipoReader::Init(TString filename,TString name){
     fHipo->ConfigOnlyBank("REC::Cherenkov");
     fHipo->ConfigOnlyBank("REC::ForwardTagger");
     fHipo->ConfigOnlyBank("REC::Event");
-    fHipo->ConfigOnlyBank("TimeBasedTrkg::TBTracks");
-    fHipo->ConfigOnlyBank("CVTRec::Tracks");
+    //fHipo->ConfigOnlyBank("TimeBasedTrkg::TBTracks");
+    //fHipo->ConfigOnlyBank("CVTRec::Tracks");
     fHipo->ConfigOnlyBank("REC::Track");
-    fHipo->ConfigOnlyBank("FTCAL::clusters");//needed for FT time
+    //fHipo->ConfigOnlyBank("FTCAL::clusters");//needed for FT time
     if(fAddGenerated&&!fMCBank){
       fHipo->ConfigOnlyBank("MC::Particle");
     }
@@ -106,18 +106,18 @@ Bool_t THSHipoReader::Init(TString filename,TString name){
     fTrNDF=dynamic_cast<THipoItemS*>(fTrBank->GetItem("NDF"));
     fTrChi2=dynamic_cast<THipoItemF*>(fTrBank->GetItem("chi2"));
  
-    fTBTrBank=fHipo->GetBank("TimeBasedTrkg::TBTracks");
-    fTBTrNDF=dynamic_cast<THipoItemS*>(fTBTrBank->GetItem("ndf"));
-    fTBTrChi2=dynamic_cast<THipoItemF*>(fTBTrBank->GetItem("chi2"));
-    fCVTrBank=fHipo->GetBank("CVTRec::Tracks");
-    fCVTrNDF=dynamic_cast<THipoItemS*>(fCVTrBank->GetItem("ndf"));
-    fCVTrChi2=dynamic_cast<THipoItemF*>(fCVTrBank->GetItem("chi2"));
+    //    fTBTrBank=fHipo->GetBank("TimeBasedTrkg::TBTracks");
+    //fTBTrNDF=dynamic_cast<THipoItemS*>(fTBTrBank->GetItem("ndf"));
+    //fTBTrChi2=dynamic_cast<THipoItemF*>(fTBTrBank->GetItem("chi2"));
+    //fCVTrBank=fHipo->GetBank("CVTRec::Tracks");
+    //fCVTrNDF=dynamic_cast<THipoItemS*>(fCVTrBank->GetItem("ndf"));
+    //fCVTrChi2=dynamic_cast<THipoItemF*>(fCVTrBank->GetItem("chi2"));
   
     fEvBank=fHipo->GetBank("REC::Event");
     fRecEvSTTime=dynamic_cast<THipoItemF*>(fEvBank->GetItem("STTime"));
 
-    fFTCALClustBank=fHipo->GetBank("FTCAL::clusters");
-    fFTCALClust_t=dynamic_cast<THipoItemF*>(fFTCALClustBank->GetItem("time"));
+    //    fFTCALClustBank=fHipo->GetBank("FTCAL::clusters");
+    //fFTCALClust_t=dynamic_cast<THipoItemF*>(fFTCALClustBank->GetItem("time"));
 
     if(fAddGenerated&&!fMCBank){
       fMCBank=fHipo->GetBank("MC::Particle");
