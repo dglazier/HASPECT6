@@ -1,3 +1,17 @@
+// Author: Michael Williams 2018 
+   
+/**********************************************************************************
+* Project:                                                                 *
+* Package:                                                                       *
+* Class  : THS2pi                                                                *
+*                                                                                *
+* Description:                                                                   *
+*                                                                                *
+*   Template final class                                                         *
+*                                                                                *
+*   Users should create their own analysis specific project classes              *
+*                                                                                *
+**********************************************************************************/
 
 #ifndef THS2PI_h
 #define THS2PI_h
@@ -6,7 +20,11 @@
 #include "THSParticle.h"
 #include "THSCLAS12Trigger.h"
 #include "THSCLAS12DeltaTime.h"
+#include <TEventList.h>
+//#include "THSMVA.h"
 #include "THSMVAPrep.h"
+#include "THSMVATrain.h"
+#include "THSMVAApp.h"
 #include <vector>
 
 class THS2pi : public THSFinalState{
@@ -31,6 +49,15 @@ class THS2pi : public THSFinalState{
   //void Topo_X();
   virtual void FileStart();
   virtual Bool_t  CheckParticle(THSParticle* part);
+  
+  void SetApplication(THSMVA* setup);
+
+  void PrepAddParticle(THSParticle* part);
+  void PrepAddParticle(TString name, THSParticle *part, std::vector<TString> variables={}, std::vector<TString> types={});
+  void SetDefaultVariables(std::vector<TString> variables);
+
+  void PrepFillVars();
+  void AppFillVars();
 
   void Kinematics();
   protected :
@@ -38,7 +65,10 @@ class THS2pi : public THSFinalState{
   THSCLAS12Trigger fTrigger;//For CLAS12 trigger info
   THSCLAS12DeltaTime fCuts; //For particle cuts
 
+  //THSMVA fMVA;
   THSMVAPrep fMVAPrep;
+  THSMVATrain fMVATrain;
+  THSMVAApp fMVAApp;
   
   //Initial state
   HSLorentzVector fBeam=HSLorentzVector(0,0,10.6,10.6);
@@ -65,61 +95,39 @@ class THS2pi : public THSFinalState{
   Double_t fMissMass=0;
   Double_t fMissMass2=0;
 
+  // vector for MVA
+  vector<THSParticle * > fParticles;
+  vector<TString> fDefaultVariables;
+
+  Int_t fSignalCount=0;
+  Int_t fBackgroundCount=0;
+  Int_t fSplitCount=0;
+  Int_t fTotalEvents=0;
+
 
   //TMVA
   Bool_t fIsTMVA=kTRUE;
+  Bool_t fIsTrain=kFALSE;
+
+  TEventList * fEventList=nullptr;//!
+  std::vector<Split> fSplits;
+
  public:
   virtual void TMVAOutTree(TTree* tree);
   void TMVAFill();
- protected:
-  
-  Float_t fElTime=0;
-  Float_t fElEdep=0;
-  Float_t fElDeltaE=0;
-  Float_t fElPreE=0;
-  Float_t fElP=0;
-  Float_t fElTh=0;
-  Float_t fElPhi=0;
-  Float_t fElVz=0;
-  Float_t fElTrChi2=0;
-  Int_t fElDet=0;
+  void RunTraining() {fMVATrain.DefaultTrain();};
+  void RunApp() {fMVAApp.DefaultApp();}
+  void EndApplication(TFile* file) {fMVAApp.SetOutputFile(file);};
+  void WriteConfig(TString name) {fMVATrain.WriteTHSMVA(name);};
+  void SetTrain(Bool_t b) {fIsTrain = b;};
 
-  Float_t fPTime=0;
-  Float_t fPEdep=0;
-  Float_t fPDeltaE=0;
-  Float_t fPPreE=0;
-  Float_t fPP=0;
-  Float_t fPTh=0;
-  Float_t fPPhi=0;
-  Float_t fPVz=0;
-  Float_t fPTrChi2=0;
-  Int_t fPDet=0;
-  
-  Float_t fPipTime=0;
-  Float_t fPipEdep=0;
-  Float_t fPipDeltaE=0;
-  Float_t fPipPreE=0;
-  Float_t fPipP=0;
-  Float_t fPipTh=0;
-  Float_t fPipPhi=0;
-  Float_t fPipVz=0;
-  Float_t fPipTrChi2=0;
-  Int_t fPipDet=0;
+  void SetNEvents(Int_t N);
+  void SetNEvents(Int_t Ntrain, Int_t Ntest);
+  void SetNEvents(Int_t NTot, Int_t NTrain, Int_t NTest);
 
-  Float_t fPimTime=0;
-  Float_t fPimEdep=0;
-  Float_t fPimDeltaE=0;
-  Float_t fPimPreE=0;
-  Float_t fPimP=0;
-  Float_t fPimTh=0;
-  Float_t fPimPhi=0;
-  Float_t fPimVz=0;
-  Float_t fPimTrChi2=0;
-  Int_t fPimDet=0;
-
- public :
   virtual void FinalStateOutTree(TTree* tree);
 
+  Int_t CheckSignalCount(TTree* tree);
  
 
 };

@@ -48,3 +48,8 @@ Thumbs.db
 # Data #
 ########
 *.root
+dataset*/
+
+# Old copies of files #
+#######################
+*.old

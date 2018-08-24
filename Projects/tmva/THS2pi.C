@@ -1,13 +1,17 @@
-/**
- * \class THS2pi
- * 
- * Template final class .
- * 
- * Users should create their own analysis specific project classes.
- * 
- */
-
-
+// Author: Michael Williams 2018 
+   
+/**********************************************************************************
+* Project:                                                                 *
+* Package:                                                                       *
+* Class  : THS2pi                                                                *
+*                                                                                *
+* Description:                                                                   *
+*                                                                                *
+*   Template final class                                                         *
+*                                                                                *
+*   Users should create their own analysis specific project classes              *
+*                                                                                *
+**********************************************************************************/
 
 #include "TDatabasePDG.h"
 #include "THS2pi.h"
@@ -27,9 +31,16 @@ THS2pi::THS2pi(){
   AddParticle(&fPip,kTRUE,0);
   AddParticle(&fPim,kTRUE,1);
 
+  // set particles for MVA analysis  
+  SetDefaultVariables({"P", "Th", "Phi", "Time", "Edep", "DeltaE", "Vz"});
+  // default variabbles will be used unless specified
+  // NOTE: MVA expects floats, to add other variables pass a vector of TStrings with the appropriate labels e.g. {"F", "I", "F"}
+  PrepAddParticle("EL", &fElectron);
+  PrepAddParticle("P", &fProton);
+  PrepAddParticle("Pip", &fPip);
+  PrepAddParticle("Pim", &fPim);
+
   //Set final state parents
-  
-  
   
   TString PID("NONE"); //set this to which particles you want to id via pdg code alone, or set it in individual AddTopology
   TString INCLUSIVE("ALL");//set this to which particles you want reaction to be inclusive of, or set it in individual AddTopology "ALL"=> completely inclusive
@@ -55,8 +66,6 @@ THS2pi::THS2pi(){
              bind(&THS2pi::Topo_3, this),
              PID,INCLUSIVE);
 
-  
-  
   THSFinalState::InitFS();
 }
 
@@ -74,7 +83,36 @@ void THS2pi::FileStart(){
   fCuts.SetGammaCut(2,2,0,2);//FT,FDTOF,CD,FDCAL
 
   //Initilaise THSMVA stuff
-  fMVAPrep.SetTree(fFinalTree);
+  // add config stuff here
+  if (fIsTrain){
+
+      std::cout<<"Setting MVA trees..."<<std::endl;
+      fMVAPrep.SetNames();
+      // add splits: name, exact variable names, pointers, values
+      fMVATrain.AddSplit("Topo0", "Topo", &fTopoID, 0);
+      fMVATrain.AddSplit("Topo1", "Topo", &fTopoID, 1);
+      fMVATrain.AddSplit("Topo2", "Topo", &fTopoID, 2);
+      fMVATrain.AddSplit("Topo3", "Topo", &fTopoID, 3);
+      fMVATrain.PrintSplits();
+      fSplits = fMVATrain.GetSplits(); 
+
+      // Set methods
+      Method method0;
+      method0.SetName("BDT0");
+      method0.SetType(TMVA::Types::kBDT);
+      method0.SetParameters("!H:!V:NTrees=1200:MinNodeSize=2.5%:MaxDepth=2:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
+      fMVATrain.AddMethod(method0);
+
+      // Set factory and dataloader configs
+      fMVATrain.SetFactoryConfig("!V:!Silent:Color:DrawProgressBar:Transformations=N:AnalysisType=Classification");
+      fMVATrain.SetDataloaderConfig("SplitMode=Random:NormMode=NumEvents:!V");
+
+      std::cout<<"  Finished setting methods and splits"<<std::endl;
+      fMVAPrep.SetTree(fFinalTree);
+      fMVATrain.SetTrainTree(fFinalTree);
+  }
+  else{
+  }
   
   
   if(THSFinalState::frGenParts) fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment
@@ -147,9 +185,6 @@ void THS2pi::Topo_2(){
   if(fElectron.Detector()<-1)fElectron.SetPath(1.97);
   Float_t stime=fTrigger.StartTime(&fElectron);
   fTrigger.SubtractStartTime(&fElectron,&fProton,&fPim);
-  if(!fCuts.ElCut(&fElectron)){fGoodEvent=kFALSE;return;}
-  if(!fCuts.ProtCut(&fProton)){fGoodEvent=kFALSE;return;}
-  if(!fCuts.PionMCut(&fPim)){fGoodEvent=kFALSE;return;}
 
   HSLorentzVector miss=fBeam+fTarget-fElectron.P4()-fProton.P4()-fPim.P4();
   fMissMass2=miss.M2();
@@ -178,9 +213,60 @@ void THS2pi::Kinematics(){
   //configure trigger for this event
   fTrigger.ReadParticles();
   //Do calculations if Good Event
-  if(fIsTMVA) TMVAFill();
+  //if(fIsTMVA) TMVAFill();
+  if (fIsTMVA){
+      PrepFillVars(); // for trains
+      fMVAPrep.RemoveNaNs();
+      // TODO : figure out how to get correct flag
+      //std::cout<<fGotCorrectOne<<std::endl;
+      //if (fGotCorrectOne==1){fSignalCount++;};
+      //if (fCorrect==0){fBackgroundCount++;};
+
+      //fMVAApp.GetResponse();
+
+  }
+  else{
+  
+      AppFillVars();
+      fMVAApp.ProcessEvent();
+  }
 
 }
+
+Int_t THS2pi::CheckSignalCount(TTree* tree){
+    //tree->Print();
+    if (!fSplits.empty()){
+        fSplitCount = 0;
+        for (UInt_t i=0; i<fSplits.size(); i++){
+            tree->Draw(">>eventlist","Correct==1&"+fSplits[i].GetTreeSplit(),"goff"); 
+            fEventList = (TEventList*)gDirectory->Get("eventlist");
+            if (fEventList){
+                fSignalCount = fEventList->GetN();
+            }
+            else fSignalCount = 0;
+            std::cout<<"    Signal count for split "<<i<<": "<<fSignalCount;
+            // check if criteria met for this split
+            if (fSignalCount >= fTotalEvents){ fSplitCount++;};
+        }
+        std::cout<<" "<<std::endl;
+        // only return true if all splits have met criteria
+        if (fSplitCount == fSplits.size()) return kTRUE;
+        else return kFALSE;
+    }
+    else{
+        tree->Draw(">>eventlist","Correct==1","goff"); 
+        fEventList = (TEventList*)gDirectory->Get("eventlist");
+        //std::cout<<"Getting number od entries"<<std::endl;
+        if (fEventList){
+            fSignalCount = fEventList->GetN();
+        }
+        else fSignalCount = 0;
+        std::cout<<"    Signal count: "<<fSignalCount<<std::endl;
+        if (fSignalCount >= fTotalEvents)return kTRUE;
+        else return kFALSE;
+    }
+}
+
 //////////////////////////////////////////////////
 /// Define conditions for track to be considered
 /// good in event. Adding conditions on junk tracks
@@ -198,11 +284,14 @@ Bool_t THS2pi::CheckParticle(THSParticle* part){
 void THS2pi::FinalStateOutTree(TTree* tree){
   fIsTMVA=kFALSE;
   THSFinalState::fFinalTree=tree;
+  fMVAApp.SetOutputTree(tree);
   //tree->Branch("Final",&fFinal);//If you want to save the final THSParticles
+  tree->Branch("MissMass2",&fMissMass2,"MissMass2/D");
   tree->Branch("MissMass",&fMissMass,"MissMass/D");
   tree->Branch("Topo",&fTopoID,"Topo/I");
   tree->Branch("NPerm",&fNPerm,"NPerm/I");
   tree->Branch("NDet",&fNDet,"NDet/I");
+  tree->Branch("Correct",&fCorrect,"Correct/I");
 
 }
 void THS2pi::TMVAOutTree(TTree* tree){
@@ -213,97 +302,121 @@ void THS2pi::TMVAOutTree(TTree* tree){
   tree->Branch("Topo",&fTopoID,"Topo/I");
   tree->Branch("NPerm",&fNPerm,"NPerm/I");
   tree->Branch("NDet",&fNDet,"NDet/I");
-  // tree->Branch("Detector",&fDetector,"Detector/I");
+  //tree->Branch("Detector",&fDetector,"Detector/I");
   tree->Branch("Correct",&fCorrect,"Correct/I");
- 
-  tree->Branch("ElTime",&fElTime,"ElTime/F");
-  tree->Branch("ElEdep",&fElEdep,"ElEdep/F");
-  tree->Branch("ElDeltaE",&fElDeltaE,"ElDeltaE/F");
-  tree->Branch("ElPreE",&fElPreE,"ElPreE/F");
-  tree->Branch("ElP",&fElP,"ElP/F");
-  tree->Branch("ElTh",&fElTh,"ElTh/F");
-  tree->Branch("ElPhi",&fElPhi,"ElPhi/F");
-  tree->Branch("ElVz",&fElVz,"ElVz/F");
-  tree->Branch("ElTrChi2",&fElTrChi2,"ElTrChi2/F");
-  tree->Branch("ElDet",&fElDet,"ElDet/I");
 
-  tree->Branch("PTime",&fPTime,"PTime/F");
-  tree->Branch("PEdep",&fPEdep,"PEdep/F");
-  tree->Branch("PDeltaE",&fPDeltaE,"PDeltaE/F");
-  tree->Branch("PPreE",&fPPreE,"PPreE/F");
-  tree->Branch("PP",&fPP,"PP/F");
-  tree->Branch("PTh",&fPTh,"PTh/F");
-  tree->Branch("PPhi",&fPPhi,"PPhi/F");
-  tree->Branch("PVz",&fPVz,"PVz/F");
-  tree->Branch("PTrChi2",&fPTrChi2,"PTrChi2/F");
-  tree->Branch("PDet",&fPDet,"PDet/I");
- 
-  tree->Branch("PipTime",&fPipTime,"PipTime/F");
-  tree->Branch("PipEdep",&fPipEdep,"PipEdep/F");
-  tree->Branch("PipDeltaE",&fPipDeltaE,"PipDeltaE/F");
-  tree->Branch("PipPreE",&fPipPreE,"PipPreE/F");
-  tree->Branch("PipP",&fPipP,"PipP/F");
-  tree->Branch("PipTh",&fPipTh,"PipTh/F");
-  tree->Branch("PipPhi",&fPipPhi,"PipPhi/F");
-  tree->Branch("PipVz",&fPipVz,"PipVz/F");
-  tree->Branch("PipTrChi2",&fPipTrChi2,"PipTrChi2/F");
-  tree->Branch("PipDet",&fPipDet,"PipDet/I");
+  fMVAPrep.SetTree(tree);
+  fMVAPrep.SetBranches();
 
-  tree->Branch("PimTime",&fPimTime,"PimTime/F");
-  tree->Branch("PimEdep",&fPimEdep,"PimEdep/F");
-  tree->Branch("PimDeltaE",&fPimDeltaE,"PimDeltaE/F");
-  tree->Branch("PimPreE",&fPimPreE,"PimPreE/F");
-  tree->Branch("PimP",&fPimP,"PimP/F");
-  tree->Branch("PimTh",&fPimTh,"PimTh/F");
-  tree->Branch("PimPhi",&fPimPhi,"PimPhi/F");
-  tree->Branch("PimVz",&fPimVz,"PimVz/F");
-  tree->Branch("PimTrChi2",&fPimTrChi2,"PimTrChi2/F");
-  tree->Branch("PimDet",&fPimDet,"PimDet/I");
-
+  fMVATrain.SetTrainTree(tree);
+  fMVAApp.SetAppTree(tree);
 
 }
-void THS2pi::TMVAFill(){
-  fElTime=fElectron.DeltaTime();
-  fElEdep=fElectron.Edep();
-  fElDeltaE=fElectron.DeltaE();
-  fElPreE=fElectron.PreE();
-  fElP=fElectron.P4p()->P();
-  fElTh=fElectron.P4p()->Theta();
-  fElPhi=fElectron.P4p()->Phi();
-  fElVz=fElectron.Vertex().Z();
-  fElTrChi2=fElectron.TrChi2();
-  fElDet=fCuts.Detector(fElectron.Detector());
- 
-  fPTime=fProton.DeltaTime();
-  fPEdep=fProton.Edep();
-  fPDeltaE=fProton.DeltaE();
-  fPPreE=fProton.PreE();
-  fPP=fProton.P4p()->P();
-  fPTh=fProton.P4p()->Theta();
-  fPPhi=fProton.P4p()->Phi();
-  fPVz=fProton.Vertex().Z();
-  fPTrChi2=fProton.TrChi2();
-  fPDet=fCuts.Detector(fProton.Detector());
 
-  fPipTime=fPip.DeltaTime();
-  fPipEdep=fPip.Edep();
-  fPipDeltaE=fPip.DeltaE();
-  fPipPreE=fPip.PreE();
-  fPipP=fPip.P4p()->P();
-  fPipTh=fPip.P4p()->Theta();
-  fPipPhi=fPip.P4p()->Phi();
-  fPipVz=fPip.Vertex().Z();
-  fPipTrChi2=fPip.TrChi2();
-  fPipDet=fCuts.Detector(fPip.Detector());
+void THS2pi::SetApplication(THSMVA* setup){
 
-  fPimTime=fPim.DeltaTime();
-  fPimEdep=fPim.Edep();
-  fPimDeltaE=fPim.DeltaE();
-  fPimPreE=fPim.PreE();
-  fPimP=fPim.P4p()->P();
-  fPimTh=fPim.P4p()->Theta();
-  fPimPhi=fPim.P4p()->Phi();
-  fPimVz=fPim.Vertex().Z();
-  fPimTrChi2=fPim.TrChi2();
-  fPimDet=fCuts.Detector(fPip.Detector());
+    fMVAApp.Init(setup);
+    fMVAApp.UpdateSplit("Topo0", &fTopoID);
+    fMVAApp.UpdateSplit("Topo1", &fTopoID);
+    fMVAApp.UpdateSplit("Topo2", &fTopoID);
+    fMVAApp.UpdateSplit("Topo3", &fTopoID);
+    fMVAApp.PrintSplits();
+    fMVAApp.AddReaders();
+    fMVAApp.SetReaders();
+    fMVAApp.SetOutput();
+}
+
+/**
+ * Add particles to vector
+ *
+ */
+
+void THS2pi::PrepAddParticle(THSParticle *part){
+    fParticles.push_back(part);
+}
+
+void THS2pi::PrepAddParticle(TString name, THSParticle *part, std::vector<TString> variables, std::vector<TString> types){
+    std::cout<<"Adding "<<name<<std::endl;
+    // fill vector of pointers
+    fParticles.push_back(part);
+    if (types.empty()){
+        std::cout<<"    Adding all variables as Float_t"<<std::endl;
+        if (variables.empty()){
+            if (fDefaultVariables.empty()) {std::cout<<"ERROR: no default variables set"; exit(1);};
+                types.resize(fDefaultVariables.size(), "F");
+        }
+        else{
+            types.resize(variables.size(), "F");
+        }
+    }
+    // add particle and its variables
+    if (variables.empty()) fMVAPrep.AddParticle(name, fDefaultVariables, types);
+    else{fMVAPrep.AddParticle(name, variables, types);}
+}
+
+/**
+ *  * Set default variables
+ *   *
+ *    */
+
+void THS2pi::SetDefaultVariables(std::vector<TString> variables){
+        fDefaultVariables = variables;
+}
+
+
+/**
+ * Fill variable vector
+ *
+ */
+
+void THS2pi::PrepFillVars(){
+
+    fNParts = fParticles.size();
+
+    for (UInt_t i = 0; i<fNParts; i++){
+        fMVAPrep.AddVarsFromParticle(fParticles[i], i);
+    }
+}
+
+/**
+ * Fill the variables for application
+ *
+ */
+
+void THS2pi::AppFillVars(){
+
+    fNParts = fParticles.size();
+
+    for (UInt_t i = 0; i<fNParts; i++){
+        fMVAApp.AddVarsFromParticle(fParticles[i], i);
+    }
+}
+
+/**
+ * Set the number of training and testing events
+ *
+ */
+
+void THS2pi::SetNEvents(Int_t N){
+    // set number of events
+    fMVATrain.SetNTrain(N);
+    fMVATrain.SetNTest(N);
+    // set total signal events for counter
+    fTotalEvents = 2*N;
+}
+
+void THS2pi::SetNEvents(Int_t NTrain, Int_t NTest){
+    // set number of events
+    fMVATrain.SetNTrain(NTrain);
+    fMVATrain.SetNTest(NTest);
+    fTotalEvents = NTrain + NTest;
+}
+
+void THS2pi::SetNEvents(Int_t NTot, Int_t NTrain, Int_t NTest){
+    //set number of events
+    fMVATrain.SetNTrain(NTrain);
+    fMVATrain.SetNTest(NTest);
+    // set total number of events
+    if (NTot == -1) {fTotalEvents = std::numeric_limits<Int_t>::max();}
+    else{ fTotalEvents = NTot;}
 }

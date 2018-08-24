@@ -1,9 +1,9 @@
-//root --hsdata --hsfinal=THS2pi RunFSRoot2pi.C
+//root --hsdata --hsfinal=THS2pi RunFSRoot2piApp.C
 //You need to replace 2pi with your final state class name
 {
   //Create FinalState
   THS2pi* fs=new THS2pi();
-  fs->SetTrain(kTRUE);
+  fs->SetTrain(kFALSE);
   // fs->SetGenerated(); //just analyse generated branch
    fs->SetMaxParticles(10);
   //create datamanager
@@ -16,34 +16,31 @@
   Int_t counter=0;
   
   //create ouput tree
-  TFile* outfile=new TFile("TestTrain.root","recreate");
-  TTree* outtree=new TTree("THSMVATree","output tree");
+  TFile* outfile=new TFile("TestApp.root","recreate");
+  TTree* outtree=new TTree("OutputTree","output tree");
   outtree->SetAutoSave(1E4);
-  //  fs->FinalStateOutTree(outtree); //connect ouput tree to project branches
-  fs->TMVAOutTree(outtree); //connect ouput tree to project branches
-  
-  gBenchmark->Start("timer");
+  fs->FinalStateOutTree(outtree); //connect ouput tree to project branches
+  //fs->TMVAOutTree(outtree); //connect ouput tree to project branches
 
-  fs->SetNEvents(50000,1000);
+  TFile* setupFile = new TFile("TestTrain.root","LOAD");
+  THSMVA* setup; setupFile->GetObject("Setup;1", setup);
+
+  fs->SetApplication(setup);
+
+  gBenchmark->Start("timer");
    
   while(dm->ReadEvent()){//loop over events
     fs->ProcessEvent();
-    if (counter%1000 == 0){
-        if (fs->CheckSignalCount(outtree)) break;
+    if (counter == 5000){
+        break;
     }
     counter++;
-    //if (counter >= 50000) break;
   }
-    
 
   gBenchmark->Stop("timer");
   gBenchmark->Print("timer");
- 
-  fs->RunTraining();
-  outtree->GetDirectory()->cd();
-  fs->WriteConfig("Setup");
 
-  //fs->RunApp();
+  fs->EndApplication(outfile);
 
   outfile->cd();
   outtree->Write();

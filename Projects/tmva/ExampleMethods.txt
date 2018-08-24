@@ -1,0 +1,67 @@
+// Author: Michael Williams
+
+Methods for use in THSMVA.
+
+//////////
+// TMVA //
+//////////
+
+Method BDT;
+BDT.SetName("BDT");
+BDT.SetType(TMVA::Types::kBDT);
+BDT.SetParameters("!H:!V:NTrees=1200:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:             AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
+fMVATrain.AddMethod(BDT);
+
+Method MLP;
+MLP.SetName("MLP");
+MLP.SetType(TMVA::Types::kMLP);
+MLP.SetParameters("H:!V:NeuronType=tanh:VarTransform=N:NCycles=600:HiddenLayers=N+5:TestRate=5:!UseRegulator");
+fMVATrain.AddMethod(MLP);
+
+Method SVM;
+SVM.SetName("SVM");
+SVM.SetType(TMVA::Types::SVM);
+SVM.SetParameters("Gamma=0.25:Tol=0.001:VarTransform=Norm");
+fMVATrain.AddMethod(SVM);
+
+Method KNN;
+KNN.SetName("KNN");
+KNN.SetType(TMVA::Types::kKNN);
+KNN.SetParameters("!H:nkNN=20:ScaleFrac=0.8:SigmaFact=1.0:Kernel=Gaus:UseKernel=F:UseWeight=T:!Trim")
+
+///////////
+// PyMVA //
+///////////
+
+Method PyRF;
+PyRF.SetName("PyRandomForest");
+PyRF.SetType(TMVA::Types::kPyRandomForest);
+PyRF.SetParameters("!V:NEstimators=200:Criterion=gini:MaxFeatures=auto:MaxDepth=6:MinSamplesLeaf=3:MinWeightFractionLeaf=0:Bootstrap=kTRUE");
+fMVATrain.AddMethod(PyRF);
+
+Method PyAda;
+PyAda.SetName("PyAdaBoost");
+PyAda.SetType(TMVA::Types::kPyAdaBoost);
+PyAda.SetParameters("!V:NEstimators=1000");
+fMVATrain.AddMethod(PyAda);
+
+Method PyGTB;
+PyGTB.SetName("PyGTB");
+PyGTB.SetType(TMVA::Types::kPyGTB);
+PyGTB.SetParameters("!V:NEstimators=150");
+fMVATrain.AddMethod(PyGTB);
+
+//////////
+// RMVA //
+//////////
+
+Method RXGB;
+RXGB.SetName("RXGB");
+RXGB.SetType(TMVA::Types::kRXGB);
+RXGB.SetParameters("!V:NRounds=80:MaxDepth=3:Eta=0.3");
+fMVATrain.AddMethod(RXGB);
+
+Method RC50;
+RC50.SetName("RC50");
+RC50.SetType(TMVA::Types::kC50);
+RC50.SetParameters("!H:NTrials=10:Rules=kFALSE:ControlSubSet=kFALSE:ControlNoGlobalPruning=kFALSE:ControlCF=0.25:ControlMinCases=2:ControlFuzzyThreshold=kTRUE:ControlSample=0:ControlEarlyStopping=kTRUE:!V" );
