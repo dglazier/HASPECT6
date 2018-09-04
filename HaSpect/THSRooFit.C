@@ -418,8 +418,7 @@ void THSRooFit::LoadBinVars(TString opt,Int_t nbins,Double_t* xbins){
   if(!fDataBins) fDataBins=new THSBins("HSDataBins");
   //Load a variable that is to be used to define the kinmatic bins
   //opt must be the name of a variable in the tree
-  // LoadAuxVars(opt+Form("[%lf,%lf]",min,max));//dummy range, needed for factory to create var
-  fBinVars.add(*(fWS->factory(opt+Form("[%lf,%lf]",xbins[0],xbins[nbins-1]))));
+  fBinVars.add(*(fWS->factory(opt+Form("[%lf,%lf]",xbins[0],xbins[nbins]))));
   fDataBins->AddAxis(opt,nbins,xbins);
 
 }
