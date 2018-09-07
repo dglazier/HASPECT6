@@ -354,6 +354,7 @@ Bool_t THSFinalState::FSProcess(){
   //Clear added particles
   for(UInt_t ic=0;ic<fConfigs.size();ic++){
     fConfigs[ic]->Particle()->MinorClear();
+    fConfigs[ic]->Particle()->SetDetector(fMISSING);
   }
   if(fTryPerm)
     PermutateParticles();
@@ -484,9 +485,12 @@ void THSFinalState::CheckTruth(){
   // for(UInt_t ip=0;ip<fFinal.size();ip++)
   //   fCorrect*=IsCorrectTruth(fFinal[ip]);
   for(UInt_t ip=0;ip<fConfigs.size();ip++)
-    if(fConfigs[ip]->GenID()>-1) //only check particles assigned via ConfigParticle
-      fCorrect*=IsCorrectTruth(fConfigs[ip]->Particle());
-  
+    if(fConfigs[ip]->GenID()>-1){ //only check particles assigned via ConfigParticle
+      auto part=fConfigs[ip]->Particle();
+      if(IsMissing(part))
+	continue;
+      fCorrect*=IsCorrectTruth(part);
+    }
   if(fCorrect) fGotCorrectOne=kTRUE;
 }
 ////////////////////////////////////////////////////////////////

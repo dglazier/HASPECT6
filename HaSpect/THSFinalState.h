@@ -88,7 +88,7 @@ class THSFinalState{
   UInt_t fNGen=0; //Number of generated particles
   Int_t fNDet=0;
   Int_t fNTried=0;
-  const Int_t fMISSING=-999999;
+  const Short_t fMISSING=-9999;
   Bool_t fGoodEvent = kTRUE;
   Long64_t fNUsedReadEvent=0; //Number of read events with at least 1 GoodEvent
   //Special behaviour for generated MC events
