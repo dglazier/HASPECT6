@@ -124,46 +124,26 @@ void THSParticleIter::SetNextInnerIter(THSParticleIter *_iter){
 THSParticle* THSParticleIter::NextParticle(){
   
   THSParticle* particle=nullptr;
-    //If we have a THSCombination get the particle from there
-  if(fUseCombi){
-    if(fSelIter){
-      //If we have a Selected THSCombination get the particle from there
-      if(fParti<fSelected.size()){
-	if((particle=fSelIter->NextParticle())){
-	  return particle;
-	}
-	else fParti=fSelected.size(); //Don't look in SelIter again until gone though remainder
-      }
-    }
-    //else //no combitorial for selected events just return selected
-    if(!fSelIter&&fParti<fSelected.size())
-      return fSelected[fParti++];//Just use results of this combitorial
+  if(fInnerIter) {
+    if(fParti==0){
+      particle=fInnerIter->NextParticle();
+      if(particle) return particle;
+      else if(fParti<fEvParts.size())
+      	return fEvParts[fParti++];
+    }	
+    else if(fParti<fEvParts.size())
+      return fEvParts[fParti++];
     
-    if(fRemIter){//if we want to use the remaining particles
-      //Get the next particle from there
-      if((particle=fRemIter->NextParticle())){
-	  return particle;
-      }
-      //If no remaining iterator given, throw away remaining particles
-    }
     fParti=0;
-    return nullptr; //end of vector
-    
+    return nullptr;
   }
+  else if(fParti<fEvParts.size())
+    return fEvParts[fParti++];
   
-  else{//No combinitorial behaviour just iterate through vector
-    // if(fParti<fAllParticles.size()){
-    // 	return fAllParticles[fParti++];
-    // }
-    if(fParti<fAllParticles->size()){
-      return fAllParticles->at(fParti++);
-    }
-    else{
-      fParti=0;
-      return nullptr;     
-    }
-  }
+  fParti=0;
   return nullptr;
+  
+ 
 }
 
 //////////////////////////////////////////////////////////////////////////
