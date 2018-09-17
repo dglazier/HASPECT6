@@ -2,10 +2,10 @@
 //You can replace the default classifier name with any other you trained pervious (here defMLP)
 ////////////////////////////////////////////////////////////////////////////////
 //This demonstrates manual usage where you the full path to the weights files;
-//Set the tree variables to the RegResult1 in the constructor and connect to tree;
+//Set the tree variables to the ResultReg1 in the constructor and connect to tree;
 //and give the variable values each event via a vector
 
-#include "RegResult1.h"
+#include "ResultReg1.h"
 #include "GetTutorialFile.h"
 
 using namespace HSMVA;
@@ -16,7 +16,7 @@ void RunReg1Result(){
 
   auto regTree = dynamic_cast<TTree*>(input->Get("TreeR"));
  
-  RegResult1 regres("Sim","var1:var2","defMLP","TMVARegressionTut/weights/TMVARegressionTut_defMLP.weights.xml");
+  ResultReg1 regres("Sim","var1:var2","defMLP","TMVARegressionTut/weights/TMVARegressionTut_defMLP.weights.xml");
 
   
   Float_t v1,v2;

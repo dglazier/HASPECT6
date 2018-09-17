@@ -23,7 +23,7 @@ ClassImp(HSMVA::TrainSignalID);
 ////////////////////////////////////////////////////////////
 ///Specific implemntation requires:
 HSMVA::TrainSignalID::TrainSignalID(TString name,TString opt):
-  TrainingInterface(nameT,opt)
+  TrainingInterface(name,opt)
 {
   
 }

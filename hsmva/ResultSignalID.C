@@ -1,9 +1,9 @@
 /**
-	\class ClassResult
+	\class ResultSignalID
 	Derived from ResultInterface
 	Used for evaluating classifier output of signal and background
 	For example :
-	  ClassResult classif("SignalID","defMLP");
+	  ResultSignalID classif("SignalID","defMLP");
 	  classif.SetBranchAllFloats(signalTree);
 	  for(Int_t i=0;i<Nent;i++){
 	     signalTree->GetEntry(i);
@@ -12,12 +12,12 @@
 
 */
 
-#include "ClassResult.h"
+#include "ResultSignalID.h"
 #include <TObjArray.h>
 #include <TFile.h>
 #include <TTree.h>
 
-ClassImp(HSMVA::ClassResult);
+ClassImp(HSMVA::ResultSignalID);
 
 ////////////////////////////////////////////////////////////
 ///Specific implemntation requires:
@@ -26,5 +26,5 @@ ClassImp(HSMVA::ClassResult);
 ///methodname, the name given to the method in training
 ///weightfile, the full path to the file containing the trained weights
 
-HSMVA::ClassResult::ClassResult(TString name,TString varlist,TString methodname,TString weightfile) : ResultInterface(name,varlist,methodname,weightfile){
+HSMVA::ResultSignalID::ResultSignalID(TString name,TString varlist,TString methodname,TString weightfile) : ResultInterface(name,varlist,methodname,weightfile){
  }

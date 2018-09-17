@@ -1,11 +1,11 @@
 
 #include "TrainSignalID.h"
-#include "GetTutorialFile.h"
 
 using namespace HSMVA;
 
 void RunTrainSignalID(){
- 
+  gROOT->LoadMacro("GetTutorialFile.C");
+
   auto input = GetClassificationFile();
 
   auto *signalTree     = dynamic_cast<TTree*>(input->Get("TreeS"));
