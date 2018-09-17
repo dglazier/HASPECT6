@@ -1,0 +1,30 @@
+/**
+	\class ClassResult
+	Derived from ResultInterface
+	Used for evaluating classifier output of signal and background
+	For example :
+	  ClassResult classif("SignalID","defMLP");
+	  classif.SetBranchAllFloats(signalTree);
+	  for(Int_t i=0;i<Nent;i++){
+	     signalTree->GetEntry(i);
+	  classif.Eval();
+	  }
+
+*/
+
+#include "ClassResult.h"
+#include <TObjArray.h>
+#include <TFile.h>
+#include <TTree.h>
+
+ClassImp(HSMVA::ClassResult);
+
+////////////////////////////////////////////////////////////
+///Specific implemntation requires:
+///name, a name for this result object
+///varlist, the list of variables used to train this result
+///methodname, the name given to the method in training
+///weightfile, the full path to the file containing the trained weights
+
+HSMVA::ClassResult::ClassResult(TString name,TString varlist,TString methodname,TString weightfile) : ResultInterface(name,varlist,methodname,weightfile){
+ }
