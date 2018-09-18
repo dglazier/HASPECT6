@@ -31,7 +31,7 @@ class THSFinalState{
 
  public :
   THSFinalState();
-  virtual ~THSFinalState(){cout<<"DELETE THSFinalState"<<endl;fConfigs.clear();};
+  virtual ~THSFinalState(){fConfigs.clear();};
 
   virtual void GetEvent(Long64_t uid){}//interface to different readers
   Bool_t WorkOnEvent();
@@ -51,13 +51,16 @@ class THSFinalState{
   void SetRunInfo(THSRunInfo* in) {fRunInfo=in;}
   
   void AddTopology(TString topo,FinalState::VoidFuncs funcI,FinalState::VoidFuncs funcE,TString chPID="",TString incl="");
+  void AddNamesTopology(TString names,FinalState::VoidFuncs funcI,FinalState::VoidFuncs funcE,TString chPID="",TString incl="");
   THSTopology* FindTopology(); //For current event
   Bool_t CheckForATopology();
   virtual  Bool_t CheckParticle(THSParticle* part);
     
   void AddParticle(THSParticle* part,Bool_t AddToFinal,Int_t genID);
+  void AddParticle(TString name,THSParticle* part,Bool_t AddToFinal,Int_t genID);
   void ConfigParent(THSParticle* parent,THSParticle* child);
   vector<THSParticleConfig* > HowManyParticles(Int_t pdg);
+  THSParticle* GetParticle(TString name);
   
   void SetPermutate(Bool_t tryp){fTryPerm=tryp;} //Turn on permuations
   void SetInclusive(TString parts="");
@@ -218,6 +221,7 @@ class THSParticleConfig{
  public:
   THSParticleConfig(){}
   THSParticleConfig(THSParticle* part,Int_t genID){fParticle=part;fGeni=genID;}
+  THSParticleConfig(TString name,THSParticle* part,Int_t genID){fName=name;fParticle=part;fGeni=genID;}
   
   virtual ~THSParticleConfig(){}
   THSParticle* Particle(){return fParticle;}
@@ -236,9 +240,10 @@ class THSParticleConfig{
   UInt_t GetNChild(){return fChildren.size();};
   Int_t PDG(){return fParticle->PDG();}
   Int_t GenID(){return fGeni;}
-
+  TString GetName(){return fName;}
 
  private:
+  TString fName;
   THSParticle* fParticle=nullptr;
   THSParticleConfig* fParent=nullptr;
   vector<THSParticle*> fChildren;

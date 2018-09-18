@@ -111,6 +111,49 @@ void THSFinalState::AddTopology(TString topo,FinalState::VoidFuncs funcI,
 
   if(!fCurrIter)cout<<"THSFinalState::AddTopology warning no Init_Iter working for topology "<<topo<<endl;
  }
+////////////////////////////////////////////////////////////////////////
+///Add a new topology
+///requires particle string of names defining particles to be detected
+/// a function intialising the particle iterator
+/// a function defining the specific behaviour for this topology
+/// a string if want to use charge as identiification
+/// a tring if want to look for inclusive topologies
+void THSFinalState::AddNamesTopology(TString names,FinalState::VoidFuncs funcI,
+				FinalState::VoidFuncs funcE,TString chPID,TString incl){
+  //convert the string of particle names into a string of particle types
+  //Save the THSParticle pointer for each particle in this topology
+  TString topo;
+  vector<THSParticle* > parts;
+  auto listofparts=names.Tokenize(":");
+  for(Int_t ip = 0; ip<listofparts->GetEntries();ip++){
+    cout<<"AddNamesTopology "<<listofparts->At(ip)->GetName()<<endl;
+    auto part=GetParticle(listofparts->At(ip)->GetName());
+    parts.push_back(part);
+    cout<<part<<" "<<endl;
+    if(part->PDG()==-22) topo+="Beam";
+    else topo+=TDatabasePDG::Instance()->GetParticle(part->PDG())->GetName();
+    if(ip!=listofparts->GetEntries())	topo+=":";
+  }
+
+  //create new topology	
+  fCurrTopo=new THSTopology(topo,funcE,chPID,incl);
+  fCurrTopo->SetID(fNTopo++);
+  fCurrTopo->SetParticles(parts);
+  
+  fTopos.push_back(fCurrTopo);
+  fCurrIter=nullptr;
+  funcI();//call the assigned particle iterator initialiser
+  fCurrIter->ConfigureIters();
+
+  if(!fCurrIter)cout<<"THSFinalState::AddTopology warning no Init_Iter working for topology "<<topo<<endl;
+ }
+//////////////////////////////////////////////////////////////////
+///Used to configure iterators and generated particles
+void THSFinalState::AddParticle(TString name,THSParticle* part,Bool_t AddToFinal,Int_t genID){
+  THSParticleConfig* pc=new THSParticleConfig(name,part,genID);
+  fConfigs.push_back(pc);
+  if(AddToFinal) fFinal.push_back(part);
+}
 //////////////////////////////////////////////////////////////////
 ///Used to configure iterators and generated particles
 void THSFinalState::AddParticle(THSParticle* part,Bool_t AddToFinal,Int_t genID){
@@ -327,7 +370,7 @@ void THSFinalState::InitDetPartsCharge(){
 ///Process one event from the input tree
 void THSFinalState::ProcessEvent(){
   //Process one input event
-   InitEvent();
+  InitEvent();
   if(frDetParts)fNDet=frDetParts->size();
   Int_t ntopo=0;
   while(FindTopology()){ //Find all valid topologies
@@ -341,12 +384,17 @@ void THSFinalState::ProcessEvent(){
   if(fIsGenerated) FSProcess(); //If only analysing generated events
   
   FinaliseEvent();
- }
+}
 Bool_t THSFinalState::FSProcess(){
  
   if(fCheckCombi) CheckCombitorial();
 
-  WorkOnEvent();
+  //Check that none of the specified topology particles IsMissing
+  //If it is we can disgard this combination
+  if(fCurrTopo->AnyMissing(fMISSING))
+    fGoodEvent=kFALSE;
+  else
+    WorkOnEvent();
   
   if(IsGoodEvent()){
     UserProcess(); 
@@ -369,7 +417,6 @@ void THSFinalState::UserProcess(){
   fUID++;
   
 }
-
 Bool_t THSFinalState::WorkOnEvent(){
   //Should this event be saved?
   THSFinalState::fGoodEvent=kTRUE;
@@ -836,6 +883,16 @@ void THSFinalState::CheckCombitorial(){
 }
 
 
+/////////////////////////////////////////////////////////////
+///Return configured particles with this pdg
+///used to work out how many identical particles to iterate over
+THSParticle* THSFinalState::GetParticle(TString name){
+  cout<<name<<endl;
+  for(auto const& part: fConfigs){
+    if(part->GetName()==name) return part->Particle();
+  }
+  return nullptr;
+}
 /////////////////////////////////////////////////////////////
 ///Return configured particles with this pdg
 ///used to work out how many identical particles to iterate over
