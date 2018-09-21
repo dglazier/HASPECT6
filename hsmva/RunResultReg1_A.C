@@ -7,10 +7,10 @@
 
 #include "ResultReg1.h"
 #include "GetTutorialFile.h"
-
+Run
 using namespace HSMVA;
 
-void RunReg1Result(){
+void RunResultReg1_A(){
 
   auto input = GetRegressionFile();
 

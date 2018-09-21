@@ -42,6 +42,7 @@ HSMVA::TrainingInterface::~TrainingInterface(){
 ///Load a tree to DataLoader using all of its branches
 ///Unless branches turned off by IgnoreBranches or OnlyTheseBranches
 void TrainingInterface::LoadTreeVars(TTree*  tree,Double_t weight){
+
   auto *loader=DataLoader();
 
   //Use first tree as tempate for variables

@@ -9,7 +9,7 @@
 
 using namespace HSMVA;
 
-void RunReg1Result_B(){
+void RunResultReg1_B(){
 
   auto input = GetRegressionFile();
 
