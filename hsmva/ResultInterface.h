@@ -1,5 +1,5 @@
-#ifndef RESULTINTERFACE_h
-#define RESULTINTERFACE_h
+#ifndef HSMVA_RESULTINTERFACE_h
+#define HSMVA_RESULTINTERFACE_h
 
 #include <TNamed.h>
 #include "TMVA/Tools.h"

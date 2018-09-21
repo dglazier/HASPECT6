@@ -8,6 +8,7 @@
   gROOT->LoadMacro("TrainingInterface.C+");
   gROOT->LoadMacro("TrainSignalID.C+");
   gROOT->LoadMacro("TrainReg1.C+");
+  gROOT->LoadMacro("TrainComparison.C+");
   gROOT->LoadMacro("ResultInterface.C+");
   gROOT->LoadMacro("ResultSignalID.C+");
   gROOT->LoadMacro("ResultReg1.C+");

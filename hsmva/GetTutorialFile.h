@@ -1,3 +1,6 @@
+TFile* GetClassificationFile();
+TFile* GetRegressionFile();
+
 TFile*  GetClassificationFile(){
    // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
    TFile *input=nullptr;

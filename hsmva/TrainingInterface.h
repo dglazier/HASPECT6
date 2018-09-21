@@ -22,6 +22,7 @@ namespace HSMVA{
     void SetNTrainTest(Long64_t ntr,Long64_t nte){fNTrain=ntr;fNTest=nte;}
     void SetCut(TCut cut){fCut=cut;}
     void IgnoreBranches(TString name);
+    void OnlyTheseBranches(TTree* tree,TString v0);
     
     virtual void PrepareTrees()=0;
     virtual void Gui() = 0;

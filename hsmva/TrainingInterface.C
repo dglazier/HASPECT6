@@ -16,12 +16,13 @@
 #include <TSystem.h>
 
 #include "TrainingInterface.h"
+using namespace HSMVA;
 
 ClassImp(HSMVA::TrainingInterface);
 
 ////////////////////////////////////////////////////////////
 ///Specific implemntation requires:
-HSMVA::TrainingInterface::TrainingInterface(TString name,TString opt):
+TrainingInterface::TrainingInterface(TString name,TString opt):
   TNamed(name,name),
   fDataLoader{new  TMVA::DataLoader{name}}
 {
@@ -30,14 +31,17 @@ HSMVA::TrainingInterface::TrainingInterface(TString name,TString opt):
   fOutFileName=name+"/"+fOutFileName;
   fOutputFile=TFile::Open( fOutFileName, "RECREATE" );
 
-  fFactory=std::unique_ptr<TMVA::Factory>(new TMVA::Factory(name,fOutputFile,opt));
-   
+  //fFactory=std::unique_ptr<TMVA::Factory>(new TMVA::Factory(name,fOutputFile,opt));
+  fFactory.reset(new TMVA::Factory(name,fOutputFile,opt));   
 }
 HSMVA::TrainingInterface::~TrainingInterface(){
   if(fOutputFile) delete fOutputFile;
   fOutputFile=nullptr;
 }
-void HSMVA::TrainingInterface::LoadTreeVars(TTree*  tree,Double_t weight){
+///////////////////////////////////////////////////////////////////////
+///Load a tree to DataLoader using all of its branches
+///Unless branches turned off by IgnoreBranches or OnlyTheseBranches
+void TrainingInterface::LoadTreeVars(TTree*  tree,Double_t weight){
   auto *loader=DataLoader();
 
   //Use first tree as tempate for variables
@@ -62,7 +66,7 @@ void HSMVA::TrainingInterface::LoadTreeVars(TTree*  tree,Double_t weight){
   }
   fLoaded++;
 }
-void HSMVA::TrainingInterface::DoTraining(){
+void TrainingInterface::DoTraining(){
   auto factory=Factory();
 
   //MAke sure in ouput file
@@ -98,7 +102,9 @@ void HSMVA::TrainingInterface::DoTraining(){
   }
 
 }
-void HSMVA::TrainingInterface::IgnoreBranches(TString branches){
+///////////////////////////////////////////////////////////////
+///Do not load branches given in this list
+void TrainingInterface::IgnoreBranches(TString branches){
   
  //Split the string with the variables list (v1:v2:v3:...) 
   auto bvars=branches.Tokenize(":");
@@ -107,4 +113,16 @@ void HSMVA::TrainingInterface::IgnoreBranches(TString branches){
   //And link to this fVars
    for(Int_t ib=0;ib<bvars->GetEntries();ib++)
      fIgnoreBranches.push_back(bvars->At(ib)->GetName());
+}
+////////////////////////////////////////////////////////////////////
+///Set Branch Status to 0 if not listed in v0 ("v1:v2:v3:...")
+void TrainingInterface::OnlyTheseBranches(TTree* tree,TString v0){
+  //Get arrays of the variables to be used for each distribution
+  auto bvars=v0.Tokenize(":");
+  //Turn off all branches in tree
+  tree->SetBranchStatus("*",0);
+  //Turn on branches for distribution1
+  for(Int_t i=0;i<bvars->GetEntries();i++)
+    tree->SetBranchStatus(bvars->At(i)->GetName(),1);
+
 }
