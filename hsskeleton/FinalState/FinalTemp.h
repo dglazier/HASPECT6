@@ -12,7 +12,7 @@ class TreeDataFinalTemp;
 class FinalTemp : public HS::FinalState{
 
  public :
-  FinalTemp(TString pid,TString inc);
+  FinalTemp(TString pid="NONE",TString inc="ALL");
   virtual ~FinalTemp()=default;
 
 
