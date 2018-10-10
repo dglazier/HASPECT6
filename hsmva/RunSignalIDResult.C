@@ -4,9 +4,9 @@
 //This demonstrates automated usage where you just give the path to the Training.root file
 //and can then set the tree brances automatically assuming they are all floats
 
-#include "ResultSignalID.h"
+#include "ResultInterface.h"
 #include "GetTutorialFile.h"
-using namespace HSMVA;
+using namespace HS::MVA;
 
 void RunSignalIDResult(){
 
@@ -15,8 +15,8 @@ void RunSignalIDResult(){
   
    TTree *signalTree     = (TTree*)input->Get("TreeS");
 
-   ResultSignalID classif("TMVAClassificationTut","defMLP");
-   classif.SetBranchAllFloats(signalTree);
+   //If I know the tree only contains floats
+   ResultByFloatTree classif("TMVAClassificationTut","MLP",signalTree);
    
    gBenchmark->Start("allfloat");
 
@@ -26,8 +26,14 @@ void RunSignalIDResult(){
      classif.Eval();
    }
 
-   gBenchmark->Stop("allfloat");
-   gBenchmark->Print("allfloat");
+   //if the tree contains other than floats I will convert
+   //and add the response to the interal tree
+  ResultByTree classif2("TMVAClassificationTut","MLP",signalTree);
+  classif2.AddToTree();
+  //now can look in MLP.root for tree + response
+  
+  gBenchmark->Stop("allfloat");
+  gBenchmark->Print("allfloat");
 
  
 }

@@ -1,0 +1,56 @@
+#include <TSystem.h>
+#include <TString.h>
+#include <TInterpreter.h>
+#include <TROOT.h>
+#include <vector>
+#include <iostream>
+
+namespace HS{};
+using namespace HS;
+
+void LoadFinalState(){
+  
+  TString HSCODE=gSystem->Getenv("HSCODE");
+  TString mvapath="/hsmva";
+  //TString dmpath="/hsdata";
+  TString fspath="/hsfinalstate";
+
+  //Add HSMVA include path
+  if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+mvapath)){
+    gInterpreter->AddIncludePath(HSCODE+mvapath);
+    gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+mvapath).Data()));
+  }
+  //Add HSFinalState include path
+  if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+fspath)){
+    gInterpreter->AddIncludePath(HSCODE+fspath);
+    gInterpreter->AddIncludePath(HSCODE+fspath+"/Experiments/CLAS12");
+    gInterpreter->AddIncludePath(HSCODE+fspath+"/Experiments/CLAS");
+    gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+fspath).Data()));
+  }
+
+  //First need DataManager
+  gROOT->ProcessLine(".x $HSCODE/hsdata/LoadDataManager.C+");
+
+
+  //Need hsmva results interface
+  if(!gROOT->GetListOfClasses()->Contains("ResultInterface"))
+    gROOT->LoadMacro("ResultInterface.C+");
+  
+  //Now finalsstate classes
+  vector<TString > FSClasses={"HSKinematics","Cuts","Combitorial","ParticleIter","Topology","FinalState","FiledTree","TreeData","TopoActionManager","ParticleCuts","VarsParticle","TreePrepParticle","MVASignalID","ParticleCutsManager","TreePrepManager","MVASignalIDManager"};
+
+  for(auto const& name : FSClasses){
+    cout<<"&&&&&&&&&&&&&&&&&&&&&&&&&&&& "<<name<<endl;
+    if(!gROOT->GetListOfClasses()->Contains(name))
+      gROOT->LoadMacro(name+".C+");
+  }
+
+  vector<TString > ExpClasses={"CLAS/CLASTrigger","CLAS12/CLAS12Trigger","CLAS12/CLAS12DeltaTime"};
+  for(auto const& name : ExpClasses){
+    cout<<"&&&&&&&&&&&&&&&&&&&&&&&&&&&& "<<name<<endl;
+    if(!gROOT->GetListOfClasses()->Contains(gSystem->BaseName(name)))
+      gROOT->LoadMacro(HSCODE+"/hsfinalstate//Experiments/"+name+".C+");
+  }
+ 
+}
+

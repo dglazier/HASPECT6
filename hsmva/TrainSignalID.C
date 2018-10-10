@@ -18,34 +18,49 @@
 
 #include "TrainSignalID.h"
 
-ClassImp(HSMVA::TrainSignalID);
+using namespace HS::MVA;
 
 ////////////////////////////////////////////////////////////
 ///Specific implemntation requires:
-HSMVA::TrainSignalID::TrainSignalID(TString name,TString opt):
+TrainSignalID::TrainSignalID(TString name,TString opt):
   TrainingInterface(name,opt)
 {
   
 }
-void HSMVA::TrainSignalID::AddSignalTree(TTree*  tree,TString wvar,Double_t weight){
+void TrainSignalID::AddSignalTree(TTree*  tree,TString wvar,Double_t weight){
 
   LoadTreeVars(tree);
   DataLoader()->AddSignalTree(tree,weight);
   if(wvar!=TString(""))DataLoader()->SetSignalWeightExpression(wvar.Data());
+  //Only add events with non-zero weight. 0 weights would not contribute
+  if(wvar!=TString(""))DataLoader()->AddCut(wvar+"!=0","Signal");
 
 }
-void HSMVA::TrainSignalID::AddBackgroundTree(TTree*  tree,TString wvar,Double_t weight){
+void TrainSignalID::AddBackgroundTree(TTree*  tree,TString wvar,Double_t weight){
 
-  if(!AreVarsLoaded()) Warning("HSMVA::TrainSignalID::AddBackgroundTree","Must add signal tree first!");
+  if(!AreVarsLoaded()) Warning("TrainSignalID::AddBackgroundTree","Must add signal tree first!");
   DataLoader()->AddBackgroundTree(tree,weight);
   if(wvar!=TString("")) DataLoader()->SetBackgroundWeightExpression(wvar.Data());
+  //Only add events with non-zero weight. 0 weights would not contribute
+  if(wvar!=TString(""))DataLoader()->AddCut(wvar+"!=0","Background");
 }
 
-void HSMVA::TrainSignalID::PrepareTrees(){
+void TrainSignalID::PrepareTrees(){
 
   //USe same cut and same number of signal and background events
   DataLoader()->
     PrepareTrainingAndTestTree(GetCut(),
 			       NTrain(),NTrain(),NTest(),NTest(),
 			       "SplitMode=Random:NormMode=NumEvents:!V" );
+}
+void  TrainSignalID::DrawResponses(){
+  TMVA::mvas(GetName(),GetOutDir()+GetOutFileName(),TMVA::kCompareType);
+  auto clist = gROOT->GetListOfCanvases();
+  std::cout << "Created  " << clist->GetSize() << " canvases with names:  " << std::endl;
+  for (auto *c : *clist) { 
+    if (c->IsA() == TCanvas::Class()) {
+      std::cout << "--- canvas name :   " << c->GetName() << std::endl;
+      c->Draw();
+    }
+  }
 }

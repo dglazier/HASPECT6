@@ -7,8 +7,8 @@
 	     TrainComparison train("MySigBGSelection");
 	     // train.SetOutDir("/a/directory");
 	     train.IgnoreBranches("");//Any branches in tree not used must be flagged!
-	     train.AddSignalTree(signalTree);
-	     train.AddBackgroundTree(background);
+	     train.AddTree1(tree1);
+	     train.AddTree2(tree2);
 	     train.PrepareTrees();
 	     train.BookMethod(HSMVA::Meths.MLP); //Predefined MLP mode see ModelConfigs.h
 	     train.DoTraining();
@@ -18,9 +18,8 @@
 
 #include "TrainComparison.h"
 
-ClassImp(HSMVA::TrainComparison);
 
-using namespace HSMVA;
+using namespace HS::MVA;
 
 ////////////////////////////////////////////////////////////
 ///Specific implemntation requires:
@@ -81,12 +80,12 @@ void TrainComparison::AddTree1(TTree*  tree,TString wvar,Double_t weight){
 ///If you have 2 trees with same branches you can use these
 void TrainComparison::AddTree2(TTree*  tree,TString wvar,Double_t weight){
 
-  if(!AreVarsLoaded()) Warning("HSMVA::TrainComparison::AddBackgroundTree","Must add signal tree first!");
+  if(!AreVarsLoaded()) Warning("HS::MVA::TrainComparison::AddTree1","Must add Tree1 tree first!");
   DataLoader()->AddBackgroundTree(tree,weight);
   if(wvar!=TString("")) DataLoader()->SetBackgroundWeightExpression(wvar.Data());
 }
 
-void HSMVA::TrainComparison::PrepareTrees(){
+void TrainComparison::PrepareTrees(){
 
   //USe same cut and same number of signal and background events
   DataLoader()->

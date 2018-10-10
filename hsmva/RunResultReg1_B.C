@@ -4,10 +4,10 @@
 //This demonstrates automated usage where you just give the path to the Training.root file
 //and can then set the tree brances automatically assuming they are all floats
 
-#include "ResultReg1.h"
+#include "ResultInterface.h"
 #include "GetTutorialFile.h"
 
-using namespace HSMVA;
+using namespace HS::MVA;
 
 void RunResultReg1_B(){
 
@@ -15,8 +15,7 @@ void RunResultReg1_B(){
 
   auto regTree = dynamic_cast<TTree*>(input->Get("TreeR"));
  
-  ResultReg1 regres("TMVARegressionTut","defMLP");
-  regres.SetBranchAllFloats(regTree);
+  ResultByFloatTree regres("TMVARegressionTut","MLP",regTree);
     
   gBenchmark->Start("reg1");
   Int_t Nent = regTree->GetEntries();
@@ -26,5 +25,8 @@ void RunResultReg1_B(){
    }
    gBenchmark->Stop("reg1");
    gBenchmark->Print("reg1");
+
+   delete regTree;
+   delete input;
    
  }

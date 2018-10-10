@@ -14,11 +14,11 @@
 */
 #include <TROOT.h>
 #include <TSystem.h>
+#include <TLeaf.h>
 
 #include "TrainingInterface.h"
-using namespace HSMVA;
+using namespace HS::MVA;
 
-ClassImp(HSMVA::TrainingInterface);
 
 ////////////////////////////////////////////////////////////
 ///Specific implemntation requires:
@@ -34,39 +34,70 @@ TrainingInterface::TrainingInterface(TString name,TString opt):
   //fFactory=std::unique_ptr<TMVA::Factory>(new TMVA::Factory(name,fOutputFile,opt));
   fFactory.reset(new TMVA::Factory(name,fOutputFile,opt));   
 }
-HSMVA::TrainingInterface::~TrainingInterface(){
-  if(fOutputFile) delete fOutputFile;
-  fOutputFile=nullptr;
-}
 ///////////////////////////////////////////////////////////////////////
 ///Load a tree to DataLoader using all of its branches
 ///Unless branches turned off by IgnoreBranches or OnlyTheseBranches
 void TrainingInterface::LoadTreeVars(TTree*  tree,Double_t weight){
-
   auto *loader=DataLoader();
 
   //Use first tree as tempate for variables
   //others assumed the same
   if(!fLoaded){
-    TIter nextbr(tree->GetListOfBranches());
-    while(auto br=nextbr()){
+    TIter nextbr(tree->GetIteratorOnAllLeaves());
+    std::map<TString, char> typeMap = {{"Long64_t",'I'},{"Int_t",'I'},{"Float_t",'F'},{"Double_t",'F'}};
+ 
+    while(auto br=dynamic_cast<TLeaf*>(nextbr())){
 
       if(std::count(fIgnoreBranches.begin(),fIgnoreBranches.end(),TString(br->GetName()))){cout<< "HSMVA::TrainingInterface::LoadTreeVars ingoring branch "<<br->GetName()<<endl;continue;}
       
       if(tree->GetBranchStatus(br->GetName())){
-	if(TString(br->GetTitle()).Contains("/F"))
-	  loader->AddVariable(br->GetName(),'F');    
-	else if(TString(br->GetTitle()).Contains("/D"))
-	  loader->AddVariable(br->GetName(),'F');
-	else if(TString(br->GetTitle()).Contains("/I"))
-	  loader->AddVariable(br->GetName(),'I');
-	else Warning("HSMVA::TrainingInterface::AddTree","variable %s type not supported",br->GetName());	 
-	//    tree->SetBranchAddress(br->GetName(),&fVars[i]);
+
+	char type = typeMap[br->GetTypeName()];
+
+	if(br->GetNdata()==1){
+	  loader->AddVariable(br->GetName(),type);
+	}
+	else{	  
+	  for(Int_t i=0; i<br->GetNdata()-1; i++ ){
+	    TString varName;
+	    varName.Form("%s_%i := %s[%i]",br->GetName(),i,br->GetName(),i);
+	    loader->AddVariable(varName,type);
+	  }
+	}
       }
     }
   }
   fLoaded++;
 }
+///////////////////////////////////////////////////////////////////////
+///Load a tree to DataLoader using all of its branches
+///Unless branches turned off by IgnoreBranches or OnlyTheseBranches
+// void TrainingInterface::LoadTreeVars(TTree*  tree,Double_t weight){
+
+//   auto *loader=DataLoader();
+
+//   //Use first tree as tempate for variables
+//   //others assumed the same
+//   if(!fLoaded){
+//     TIter nextbr(tree->GetListOfBranches());
+//     while(auto br=nextbr()){
+
+//       if(std::count(fIgnoreBranches.begin(),fIgnoreBranches.end(),TString(br->GetName()))){cout<< "HSMVA::TrainingInterface::LoadTreeVars ingoring branch "<<br->GetName()<<endl;continue;}
+      
+//       if(tree->GetBranchStatus(br->GetName())){
+// 	if(TString(br->GetTitle()).Contains("/F"))
+// 	  loader->AddVariable(br->GetName(),'F');    
+// 	else if(TString(br->GetTitle()).Contains("/D"))
+// 	  loader->AddVariable(br->GetName(),'F');
+// 	else if(TString(br->GetTitle()).Contains("/I"))
+// 	  loader->AddVariable(br->GetName(),'I');
+// 	else Warning("HSMVA::TrainingInterface::AddTree","variable %s type not supported",br->GetName());	 
+// 	//    tree->SetBranchAddress(br->GetName(),&fVars[i]);
+//       }
+//     }
+//   }
+//   fLoaded++;
+// }
 void TrainingInterface::DoTraining(){
   auto factory=Factory();
 

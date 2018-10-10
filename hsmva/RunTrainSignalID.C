@@ -1,7 +1,7 @@
 #include "GetTutorialFile.h"
 #include "TrainSignalID.h"
 
-using namespace HSMVA;
+using namespace HS::MVA;
 
 void RunTrainSignalID(){
  
@@ -22,7 +22,7 @@ void RunTrainSignalID(){
   train.BookMethod(TMVA::Types::kBDT, "BDT","!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20");
 
   //..or predefined methods (See HSMVA::MethodConfigure.h)
-  train.BookMethod(HSMVA::Meths.MLP);
+  train.BookMethod(HS::MVA::Meths.MLP);
 
   train.DoTraining();
 }
