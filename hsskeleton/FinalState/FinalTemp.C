@@ -17,7 +17,7 @@
 
 using namespace HS;
 
-FinalTemp::FinalTemp(TString pid,TString inc):fPID(pi),fINCLUSIVE(inc){
+FinalTemp::FinalTemp(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   SetVerbose(1);
   CheckCombi(); //comment out to remove messages
   
