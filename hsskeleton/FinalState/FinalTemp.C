@@ -19,7 +19,7 @@ using namespace HS;
 
 FinalTemp::FinalTemp(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   SetVerbose(1);
-  CheckCombi(); //comment out to remove messages
+  // CheckCombi(); //comment out to remove messages
   
   //Set final state detected particles
   //AddParticle(particle,true/false you want to write in final vector, genID for linking to generated truth value)
