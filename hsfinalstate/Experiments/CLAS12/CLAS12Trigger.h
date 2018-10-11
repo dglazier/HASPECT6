@@ -26,8 +26,8 @@ namespace HS{
     Bool_t TrigStatus(Short_t status);
     
     void SetParticles(vector<THSParticle> *parts){fParticles=parts;}
-    void SetEventInfo(shared_ptr<EventInfo> info){fEventInfo=info;}
-    void SetRunInfo(shared_ptr<RunInfo> info){fRunInfo=info;if(fRunInfo->Type())SetSim();}
+    void SetEventInfo(EventInfo* info){fEventInfo=info;}
+    void SetRunInfo(RunInfo* info){fRunInfo=info;if(fRunInfo->Type())SetSim();}
     void SetSim(){fSTimePeak=124.25;fTimeShiftFT=0;};
     
     void ReadParticles();
@@ -58,8 +58,8 @@ namespace HS{
     vector<Short_t> fEventSectors=std::vector<Short_t>(11,0);
     vector<THSParticle> *fParticles=nullptr;
     
-    shared_ptr<EventInfo> fEventInfo;
-    shared_ptr<RunInfo> fRunInfo;
+    EventInfo* fEventInfo=nullptr;
+    RunInfo* fRunInfo=nullptr;
     
     Float_t fStartTime=0;
     Float_t fSTimePeak=124.25;

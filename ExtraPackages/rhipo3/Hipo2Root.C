@@ -4,7 +4,7 @@
     gROOT->ProcessLine("#define __LZ4__");
     gSystem->AddIncludePath("-D__LZ4__");
     gSystem->AddIncludePath(TString("-I")+gSystem->Getenv("LZ4_h"));
-     
+    cout<<gSystem->GetIncludePath()<<endl;     
   }
   else{
     printf("\n   >>>>> LZ4 compression is not supported.");
