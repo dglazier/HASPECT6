@@ -39,7 +39,7 @@ namespace HS{
 	return kFALSE;
       };
       
-      TTree* Tree(){return fTree.get()->Tree();}
+      TTree* Tree(){if(fTree.get()) return fTree.get()->Tree();return nullptr;}
       TMVA::Reader *Reader(){return fReader.get();}
       TMVA::MethodBase* Method(){return fMethod;}
       TMVA::DataSetInfo* DataSetInfo(){return fDataSetInfo.get();}

@@ -6,6 +6,7 @@
 
 #include "ResultInterface.h"
 #include "GetTutorialFile.h"
+#include "TBenchmark.h"
 using namespace HS::MVA;
 
 void RunSignalIDResult(){
@@ -27,10 +28,12 @@ void RunSignalIDResult(){
    }
 
    //if the tree contains other than floats I will convert
-   //and add the response to the interal tree
-  ResultByTree classif2("TMVAClassificationTut","MLP",signalTree);
-  classif2.AddToTree();
-  //now can look in MLP.root for tree + response
+   //and add the response to the interal tree.
+   //I need to make a copy of the tree for this =>kTRUE
+   ResultByTree classif2("TMVAClassificationTut","MLP",signalTree);
+   classif2.AddToTree();
+
+   //now can look in MLP.root for tree + response
   
   gBenchmark->Stop("allfloat");
   gBenchmark->Print("allfloat");

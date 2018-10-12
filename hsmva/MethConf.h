@@ -116,18 +116,16 @@ namespace HS{
 	TString training0("LearningRate=1e-2,Momentum=0.5,Repetitions=1,ConvergenceSteps=20,BatchSize=50,"
 			  "TestRepetitions=10,WeightDecay=0.01,Regularization=NONE,DropConfig=0.2+0.2+0.2+0.,"
 			  "DropRepetitions=2");
-	/* TString training1("LearningRate=1e-3,Momentum=0.9,Repetitions=1,ConvergenceSteps=20,BatchSize=50," */
-	/* 		  "TestRepetitions=5,WeightDecay=0.01,Regularization=L2,DropConfig=0.1+0.1+0.1,DropRepetitions=" */
-	/* 		  "1"); */
-	TString training1("LearningRate=1e-4,Momentum=0.9,Repetitions=1,ConvergenceSteps=40,BatchSize=100,"
+	TString training1("LearningRate=1e-3,Momentum=0.9,Repetitions=1,ConvergenceSteps=100,BatchSize=50,"
 			  "TestRepetitions=5,WeightDecay=0.01,Regularization=L2,DropConfig=0.1+0.1+0.1,DropRepetitions="
 			  "1");
 	TString training2("LearningRate=1e-4,Momentum=0.3,Repetitions=1,ConvergenceSteps=10,BatchSize=50,"
 			  "TestRepetitions=5,WeightDecay=0.01,Regularization=NONE");
 	
 	TString trainingStrategyString("TrainingStrategy=");
-	//	trainingStrategyString += training0 + "|" + training1 + "|" + training2;
-	trainingStrategyString += training1 ;
+      	trainingStrategyString += training0 + "|" + training1 + "|" + training2;
+	//	trainingStrategyString += training0 + "|" + training1 ;
+	//trainingStrategyString += training1 ;
 	SetTrainingStrategy( trainingStrategyString);
       }
 

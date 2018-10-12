@@ -45,6 +45,13 @@ Thumbs.db
 .nfs*
 *~
 
+#Dropbox 
+.dropbox.attr
+*conflicted*
+
+.ipynb_checkpoints
+.ipynb_checkpoints/*
+
 # Data #
 ########
 *.root

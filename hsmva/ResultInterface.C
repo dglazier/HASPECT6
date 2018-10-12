@@ -39,7 +39,8 @@ void ResultInterface::InitMethod(TString trainpath,TString methodname){
 }
 void ResultInterface::AddToTree(){
   if(!Tree()){
-    cout<<"ResultByTree::AddToTree() I do not own a tree!"<<endl;
+    cout<<"ResultByTree::AddToTree() I do not own a tree! Need to add kTRUE as extra argument in constructor"<<endl;
+    exit(1);
   }
   if(Method()->DoRegression())
     AddRegressionToTree();
