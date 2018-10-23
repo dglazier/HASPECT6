@@ -31,8 +31,6 @@ namespace HS{
     Bool_t InitTreeReader(TString filename,TString name);
     Bool_t InitReader(TString filename,TString name);
     virtual Bool_t ReadEvent(Long64_t entry=-1);
-    //virtual Bool_t ReadFinalStateEvent(Long64_t entry=-1);
-    //virtual void FilterFinalStateEvent(Long64_t entry=-1);
     virtual void PrintEvent(Long64_t=0);
     virtual void WriteParticles();
     virtual void PostWrite(){} //in case want to reset anything after write
@@ -57,8 +55,8 @@ namespace HS{
     virtual void InitOutput(TString filename);
     virtual void WriteEvent(){fWriteTree->Fill();}
     virtual void CloseOutput();
-    // virtual void ReadWriteChain(TChain* chain,TString OutDirName,TString FileAppend);
     virtual void CloseReadTree();
+    
     Bool_t InitChain(TChain* chain);
     Bool_t NextChainFile();
     

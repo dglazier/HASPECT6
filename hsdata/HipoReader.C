@@ -265,7 +265,6 @@ Bool_t HipoReader::ReadEvent(Long64_t entry){
 	  particle.SetDetector(1000*fSSector->Val());
 	}
 	else  if(fSDet->Val()==4) {//CD-TOF
-	  //	  if(particle.Time()==0){ //use FD layer 2 if exists
 	  //Just take CTOF hit, i.e. replace CND 
 	  particle.SetTime(fSTime->Val());
 	  particle.SetPath(fSPath->Val()/100);
@@ -273,7 +272,7 @@ Bool_t HipoReader::ReadEvent(Long64_t entry){
 	  particle.SetDetector(10000);
 	}
 	else  if(fSDet->Val()==3) {//CD-Neutron
-	  if(particle.Time()==0){ //use FD layer 2 if exists
+	  if(particle.Time()==0){
 	    particle.SetTime(fSTime->Val());
 	    particle.SetPath(fSPath->Val()/100);
 	  }

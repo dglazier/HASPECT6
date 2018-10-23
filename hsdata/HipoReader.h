@@ -17,12 +17,11 @@ namespace HS{
     HipoReader();
     virtual ~HipoReader(){if(fHipo) delete fHipo;};
 
-    virtual Bool_t Init(TString filename,TString name="");
-    virtual Bool_t ReadEvent(Long64_t entry=0);
-    virtual void CloseReadTree();
-    // virtual void WriteParticles(TString filename);
-    virtual void InitOutput(TString filename);
-    virtual void CloseOutput();
+    Bool_t Init(TString filename,TString name="") override;
+    Bool_t ReadEvent(Long64_t entry=0) override;
+    void CloseReadTree() override;
+    void InitOutput(TString filename) override;
+    void CloseOutput() override;
 
     Int_t GetRunNumber(TString filen);
     void SetCombineFiles(Bool_t setf=kTRUE){fCombineFiles=kTRUE;};
@@ -30,6 +29,7 @@ namespace HS{
   protected :
   
     THipo *fHipo=nullptr;
+    
     THipoBank *fPBank=nullptr;
     THipoBank *fSBank=nullptr;
     THipoBank *fCalBank=nullptr;

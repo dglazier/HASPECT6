@@ -1,25 +1,21 @@
 //Datareader class for converting Lund format txt files
 //into THSParticles
-#ifndef HS_HIPOTRIGGER_h
-#define HS_HIPOTRIGGER_h
+#ifndef HS_HIPODST_h
+#define HS_HIPODST_h
 
 #include "HipoReader.h"
 
 namespace HS{
 
-  class HipoTrigger: public HipoReader{
+  class HipoDST: public HipoReader{
 
   public :
-    HipoTrigger();
-    virtual ~HipoTrigger()=default;
+    HipoDST();
+    virtual ~HipoDST()=default;
 
     Bool_t ReadEvent(Long64_t entry=0) override;
     void InitOutput(TString filename) override;
     Bool_t Init(TString filename,TString name) override;
-  
-  
-  
-    void  RawScaler();
   
   private :
   
@@ -39,7 +35,6 @@ namespace HS{
 
     //items in banks
     THipoItemL* fRunTrig=nullptr;
-    //THipoItem* fEvSTTime=nullptr;
     THipoItemI* fRecEvNRun=nullptr;
     THipoItemI* fRecEvNEVENT=nullptr;
     THipoItemB* fRecEvTYPE=nullptr;
@@ -60,4 +55,4 @@ namespace HS{
   };
 }//namepsace HS
 
-#endif //ifdef HS_HIPOTRIGGER
+#endif //ifdef HS_HIPODST
