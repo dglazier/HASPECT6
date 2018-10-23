@@ -23,11 +23,14 @@ void LoadHipo(){
   if(RHIPO==TString("")) {cout<<"Error LoadHipo() You need to set RHIPO"<<endl; exit(1);}
 
   //First need DataManager
+  gROOT->ProcessLine(".x LoadDataManager.C+");
+
+  //Now THipo
   gROOT->ProcessLine(".x $RHIPO/Hipo2Root.C+");
 
 
   //Add classes
-  std::vector<TString > DMClasses={"HipoReader","HipoTrigger"};
+  std::vector<TString > DMClasses={"HipoReader","HipoTrigger","HipoDST"};
   for(auto const& name : DMClasses){
     std::cout<<"HHHHHHHHHHHHHHHHHHHHHHHH    "<<name<<std::endl;
     if(!gROOT->GetListOfClasses()->Contains(name))
