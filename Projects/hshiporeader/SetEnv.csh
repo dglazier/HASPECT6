@@ -4,8 +4,8 @@
 ##   cd Clas12Tool/ ; make ;
 
 setenv RHIPO $HSCODE/ExtraPackages/rhipo3
-setenv CHIPO $CLAS12TOOLS/Hipo
-setenv LZ4_h $CLAS12TOOLS/Lz4/lib
+setenv CHIPO $CLAS12TOOL/Hipo
+setenv LZ4_h $CLAS12TOOL/Lz4/lib
 setenv LD_LIBRARY_PATH "$LD_LIBRARY_PATH":"$LZ4_h"
 
 alias hipo2root root -l $RHIPO/Hipo2Root.C 
