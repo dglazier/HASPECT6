@@ -29,7 +29,7 @@ Bool_t HipoTrigger::Init(TString filename,TString name){
   if(!fRawScalBank){
     //Add the trigger banks to those to be configured
     Info("HipoTrigger","Opened file");
-    //    fHipo->ConfigOnlyBank("RAW::scaler");
+    fHipo->ConfigOnlyBank("RAW::scaler");
   }
   HipoReader::Init(filename,name);
   
@@ -42,7 +42,13 @@ Bool_t HipoTrigger::Init(TString filename,TString name){
     fRecEvRFTime=dynamic_cast<THipoItemF*>(fEvBank->GetItem("RFTime"));
     fRecEvBCG=dynamic_cast<THipoItemF*>(fEvBank->GetItem("BCG"));    
   }
-
+  fRawScalBank=fHipo->GetBank("RAW::scaler");
+  
+  fRawScalChan=dynamic_cast<THipoItemS*>(fRawScalBank->GetItem("channel")); 
+  fRawScalSlot=dynamic_cast<THipoItemB*>(fRawScalBank->GetItem("slot"));
+  fRawScalVal=dynamic_cast<THipoItemI*>(fRawScalBank->GetItem("value"));
+  fRawScalHel=dynamic_cast<THipoItemB*>(fRawScalBank->GetItem("helicity"));
+  
   fCharge=0;
   // fHelicity=-1;
   fTotCharge=0;
