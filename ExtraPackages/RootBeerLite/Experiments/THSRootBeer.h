@@ -7,9 +7,9 @@
 
 #include "TRootBeer.h"
 #include "THSParticle.h"
-#include "THSDataManager.h"
+#include "DataManager.h"
 
-class THSRootBeer: public THSDataManager{
+class THSRootBeer: public HS::DataManager{
 
  public :
   THSRootBeer(){};

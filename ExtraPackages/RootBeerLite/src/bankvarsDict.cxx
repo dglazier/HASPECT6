@@ -12126,7 +12126,7 @@ namespace {
 0
     };
     static const char* includePaths[] = {
-"/mnt/share/cern_CentOS7/root/v6.10.02/include",
+"/mnt/share/cern_CentOS7/root/v6.14.04/include",
 "/home/dglazier/Dropbox/HaSpect/dev/HASPECT6/ExtraPackages/RootBeerLite/",
 0
     };
@@ -13395,7 +13395,7 @@ nullptr};
     if (!isInitialized) {
       TROOT::RegisterModule("bankvarsDict",
         headers, includePaths, payloadCode, fwdDeclCode,
-        TriggerDictionaryInitialization_bankvarsDict_Impl, {}, classesHeaders);
+        TriggerDictionaryInitialization_bankvarsDict_Impl, {}, classesHeaders, /*has no C++ module*/false);
       isInitialized = true;
     }
   }

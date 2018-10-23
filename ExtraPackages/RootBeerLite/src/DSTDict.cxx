@@ -102,7 +102,7 @@ TClass *TDST::Dictionary()
 //______________________________________________________________________________
 TClass *TDST::Class()
 {
-   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::TDST*)0x0)->GetClass(); }
+   if (!fgIsA.load()) { R__LOCKGUARD(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::TDST*)0x0)->GetClass(); }
    return fgIsA;
 }
 
@@ -139,7 +139,7 @@ namespace {
 0
     };
     static const char* includePaths[] = {
-"/mnt/share/cern_CentOS7/root/v6.10.02/include",
+"/mnt/share/cern_CentOS7/root/v6.14.04/include",
 "/home/dglazier/Dropbox/HaSpect/dev/HASPECT6/ExtraPackages/RootBeerLite/",
 0
     };
@@ -171,7 +171,7 @@ nullptr};
     if (!isInitialized) {
       TROOT::RegisterModule("DSTDict",
         headers, includePaths, payloadCode, fwdDeclCode,
-        TriggerDictionaryInitialization_DSTDict_Impl, {}, classesHeaders);
+        TriggerDictionaryInitialization_DSTDict_Impl, {}, classesHeaders, /*has no C++ module*/false);
       isInitialized = true;
     }
   }

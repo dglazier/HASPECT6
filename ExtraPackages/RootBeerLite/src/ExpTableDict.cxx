@@ -100,7 +100,7 @@ TClass *TExpTable::Dictionary()
 //______________________________________________________________________________
 TClass *TExpTable::Class()
 {
-   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::TExpTable*)0x0)->GetClass(); }
+   if (!fgIsA.load()) { R__LOCKGUARD(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::TExpTable*)0x0)->GetClass(); }
    return fgIsA;
 }
 
@@ -137,7 +137,7 @@ namespace {
 0
     };
     static const char* includePaths[] = {
-"/mnt/share/cern_CentOS7/root/v6.10.02/include",
+"/mnt/share/cern_CentOS7/root/v6.14.04/include",
 "/home/dglazier/Dropbox/HaSpect/dev/HASPECT6/ExtraPackages/RootBeerLite/",
 0
     };
@@ -169,7 +169,7 @@ nullptr};
     if (!isInitialized) {
       TROOT::RegisterModule("ExpTableDict",
         headers, includePaths, payloadCode, fwdDeclCode,
-        TriggerDictionaryInitialization_ExpTableDict_Impl, {}, classesHeaders);
+        TriggerDictionaryInitialization_ExpTableDict_Impl, {}, classesHeaders, /*has no C++ module*/false);
       isInitialized = true;
     }
   }

@@ -12,7 +12,8 @@
 THSCLASg8::THSCLASg8() : THSRootBeer("EPIC:EVNT:ECPB:SCPB:TAGR:TGBI:DCPB:STPB:MCTK:MCVX") {
   //for PM momentum and enrgy loss corrections
   
-  fEventInfo=new THSEventInfo();
+  fEventInfo=new HS::EventInfo();
+  //  fEventInfo.reset(new HS::EventInfo());
 }
 
 Bool_t THSCLASg8::Init(TString filename,TString name){
@@ -20,7 +21,8 @@ Bool_t THSCLASg8::Init(TString filename,TString name){
   //Load fake MC run number
   if(fAddGenerated){
     fRun_number = TString("054044").Atoi();
-    // LoadMCCor("/home/dglazier/Dropbox/g13Sim/MCCor/totalSept16.root");
+    fRunInfo->SetType(1);
+   // LoadMCCor("/home/dglazier/Dropbox/g13Sim/MCCor/totalSept16.root");
   }
    //initialise eloss
   initELoss(0.0,0.0,-20.0,-24.06);
@@ -48,6 +50,7 @@ Bool_t THSCLASg8::ReadEvent(Long64_t entry){
     Double_t vl = 29.9792458;
     Double_t  starttime=SCPB[EVNT[0].SCstat-1].Time-(SCPB[EVNT[0].SCstat-1].Path)/vl/EVNT[0].Betta;//OR THIS COULD BE FROM THE HEVT STT
     if(!fIsSim)fEventInfo->SetCJStartTime(starttime);
+   
     //make particles for this event
     MakeDetected();
     //get tagged photons for this event
@@ -73,7 +76,7 @@ Bool_t THSCLASg8::ReadEvent(Long64_t entry){
 void THSCLASg8::MakeParticle(Int_t ip){
  
   THSParticle hsp;
-  hsp.SetPDGcode(EVNT[ip].Charge *1E6);
+  hsp.SetPDGcode(EVNT[ip].Charge *1E4);
   hsp.SetVertex(EVNT[ip].X,EVNT[ip].Y,EVNT[ip].Z);
   //set the intitial Lorentz Vector
   hsp.SetXYZM(EVNT[ip].Pmom*EVNT[ip].Cx,
@@ -142,12 +145,12 @@ Bool_t THSCLASg8::MakeBeam(Float_t Tmid,Float_t Tcut){
       // else if (fCurrentPlane == 1) hsp.SetVertex(0,GetLinPol(1, fCurrentEdge, Egamma*1000., 8, 0.2, 0.3),0);
       // else  fHSgamma->SetVertex(0,0,0);
        //LinPol
+      if(fEgSetting){
       GetEdge(HEAD[0].NEVENT); //get the current edge position
-      // cout<<GetPol(im)<<" "<<fCurrentPlane <<endl;
-      //cout<<" A "<<hsp.Vertex().X()<<" "<<hsp.Vertex().Y()<<" "<<hsp.Vertex().Z()<<" "<<HEAD[0].NEVENT<<endl;
-     if (fCurrentPlane == 0) hsp.SetVertex(GetPol(im),0,0);
+      if (fCurrentPlane == 0) hsp.SetVertex(GetPol(im),0,0);
       else if (fCurrentPlane == 1) hsp.SetVertex(0,GetPol(im),0);
      //cout<<" B "<<hsp.Vertex().X()<<" "<<hsp.Vertex().Y()<<" "<<hsp.Vertex().Z()<<endl;
+      }
       fParticles.push_back(hsp);	
     }
   }
