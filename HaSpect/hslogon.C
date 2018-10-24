@@ -53,7 +53,8 @@ void hslogon(){
   //Check if user source code directory defined
   TString HSANA=gSystem->Getenv("HSANA");
   TString HSUSER=gSystem->Getenv("HSUSER");
-
+  TString HSCODE=gSystem->Getenv("HSCODE");
+ 
   if(gSystem->Getenv("HSUSER")){
     gROOT->SetMacroPath(Form("%s:%s",HSUSER.Data(),gROOT->GetMacroPath()));
     gSystem->AddIncludePath(TString("-I")+HSUSER);
@@ -97,24 +98,28 @@ void hslogon(){
     //look for --farm and copy all hsroot files to local hsana directory
     if((opt.Contains("--farm"))){
       gISFARM=kTRUE;
-      gSystem->Exec(Form("mkdir hsana"));
-      gSystem->Exec(Form("cp %s/*.h hsana/.",HSANA.Data()));
-      gSystem->Exec(Form("cp %s/*.C hsana/.",HSANA.Data()));
-      gSystem->Setenv("HSANA","./");
+      gSystem->Exec(Form("mkdir hscode"));
+      gSystem->Exec(Form("cp %s/CleanAll.csh hscode/.",HSCODE.Data()));
+      gSystem->Exec(Form("cp -r %s/hsdata hscode/.",HSCODE.Data()));
+
+      //make sure hscode clean
+      gSystem->Exec(Form("cd hscode/ ; ./CleanAll.csh ; cd .."));
+
+      gSystem->Setenv("HSCODE","./hscode");
       if(gSystem->Getenv("RHIPO")){
 	TString RHIPO=gSystem->Getenv("RHIPO");
-	gSystem->Exec(Form("cp %s/THipo.h hsana/.",RHIPO.Data()));
-	gSystem->Exec(Form("cp %s/THipo.C hsana/.",RHIPO.Data()));
-	gSystem->Exec(Form("cp %s/Hipo2Root.C hsana/.",RHIPO.Data()));
-	gSystem->Setenv("RHIPO","./");	
+	gSystem->Exec(Form("cp %s/THipo.h hscode/.",RHIPO.Data()));
+	gSystem->Exec(Form("cp %s/THipo.C hscode/.",RHIPO.Data()));
+	gSystem->Exec(Form("cp %s/Hipo2Root.C hscode/.",RHIPO.Data()));
+	gSystem->Setenv("RHIPO","./hscode");	
       }
       if(gSystem->Getenv("CHIPO")){
 	TString CHIPO=gSystem->Getenv("CHIPO");
-	gSystem->Exec(Form("cp %s/*.h hsana/.",CHIPO.Data()));
-	gSystem->Exec(Form("cp %s/*.cpp hsana/.",CHIPO.Data()));
-	gSystem->Setenv("CHIPO","./");	
+	gSystem->Exec(Form("cp %s/*.h hscode/.",CHIPO.Data()));
+	gSystem->Exec(Form("cp %s/*.cpp hscode/.",CHIPO.Data()));
+	gSystem->Setenv("CHIPO","./hscode");	
       }
-      gROOT->SetMacroPath(TString("hsana/:")+gROOT->GetMacroPath());
+      gROOT->SetMacroPath(TString("hscode/:")+gROOT->GetMacroPath());
     }
   }
   
@@ -224,19 +229,8 @@ void HSselector(){
  */
 void HSFinal(TString pname){
   HSfinal(pname);
-  HSdata();
-  // if(!TClass::GetClass("THSParticle")) LoadMacro("THSParticle.C");
-  //LoadMacro(THSPARTICLE);
-  LoadMacro("THSKinematics.C");
-  LoadMacro("THSCombitorial.C");
-  LoadMacro("THSParticleIter.C");
-  LoadMacro("THSTopology.C");
-  LoadMacro("THSCuts.C");
-  LoadMacro("THSCLAS12DeltaTime.C");
-  LoadMacro("THSCLAS12Trigger.C");
-  LoadMacro("THSFinalState.C");
+  gROOT->ProcessLine(Form(".x %s/hsfinalstate/LoadFinalState.C+",gSystem->Getenv("HSCODE")));
   LoadMacro(pname+".C");
-
 }
 
 /** Function is called with \--hsdata \n
@@ -248,27 +242,11 @@ void HSFinal(TString pname){
  * THSHipoReader.C (if RHIPO set)
  */
 void HSdata(){
+
   if(gSystem->Getenv("RHIPO"))
-    gROOT->ProcessLine(TString(".x ")+gSystem->Getenv("RHIPO")+"/Hipo2Root.C");
-  cout<<"THSPARTICLE= "<<THSPARTICLE<<endl;
- 
-  LoadMacro("THSWeights.C");
-  //if(!TClass::GetClass("THSParticle"))   LoadMacro("THSParticle.C");
-  LoadMacro(THSPARTICLE);
-  LoadMacro("THSEventInfo.C");
-  LoadMacro("THSRunInfo.C");
-  LoadMacro("THSDataManager.C");
-  LoadMacro("THSLundReader.C");
-  if(gSystem->Getenv("RHIPO")){
-    LoadMacro("THSHipoReader.C");
-    LoadMacro("THSHipoTrigger.C");
-  }
-  if(gSystem->Getenv("FASTMCLIB")){
-    TString fastmclib=gSystem->Getenv("FASTMCLIB");
-    gSystem->AddIncludePath(TString("-I")+fastmclib);
-    gSystem->Load(fastmclib+"/libFastMC.so");
-    LoadMacro("THSCLAS12FastMC.C");
-  }
+    gROOT->ProcessLine(Form(".x %s/hsdata/LoadHipo.C+",gSystem->Getenv("HSCODE")));
+  else
+    gROOT->ProcessLine(Form(".x %s/hsdata/LoadDataManager.C+",gSystem->Getenv("HSCODE")));
 }
 /////////////////////////////////////
 //Load rootbeer libraries
