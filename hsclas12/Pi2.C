@@ -65,9 +65,10 @@ void Pi2::FileStart(){
   fTrigger.SetParticles(frDetParts); //the detected particles
   fTrigger.SetEventInfo(fEventInfo);//once per event info
   fTrigger.SetRunInfo(fRunInfo);//once per run info
+  fTrigger.SetTimeShiftFT(16.45);
+  fTrigger.SetSTimePeak(125.45);
 
-
-  if(fRunInfo->Type()) fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment
+  // if(fRunInfo->Type()) fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment
   
 }
 ///Will be called after the Topo_ functions

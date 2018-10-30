@@ -39,13 +39,18 @@ namespace HS{
     void SetRunInfo(RunInfo* info){fRunInfo=info;if(fRunInfo->Type())SetSim();}
     void SetSim(){if(fRunInfo->Type()==1)fIsSim=kTRUE;else fIsSim=kFALSE;};
     void SetSim(Bool_t sim){fIsSim=sim;};
-    
-    void SetStartTime(){fStartTime=fEventInfo->CJStartTime();}
+    Bool_t IsSim(){return (Bool_t)(fRunInfo->Type());};
+
+    void SetStartTime(){
+      if(!fRunInfo->Type()) fStartTime=fEventInfo->CJStartTime(); 
+      else  fStartTime=0;
+    }
     
     void ReadParticles();
     
     Short_t  HitsInFD();
     Short_t  HitsInTagger(){return fEventSectors[8];}
+
     
     void SubtractStartTimeBeam(THSParticle* part,THSParticle* beam); //subtract from HSParticle  
     void SubtractStartTime(THSParticle* part); //subtract from HSParticle  
@@ -91,6 +96,7 @@ Bool_t  HS::CLASTrigger::TrigStatus(Short_t status){
 
 return kTRUE; //everything else
 }
+
 void HS::CLASTrigger::ReadParticles(){
 EventReset();
 for(UInt_t i=0;i<fParticles->size();i++)

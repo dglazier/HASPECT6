@@ -18,7 +18,8 @@ using namespace HS;
 ///Should be called after fTrigger.StartTime(&fElectron);
 void CLASTrigger::SubtractStartTimeBeam(THSParticle* part,THSParticle* beam){
   SetStartTime();
-  Float_t offset=20*(!fIsSim);
+  //  Float_t offset=0;
+  Float_t offset=20*(!IsSim());
   Float_t startime=fStartTime-(part->Vertex().Z()+offset)/TMath::C()*1E9/100;
   beam->ShiftTime(-startime);
 }

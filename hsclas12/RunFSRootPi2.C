@@ -17,7 +17,7 @@
   
   //And make a chain of data files
   TChain chain("HSParticles");
-  chain.Add("/indir/out_*root");
+  chain.Add("/w/work1/jlab/hallb/clas12/RG-A/hs/fall18/cooked/run4909/out_clas_pin_004909.evio.00555.hipo.root");
   dm->InitChain(&chain);
 
   //connect FinalState to Data

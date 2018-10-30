@@ -41,7 +41,10 @@ namespace HS{
     void FindTimeOffSetFT(TTree* tree,TString option="goff");
     void FindTimeRFTimePeak(TTree* tree,TString option="goff");
     
-    void SubtractStartTime(THSParticle* part); //subtract from HSParticle  
+    Short_t  TrigNSectors();
+    Short_t  TrigNSectorsRoads();
+
+   void SubtractStartTime(THSParticle* part); //subtract from HSParticle  
     void SubtractStartTime(THSParticle* part0,THSParticle* part1);
     void SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2);
     void SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2,THSParticle* part3);
@@ -126,6 +129,16 @@ void HS::CLAS12Trigger::ReadParticles(){
 EventReset();
 for(UInt_t i=0;i<fParticles->size();i++)
   if(TrigStatus(fParticles->at(i).Status()))Sector(fParticles->at(i).Detector());
+}
+inline Short_t  HS::CLAS12Trigger::TrigNSectors(){
+  return fEventInfo->TrigBit(13)+fEventInfo->TrigBit(14)
+    +fEventInfo->TrigBit(15)+fEventInfo->TrigBit(16)
+    +fEventInfo->TrigBit(17)+fEventInfo->TrigBit(18);
+}
+inline Short_t  HS::CLAS12Trigger::TrigNSectorsRoads(){
+  return fEventInfo->TrigBit(19)+fEventInfo->TrigBit(20)
+    +fEventInfo->TrigBit(21)+fEventInfo->TrigBit(22)
+    +fEventInfo->TrigBit(23)+fEventInfo->TrigBit(24);
 }
 
 #endif
