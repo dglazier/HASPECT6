@@ -7,7 +7,7 @@ COMMAND: root
 OPTIONS: -l -b -q  --farm --hsdata ConvertHSHipoTriggerChain.C --hsin=./ --hsout=outfiles/
 OS: centos7
 TRACK: analysis
-OTHER_FILES: $HSANA/../Projects/hiporeader/ConvertHSHipoTriggerChain.C
+OTHER_FILES: $HSCODE/Projects/hshiporeader/ConvertHSHipoTriggerChain.C
 OUTPUT_DATA: outfiles/*.root
 OUTPUT_TEMPLATE:
 INPUT_FILES: 
