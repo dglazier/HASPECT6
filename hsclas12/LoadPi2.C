@@ -1,5 +1,8 @@
 {
-gROOT->ProcessLine(".x /scratch/dglazier/tesths/HASPECT6/hsfinalstate/LoadFinalState.C+");
+  gSystem->Setenv("HSFINAL","1");
+  gROOT->ProcessLine(".x $HSEXP/LoadCLAS12.C+");
+//gROOT->ProcessLine(".x $HSCODE/hsfinalstate/LoadFinalState.C+");
+ 
 /////////////////////////////////////////////////////////////
 gROOT->LoadMacro("DeltaTimePCut.C+"); //ADD MY NEW CUT HERE
 ////////////////////////////////////////////////////////////

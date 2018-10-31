@@ -20,7 +20,7 @@ void LoadDataManager(){
   }
 
   //Add classes
-  std::vector<TString > DMClasses={"THSParticle","BaseEventInfo","BaseRunInfo","THSWeights","DataManager","LundReader"};
+  std::vector<TString > DMClasses={"BaseEventInfo","BaseRunInfo","THSWeights","DataManager","LundReader"};
 
   for(auto const& name : DMClasses){
     std::cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%    "<<name<<std::endl;

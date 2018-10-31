@@ -1,6 +1,5 @@
 #include "Pi2.h"
 void Pi2::Kinematics(){
-  fTrigger.ReadParticles();
   TD.TrigNSector=fTrigger.TrigNSectors();
   TD.TrigNSectorRoads=fTrigger.TrigNSectorsRoads();
 

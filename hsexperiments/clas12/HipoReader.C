@@ -241,7 +241,7 @@ Bool_t CLAS12::HipoReader::ReadEvent(Long64_t entry){
   
   if(fPBank){ //Filling reconstructed fParticles
     UInt_t Nin=fPBank->GetEntries();
-     Int_t ip=0;
+    Int_t ip=0;
     fParticles.reserve(Nin);
     //fPIDs.reserve(Nin);
     while(fPBank->NextEntry()){

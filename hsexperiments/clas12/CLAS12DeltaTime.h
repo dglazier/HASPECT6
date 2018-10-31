@@ -7,34 +7,34 @@
 #include "Cuts.h"
 
 namespace HS{
-  
-  class CLAS12DeltaTime: public Cuts {
+  namespace CLAS12{
+    class CLAS12DeltaTime: public Cuts {
 
-  public :
-    CLAS12DeltaTime()=default;
+    public :
+      CLAS12DeltaTime()=default;
     CLAS12DeltaTime(Float_t FT,Float_t FD,Float_t CD,Float_t FDCAL):Cuts(){
-      fCLAS12TimeCuts[0]=FT;
-      fCLAS12TimeCuts[1]=FD;
-      fCLAS12TimeCuts[2]=CD;
-      fCLAS12TimeCuts[3]=FDCAL;
+	fCLAS12TimeCuts[0]=FT;
+	fCLAS12TimeCuts[1]=FD;
+	fCLAS12TimeCuts[2]=CD;
+	fCLAS12TimeCuts[3]=FDCAL;
+      };
+      ~CLAS12DeltaTime()=default;
+    
+      Bool_t ParticleCut(THSParticle* part) const override ;
+    
+      Short_t Detector(Int_t det) const;
+      //   Bool_t Cherenkov(Int_t det);
+    
+    
+    
+    protected:
+      //                        FT,FD,CD,FTCAL
+      Float_t fCLAS12TimeCuts[4]={2, 2, 2, 2};
+    
     };
-    ~CLAS12DeltaTime()=default;
-    
-    Bool_t ParticleCut(THSParticle* part) const override ;
-    
-    Short_t Detector(Int_t det) const;
-    //   Bool_t Cherenkov(Int_t det);
-    
-    
-    
-  protected:
-    //                        FT,FD,CD,FTCAL
-    Float_t fCLAS12TimeCuts[4]={2, 2, 2, 2};
-    
-  };
+  }//namespace CLAS12
 }//namespace HS
-
-inline Short_t HS::CLAS12DeltaTime::Detector(Int_t det) const{
+inline Short_t HS::CLAS12::CLAS12DeltaTime::Detector(Int_t det) const{
   if(det<0) return 0; //FT
   else if(det==0) return 10; //undefined
   else if(det<9999) return 1; //FD
@@ -46,7 +46,7 @@ inline Short_t HS::CLAS12DeltaTime::Detector(Int_t det) const{
 
 //////////////////////////////////////////////////
 ///Timing cuts for CLAS12 protons
-inline Bool_t HS::CLAS12DeltaTime::ParticleCut(THSParticle* part) const{
+inline Bool_t HS::CLAS12::CLAS12DeltaTime::ParticleCut(HS::THSParticle* part) const{
   if(part->Time()==0) return kFALSE;
   
   Short_t det=Detector(part->Detector());

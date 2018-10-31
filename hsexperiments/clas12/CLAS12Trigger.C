@@ -34,7 +34,7 @@
 #include <TH1.h>
 #include <TSpectrum.h>
 
-using namespace HS;
+using namespace HS::CLAS12;
 
 ////////////////////////////////////////////////////////////////////////
 ///Look for global FT-CLAS12 offset
@@ -74,13 +74,13 @@ void CLAS12Trigger::FindTimeRFTimePeak(TTree* tree,TString option){
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part){
   part->ShiftTime(-fStartTime);
 }
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part0,HS::THSParticle* part1){
   Float_t startime=fStartTime;
   part0->ShiftTime(-startime);
   part1->ShiftTime(-startime);
@@ -88,7 +88,7 @@ void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1){
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part0,HS::THSParticle* part1,HS::THSParticle* part2){
   Float_t startime=fStartTime;
   part0->ShiftTime(-startime);
   part1->ShiftTime(-startime);
@@ -97,7 +97,7 @@ void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSP
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2,THSParticle* part3){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part0,HS::THSParticle* part1,HS::THSParticle* part2,HS::THSParticle* part3){
   Float_t startime=fStartTime;
   part0->ShiftTime(-startime);
   part1->ShiftTime(-startime);
@@ -107,7 +107,7 @@ void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSP
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2,THSParticle* part3,THSParticle* part4){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part0,HS::THSParticle* part1,HS::THSParticle* part2,HS::THSParticle* part3,HS::THSParticle* part4){
   Float_t startime=fStartTime;
   part0->ShiftTime(-startime);
   part1->ShiftTime(-startime);
@@ -118,7 +118,7 @@ void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSP
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2,THSParticle* part3,THSParticle* part4,THSParticle* part5){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part0,HS::THSParticle* part1,HS::THSParticle* part2,HS::THSParticle* part3,HS::THSParticle* part4,HS::THSParticle* part5){
   Float_t startime=fStartTime;
   part0->ShiftTime(-startime);
   part1->ShiftTime(-startime);
@@ -130,7 +130,7 @@ void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSP
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2,THSParticle* part3,THSParticle* part4,THSParticle* part5,THSParticle* part6){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part0,HS::THSParticle* part1,HS::THSParticle* part2,HS::THSParticle* part3,HS::THSParticle* part4,HS::THSParticle* part5,HS::THSParticle* part6){
   Float_t startime=fStartTime;
   part0->ShiftTime(-startime);
   part1->ShiftTime(-startime);
@@ -143,7 +143,7 @@ void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSP
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2,THSParticle* part3,THSParticle* part4,THSParticle* part5,THSParticle* part6,THSParticle* part7){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part0,HS::THSParticle* part1,HS::THSParticle* part2,HS::THSParticle* part3,HS::THSParticle* part4,HS::THSParticle* part5,HS::THSParticle* part6,HS::THSParticle* part7){
   Float_t startime=fStartTime;
   part0->ShiftTime(-startime);
   part1->ShiftTime(-startime);
@@ -157,7 +157,7 @@ void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSP
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2,THSParticle* part3,THSParticle* part4,THSParticle* part5,THSParticle* part6,THSParticle* part7,THSParticle* part8){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part0,HS::THSParticle* part1,HS::THSParticle* part2,HS::THSParticle* part3,HS::THSParticle* part4,HS::THSParticle* part5,HS::THSParticle* part6,HS::THSParticle* part7,HS::THSParticle* part8){
   Float_t startime=fStartTime;
   part0->ShiftTime(-startime);
   part1->ShiftTime(-startime);
@@ -172,7 +172,7 @@ void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSP
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
 ///Should be called after fTrigger.StartTime(&fElectron);
-void CLAS12Trigger::SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2,THSParticle* part3,THSParticle* part4,THSParticle* part5,THSParticle* part6,THSParticle* part7,THSParticle* part8,THSParticle* part9){
+void CLAS12Trigger::SubtractStartTime(HS::THSParticle* part0,HS::THSParticle* part1,HS::THSParticle* part2,HS::THSParticle* part3,HS::THSParticle* part4,HS::THSParticle* part5,HS::THSParticle* part6,HS::THSParticle* part7,HS::THSParticle* part8,HS::THSParticle* part9){
   Float_t startime=fStartTime;
   part0->ShiftTime(-startime);
   part1->ShiftTime(-startime);

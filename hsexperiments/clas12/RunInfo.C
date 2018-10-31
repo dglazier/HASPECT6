@@ -13,17 +13,20 @@
 */
 #include <TFile.h>
 #include "RunInfo.h"
-
+#include <iostream>
 
 ////////////////////////////////////////////////////////////
 ///Load the run info from file filename
 void HS::CLAS12::RunInfo::LoadTree(TString filename){
+  cout<<":RunInfo::LoadTree"<<endl;
   TFile* file=new TFile(filename);
   TTree* tree=(TTree*) file->Get("HSRunInfo");
   RunInfo* info=nullptr;
+  cout<<tree<<" "<<file<<endl;
   tree->SetBranchAddress("Info",&info);
   tree->GetEntry(0); //only a single entry in the tree
-  *this=*info;
+  cout<<"do copy "<<endl;
+  *this=*info;//copy saved one
   delete tree;
   delete file;
   info=nullptr;

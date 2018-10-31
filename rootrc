@@ -1,0 +1,4 @@
+Rint.Logon:              $HSCODE/hslogon.C
+Unix.*.Root.MacroPath:      .:$(ROOTSYS)/macros:
+ACLiC.IncludePaths:     
+Proof.MaxOldSessions 100

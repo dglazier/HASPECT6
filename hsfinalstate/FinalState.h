@@ -15,8 +15,8 @@
 #include "THSParticle.h"
 #include "ParticleIter.h"
 #include "HSKinematics.h"
-#include "RunInfo.h"
-#include "EventInfo.h"
+#include "BaseRunInfo.h"
+#include "BaseEventInfo.h"
 #include "TopoActionManager.h"
 
     
@@ -58,8 +58,8 @@ namespace HS{
       void SetGenParts(vector<THSParticle> * dpp){frGenParts=dpp;}
       //void SetEventInfo(shared_ptr<EventInfo> in) {fEventInfo=in;}
       //void SetRunInfo(shared_ptr<RunInfo> in) {fRunInfo=in;}
-      void SetEventInfo(EventInfo* in) {fEventInfo=in;}
-      void SetRunInfo(RunInfo* in) {fRunInfo=in;}
+      void SetEventInfo(BaseEventInfo* in) {fEventInfo=in;}
+      void SetRunInfo(BaseRunInfo* in) {fRunInfo=in;}
   
       void AddTopology(TString topo,VoidFuncs funcI,VoidFuncs funcE,TString chPID="",TString incl="");
       void AddNamesTopology(TString names,VoidFuncs funcI,VoidFuncs funcE,TString chPID="",TString incl="");
@@ -110,8 +110,8 @@ namespace HS{
       //     DataManager* fData=nullptr;
       shared_ptr<DataManager> fData;
       //Run and event info
-      EventInfo* fEventInfo=nullptr;
-      RunInfo* fRunInfo=nullptr;
+      BaseEventInfo* fEventInfo=nullptr;
+      BaseRunInfo* fRunInfo=nullptr;
       
       vector<TopoActionManager*> fPostWorkAction;
       vector<TopoActionManager*> fPostTopoAction;

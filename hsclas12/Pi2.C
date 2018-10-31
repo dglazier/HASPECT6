@@ -15,7 +15,6 @@
 #include "ToposPi2.h"
 #include <algorithm>
 
-using namespace HS;
 
 Pi2::Pi2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   SetVerbose(1);
@@ -68,8 +67,7 @@ void Pi2::FileStart(){
   fTrigger.SetTimeShiftFT(16.45);
   fTrigger.SetSTimePeak(125.45);
 
-  // if(fRunInfo->Type()) fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment
-  
+   
 }
 ///Will be called after the Topo_ functions
 ///And before PostTopoManager

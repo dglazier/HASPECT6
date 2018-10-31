@@ -83,6 +83,8 @@ DataManager::~DataManager(){
 }
 void DataManager::CloseReadTree(){
   if(fReadFile) {
+    delete fReadTree;
+    delete fRunTree;
     delete fReadFile;fReadFile=nullptr;
     fReadTree=nullptr;
     fRunTree=nullptr;
@@ -110,12 +112,14 @@ Bool_t DataManager::InitReader(TString filename,TString name){
     cout<<"DataManager::InitReader set branch "<<fReadGName<<" "<<fReadGenerated<<" "<<endl;
   }
   else fReadGenerated=nullptr;
-  
+  cout<<"DataManager::InitReader EventInfo"<<endl;
   //Get Event and Run info if exists
   if(fReadTree->GetBranch("EventInfo"))fReadTree->SetBranchAddress("EventInfo",&fBaseEventInfo);
+  cout<<"DataManager::InitReader RunInfo"<<endl;
   fRunTree=dynamic_cast<TTree*>(fReadFile->Get("HSRunInfo"));
   if(fRunTree){
-    fBaseRunInfo->LoadTree(filename);
+    fRunTree->SetBranchAddress("Info",&fBaseRunInfo);
+    fRunTree->GetEntry(0);
   }
   //if(fFinalState) fFinalState->FileStart();
 

@@ -40,23 +40,23 @@
 #include <iostream>
 #include "THSParticle.h"
 
-ClassImp(THSParticle);
+//ClassImp(THSParticle);
 
 // THSParticle::THSParticle() {
 // }
-THSParticle::THSParticle(int code) {
+HS::THSParticle::THSParticle(int code) {
   SetPDGcode(code);
 
 }
-THSParticle::THSParticle(TString pdgname){
+HS::THSParticle::THSParticle(TString pdgname){
   SetPDGcode(TDatabasePDG::Instance()->GetParticle(pdgname)->PdgCode());
 }
-void THSParticle::Print(Option_t *) const{
+void HS::THSParticle::Print(Option_t *) const{
   cout<<"Printing THSParticle of type "<<TDatabasePDG::Instance()->GetParticle(fPDGCode)->GetName()<<endl;
   // fP4.Print("");
   //fVertex.Print("");
 }
-void THSParticle::CopyParticle(THSParticle* part,Bool_t andPDG){
+void HS::THSParticle::CopyParticle(THSParticle* part,Bool_t andPDG){
   SetP4(part->P4());
   SetVertex(part->Vertex());
   SetMeasMass(part->MeasMass());
@@ -71,7 +71,7 @@ void THSParticle::CopyParticle(THSParticle* part,Bool_t andPDG){
   if(andPDG) SetPDGcode(part->PDG());
   SetDetector(part->Detector());
 }
-void THSParticle::Add(THSParticle* hsp1, THSParticle* hsp2,Int_t pdg){
+void HS::THSParticle::Add(THSParticle* hsp1, THSParticle* hsp2,Int_t pdg){
   //  SetVertex(hsp1->Vertex()+hsp2->Vertex()); //average vertex
   SetP4(hsp1->P4()+hsp2->P4());
   SetTime((hsp1->Time()+hsp2->Time())/2);//average time

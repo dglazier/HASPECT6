@@ -13,22 +13,24 @@ using namespace HS::CLAS12;
 void LoadCLAS12(){
   
   TString HSCODE=gSystem->Getenv("HSCODE");
-  //First need DataManager
-  gROOT->ProcessLine(".x $HSCODE/hsdata/LoadDataManager.C+");
-
-
   //Now CLAS12 specific setup  
   TString HSEXP=gSystem->Getenv("HSEXP");
-
-  //Add HSMVA include path
+  //Add CLAS12 include path
   if(!TString(gInterpreter->GetIncludePath()).Contains(HSEXP)){
     gInterpreter->AddIncludePath(HSEXP);
     gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSEXP).Data()));
+    gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSEXP+"/scripts").Data()));
   }
+  //DataManager need THSParticle
+  gROOT->LoadMacro("$HSEXP/THSParticle.C+");
 
-  vector<TString > SkClasses={"EventInfo","RunInfo"};
+  //First need DataManager
+  gROOT->ProcessLine(".x $HSCODE/hsdata/LoadDataManager.C+");
+ 
+
+  vector<TString > DataClasses={"EventInfo","RunInfo"};
   
-  for(auto const& name : SkClasses){
+  for(auto const& name : DataClasses){
     cout<<"12121212121212121212121212 "<<name<<endl;
     if(!gROOT->GetListOfClasses()->Contains(name))
       gROOT->LoadMacro(name+".C+");
@@ -39,7 +41,6 @@ void LoadCLAS12(){
   TString RHIPO=gSystem->Getenv("RHIPO");
   if(RHIPO!=TString("")) {
     gROOT->ProcessLine(".x $RHIPO/Hipo2Root.C+");
-
     //Add classes
     std::vector<TString > DMClasses={"HipoReader","HipoTrigger","HipoDST"};
     for(auto const& name : DMClasses){
@@ -52,4 +53,22 @@ void LoadCLAS12(){
     cout<<"Warning : LoadHipo() You need to set RHIPO"<<endl;
   }
 
+ // Now we can Load FinalState
+  TString HSFINAL=gSystem->Getenv("HSFINAL");
+  if(HSFINAL!=TString("")) {
+    //First need DataManager
+    gROOT->ProcessLine(".x $HSCODE/hsfinalstate/LoadFinalState.C+");
+
+    //additional classes for this experiment
+    vector<TString > DataClasses={"CLAS12Trigger","CLAS12DeltaTime"};
+  
+    for(auto const& name : DataClasses){
+      cout<<"12121212121212121212121212 "<<name<<endl;
+      if(!gROOT->GetListOfClasses()->Contains(name))
+	gROOT->LoadMacro(name+".C+");
+    }
+    
+  }
+ 
+  
 }

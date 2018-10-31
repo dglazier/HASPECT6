@@ -15,7 +15,7 @@ class Cuts: public TNamed {
   ~Cuts()=default;
   
   
-  virtual Bool_t ParticleCut(THSParticle* part) const =0;
+  virtual Bool_t ParticleCut(HS::THSParticle* part) const =0;
   
  protected:
   
@@ -27,7 +27,7 @@ class DeltaTimeCut : public Cuts{
  public:
   DeltaTimeCut(Float_t cut=FLT_MAX){fTimeCut=cut;}
 
-  Bool_t ParticleCut(THSParticle* part) const{
+  Bool_t ParticleCut(HS::THSParticle* part) const{
     if(TMath::Abs(part->DeltaTime())<fTimeCut) return kTRUE;
     return kFALSE;
   }

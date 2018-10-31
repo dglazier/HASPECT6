@@ -44,11 +44,7 @@ namespace HS{
       /* void SetTarPol(Float_t st){fTarPol=st;} */
       
       
-      /* Int_t TrigBit(Int_t  k) */
-      /* { //borrowed from M.Dugger */
-      /* 	return (fTrigBit & (1<<k)) != 0; */
-      /* } */
-      
+         
     };
   } //namespace CLAS12
 }//namespace HS

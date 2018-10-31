@@ -1,4 +1,3 @@
-
 #ifndef PI2_h
 #define PI2_h
 
@@ -8,11 +7,13 @@
 #include "CLAS12DeltaTime.h"
 #include "TreeDataPi2.h"
 #include <vector>
+using namespace HS;
 
 class TreeDataPi2;
 
 class Pi2 : public HS::FinalState{
 
+  
  public :
   Pi2(TString pid="NONE",TString inc="ALL");
   virtual ~Pi2()=default;
@@ -20,7 +21,7 @@ class Pi2 : public HS::FinalState{
 
 
   void FileStart() override;
-  Bool_t  CheckParticle(THSParticle* part) override;
+  Bool_t  CheckParticle(HS::THSParticle* part) override;
   void FinalStateOutTree(TTree* tree) override;
   void Kinematics() override;
   void UserPostTopo() override;
@@ -52,18 +53,18 @@ class Pi2 : public HS::FinalState{
   protected :
 
   private:
-  HS::CLAS12Trigger fTrigger;//For CLAS12 trigger info
-  HS::CLAS12DeltaTime fCuts; //For particle cuts
+  CLAS12::CLAS12Trigger fTrigger;//For CLAS12 trigger info
+  CLAS12::CLAS12DeltaTime fCuts; //For particle cuts
 
   //Initial state
-  HSLorentzVector fBeam=HSLorentzVector(0,0,10.6,10.6);
-  HSLorentzVector fTarget=HSLorentzVector(0,0,0,0.938272);
+  HS::HSLorentzVector fBeam=HSLorentzVector(0,0,10.6,10.6);
+  HS::HSLorentzVector fTarget=HSLorentzVector(0,0,0,0.938272);
 
   //Final Particles Detected
-  THSParticle fElectron=THSParticle("e-");
-  THSParticle fProton=THSParticle("proton");
-  THSParticle fPip=THSParticle("pi+");
-  THSParticle fPim=THSParticle("pi-");
+  HS::THSParticle fElectron=THSParticle("e-");
+  HS::THSParticle fProton=THSParticle("proton");
+  HS::THSParticle fPip=THSParticle("pi+");
+  HS::THSParticle fPim=THSParticle("pi-");
  
   //Final Parents
  

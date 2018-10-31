@@ -79,10 +79,10 @@ namespace HS{
 
     TEntryList* fEntryList=nullptr;
     //GENERAL VECTORS FOR READING/WRITING
-    vector<THSParticle> fParticles; //vector of  particles
-    vector<THSParticle> * fReadParticles=nullptr; //vector of input particles from some source
-    vector<THSParticle> fGenerated; //vector of generated particles
-    vector<THSParticle> * fReadGenerated=nullptr; //vector of input particles from some source
+    vector<HS::THSParticle> fParticles; //vector of  particles
+    vector<HS::THSParticle> * fReadParticles=nullptr; //vector of input particles from some source
+    vector<HS::THSParticle> fGenerated; //vector of generated particles
+    vector<HS::THSParticle> * fReadGenerated=nullptr; //vector of input particles from some source
     TBranch *fBParticles=nullptr;
     UInt_t fNin=0; //number of iinput particles
     UInt_t fNgen=0; //number of generated particles
@@ -94,7 +94,7 @@ namespace HS{
     
     TTree* fRunTree=nullptr;
     
-    //default THSParticles tree reader
+    //default HS::THSParticles tree reader
     TFile* fReadFile=0;
     TTree* fReadTree =0;
     TTreePerfStats* fPerfstats=nullptr;
@@ -107,7 +107,7 @@ namespace HS{
     TString fIDName="UID"; //by default uid
     Bool_t fAddGenerated=kFALSE; //also generated vector?
     Bool_t fInGenerated=kFALSE; //also generated vector?
-    //default THSParticles tree writer
+    //default HS::THSParticle.qs tree writer
     Bool_t fWriteThis=kTRUE; //write this event?
     TFile* fWriteFile=0;
     TTree* fWriteTree=0;
