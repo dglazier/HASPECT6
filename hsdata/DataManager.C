@@ -77,8 +77,8 @@ DataManager::~DataManager(){
   if(fWeights)delete fWeights;
   if(fEntryList)delete fEntryList;
 
-  if(fEventInfo) delete fEventInfo;
-  if(fRunInfo) delete fRunInfo;
+  if(fBaseEventInfo) delete fBaseEventInfo;
+  if(fBaseRunInfo) delete fBaseRunInfo;
   
 }
 void DataManager::CloseReadTree(){
@@ -112,10 +112,10 @@ Bool_t DataManager::InitReader(TString filename,TString name){
   else fReadGenerated=nullptr;
   
   //Get Event and Run info if exists
-  if(fReadTree->GetBranch("EventInfo"))fReadTree->SetBranchAddress("EventInfo",&fEventInfo);
+  if(fReadTree->GetBranch("EventInfo"))fReadTree->SetBranchAddress("EventInfo",&fBaseEventInfo);
   fRunTree=dynamic_cast<TTree*>(fReadFile->Get("HSRunInfo"));
   if(fRunTree){
-    fRunInfo->LoadTree(filename);
+    fBaseRunInfo->LoadTree(filename);
   }
   //if(fFinalState) fFinalState->FileStart();
 
@@ -225,13 +225,13 @@ void DataManager::InitOutput(TString filename){
   TTree* UnSplitTree=new TTree("HSUnSplit","unsplit tree for MakeSelector");
   UnSplitTree->Branch(fReadBName,&fParticles,256000,0);
  
-  if(fEventInfo){
-    fWriteTree->Branch("EventInfo",&fEventInfo);
-    UnSplitTree->Branch("EventInfo",&fEventInfo,64000,0);
+  if(fBaseEventInfo){
+    fWriteTree->Branch("EventInfo",&fBaseEventInfo);
+    UnSplitTree->Branch("EventInfo",&fBaseEventInfo,64000,0);
   }
-  if(fRunInfo){
+  if(fBaseRunInfo){
     fRunTree=new TTree("HSRunInfo","once per run information");
-    fRunTree->Branch("Info",&fRunInfo);
+    fRunTree->Branch("Info",&fBaseRunInfo);
   }
   UnSplitTree->Write();
   delete UnSplitTree;

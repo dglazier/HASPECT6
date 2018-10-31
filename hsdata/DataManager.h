@@ -14,8 +14,8 @@
 #include <TTreePerfStats.h>
 
 #include "THSParticle.h"
-#include "RunInfo.h"
-#include "EventInfo.h"
+#include "BaseRunInfo.h"
+#include "BaseEventInfo.h"
 #include "THSWeights.h"
 
 namespace HS{
@@ -41,8 +41,8 @@ namespace HS{
     vector<THSParticle>* GetParticles(){return &fParticles;}
     vector<THSParticle>* GetGenerated(){return &fGenerated;}
   
-    EventInfo* GetEventInfo(){return fEventInfo;}
-    RunInfo* GetRunInfo(){return fRunInfo;}
+    BaseEventInfo* GetEventInfo(){return fBaseEventInfo;}
+    BaseRunInfo* GetRunInfo(){return fBaseRunInfo;}
     
     void AddParticle(THSParticle* part){fParticles.push_back(*part);fNin++;};
     void AddGenerated(THSParticle* part){fGenerated.push_back(*part);fNgen++;};
@@ -88,8 +88,10 @@ namespace HS{
     UInt_t fNgen=0; //number of generated particles
     
     //Run and event info
-    EventInfo* fEventInfo=nullptr;
-    RunInfo* fRunInfo=new RunInfo();
+    //Note ROOT tree do not like smart pointers?
+    BaseEventInfo* fBaseEventInfo=nullptr;
+    BaseRunInfo* fBaseRunInfo=nullptr;
+    
     TTree* fRunTree=nullptr;
     
     //default THSParticles tree reader

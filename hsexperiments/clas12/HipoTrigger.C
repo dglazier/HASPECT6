@@ -17,14 +17,11 @@
 
 using namespace HS;
 
-HipoTrigger::HipoTrigger(){
-  fEventInfo=new EventInfo();
-}
 
 /////////////////////////////////////////////////////////////
 /// Configure the REC::Event and RAW::Scaler banks
 /// Additional items may be added in a similar fashion
-Bool_t HipoTrigger::Init(TString filename,TString name){
+Bool_t  CLAS12::HipoTrigger::Init(TString filename,TString name){
 
   if(!fRawScalBank){
     //Add the trigger banks to those to be configured
@@ -32,7 +29,7 @@ Bool_t HipoTrigger::Init(TString filename,TString name){
     fHipo->ConfigOnlyBank("RAW::scaler");
     fHipo->ConfigOnlyBank("RAW::vtp");
   }
-  HipoReader::Init(filename,name);
+   CLAS12::HipoReader::Init(filename,name);
   
   if(!fRecEvNRun){
     fRecEvNRun=dynamic_cast<THipoItemI*>(fEvBank->GetItem("NRUN"));
@@ -61,7 +58,7 @@ Bool_t HipoTrigger::Init(TString filename,TString name){
   return kTRUE;
 }
 
-void HipoTrigger::InitOutput(TString filename){
+void  CLAS12::HipoTrigger::InitOutput(TString filename){
   DataManager::InitOutput(filename);
 }
 
@@ -70,7 +67,7 @@ void HipoTrigger::InitOutput(TString filename){
 /// Write RunInfo at the end of file (when the gated charge is known).
 /// Call HipoReader::ReadEvent to fill event THSParticle vector.
 /// Fill the EventInfo from REC::Event.
-Bool_t HipoTrigger::ReadEvent(Long64_t entry){
+Bool_t  CLAS12::HipoTrigger::ReadEvent(Long64_t entry){
 
   //cout<<"HipoTrigger::ReadEvent("<<endl;    
 
@@ -79,12 +76,12 @@ Bool_t HipoTrigger::ReadEvent(Long64_t entry){
     //End of file write the total current
     if(fRunTree){
       fEvBank->SetEntry(0);
-      fRunInfo->SetNRun(fRecEvNRun->Val());
+      fRunInfo->fNRun=(fRecEvNRun->Val());
       //fRunInfo->SetType(fRecEvTYPE->Val());
-      if(fAddGenerated)fRunInfo->SetType(1);
-      else fRunInfo->SetType(0);
-      fRunInfo->SetTotalCharge(fTotCharge);
-      fRunInfo->SetMeanCurrent(fTotCharge/fNScalerReads/0.033);
+      if(fAddGenerated)fRunInfo->fType=(1);
+      else fRunInfo->fType=(0);
+      fRunInfo->fTotCharge=(fTotCharge);
+      fRunInfo->fMeanCurrent=(fTotCharge/fNScalerReads/0.033);
     }
     cout<<"HipoTrigger::ReadEvent total charge for this file "<<fTotCharge<<endl;
     //cout<<"  at average of current of "<<fTotCharge/fNScalerReads/0.033<<"nA per read. "<<endl; 
@@ -106,20 +103,20 @@ Bool_t HipoTrigger::ReadEvent(Long64_t entry){
 
   //Now check Event Builder Banks, -2 =>we have all ready got event
   //Note that this function will call fEvBank->NextEntry()
-  HipoReader::ReadEvent(-2); 
+   CLAS12::HipoReader::ReadEvent(-2); 
 
   //now other event scalars
   if(fEvBank->GetEntry()<0) return kTRUE;
   fWriteThis=kTRUE; //Got a REC::Event 
   
-  fEventInfo->SetTrigBit(fRecEvTRG->Val());
-  fEventInfo->SetCJStartTime(fRecEvSTTime->Val());
-  fEventInfo->SetRFTime(fRecEvRFTime->Val());
-  fEventInfo->SetBeamHel(fRecEvHelic->Val());
-  fEventInfo->SetNEvent(fRecEvNEVENT->Val());
+  fEventInfo->fTrigBit=(fRecEvTRG->Val());
+  fEventInfo->fCJSTTime=(fRecEvSTTime->Val());
+  fEventInfo->fRFTime=(fRecEvRFTime->Val());
+  fEventInfo->fBeamHel=(fRecEvHelic->Val());
+  fEventInfo->fNEvent=(fRecEvNEVENT->Val());
 
   makeVTPTriggers();
-  fEventInfo->SetVTPTrigBit(fVTPBitSet.to_ulong());
+  fEventInfo->fVTPTrigBit=(fVTPBitSet.to_ulong());
   
   // for(auto &jt : fVTPTriggers)
   //   cout<<jt<<" ";
@@ -128,7 +125,7 @@ Bool_t HipoTrigger::ReadEvent(Long64_t entry){
   return kTRUE;
 
 }
-void  HipoTrigger::RawScaler()
+void   CLAS12::HipoTrigger::RawScaler()
 {
   Double_t GatedFC=0;
   Double_t UnGatedFC=0;
@@ -154,7 +151,7 @@ void  HipoTrigger::RawScaler()
 
 }
 
-Int_t HipoTrigger::makeVTPTriggers() {
+Int_t  CLAS12::HipoTrigger::makeVTPTriggers() {
 
   fVTPBitSet.reset();
   Int_t nVTPTriggers = 0;
@@ -199,7 +196,7 @@ Int_t HipoTrigger::makeVTPTriggers() {
   
 }
 
-void HipoTrigger::decodeVTPTrigger(Int_t word1vtp, Int_t word2vtp) {
+void  CLAS12::HipoTrigger::decodeVTPTrigger(Int_t word1vtp, Int_t word2vtp) {
   Int_t time, trgL, trgH;
   time = (word1vtp >> 16) & 0x7FF; // 11 bits time
   trgL = (word1vtp & 0xFFFF); // 16 bits
@@ -208,8 +205,8 @@ void HipoTrigger::decodeVTPTrigger(Int_t word1vtp, Int_t word2vtp) {
   addVTPTriggerToEvent(pattern);
 }
 
-void HipoTrigger::addVTPTriggerToEvent(Long_t pattern){
+void  CLAS12::HipoTrigger::addVTPTriggerToEvent(Long_t pattern){
   const UInt_t bitsize= fVTPBitSet.size();
   for(UInt_t ib=0;ib<bitsize;ib++)
-    fVTPBitSet.set(i,(pattern& (1<<ib)) !=0);
+    fVTPBitSet.set(ib,(pattern& (1<<ib)) !=0);
 }

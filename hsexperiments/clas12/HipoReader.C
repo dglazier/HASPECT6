@@ -18,7 +18,15 @@
 
 using namespace HS;
 
-HipoReader::HipoReader(){
+CLAS12::HipoReader::HipoReader(){
+  //create CLAS12 data structures
+  //and pass to HS::DataManager
+  fEventInfo=new CLAS12::EventInfo();
+  fBaseEventInfo=fEventInfo;
+  
+  fRunInfo=new CLAS12::RunInfo();
+  fBaseRunInfo=fRunInfo;
+
   fHipo = new THipo();
   fHipo->SetIsVector(kFALSE);
   //Make vectors to hold pointers to THSParticles
@@ -32,7 +40,7 @@ HipoReader::HipoReader(){
 }
 ////////////////////////////////////////////////////////////
 /// Initialise banks and items
-Bool_t HipoReader::Init(TString filename,TString name){
+Bool_t CLAS12::HipoReader::Init(TString filename,TString name){
   fCurFileName=gSystem->BaseName(filename);
   cout<<"HipoReader::Init "<<fCurFileName<<endl;
   fHipo->InitFile(filename);
@@ -137,7 +145,7 @@ Bool_t HipoReader::Init(TString filename,TString name){
 }
 ////////////////////////////////////////////////////////
 //nothing to do for hipo files (I think)
-void HipoReader::CloseReadTree(){
+void CLAS12::HipoReader::CloseReadTree(){
   //noting to do for hipo files (I think)
 }
 
@@ -145,7 +153,7 @@ void HipoReader::CloseReadTree(){
 ///Make output files, generally 1 for each input file
 ///Calling SetCombine files allows all input files to be written to 1 output
 ///Watch file sizes though!
-void HipoReader::InitOutput(TString filename){
+void CLAS12::HipoReader::InitOutput(TString filename){
   //CLAS file names ~ out_clas_003311.evio.3.hipo ~out_clas_RUNNO.evio.FILENO.hipo
   //Want the option to write all files into 1 run output file
   //Write all input events on 1 go
@@ -168,7 +176,7 @@ void HipoReader::InitOutput(TString filename){
 ///////////////////////////////////////////////////////////////
 ///Close output root file after each input hipo file
 ///If SetCombineFiles set, merge all files into 1
-void HipoReader::CloseOutput(){
+void  CLAS12::HipoReader::CloseOutput(){
   if(!fCombineFiles){ //only merge files if fCombineFiles=kTRUE
     DataManager::CloseOutput();
     return;
@@ -184,7 +192,7 @@ void HipoReader::CloseOutput(){
 //////////////////////////////////////////////////////////////
 ///Get run number from file name for purposes of combining files
 ///This could be got from the banks (it is written in RunInfo)
-Int_t HipoReader::GetRunNumber(TString filen){
+Int_t  CLAS12::HipoReader::GetRunNumber(TString filen){
   TString base(gSystem->BaseName(filen));
   TString sNum0(base(base.First("0"),6));
   return sNum0.Atoi();
@@ -194,7 +202,7 @@ Int_t HipoReader::GetRunNumber(TString filen){
 /// Read the event from THipo.
 /// Get values from THipo and but into THSParticle class.
 /// Called once per hipo event.
-Bool_t HipoReader::ReadEvent(Long64_t entry){
+Bool_t CLAS12::HipoReader::ReadEvent(Long64_t entry){
   //if entry ==-2 we have been called from a derived class who has
   //already got the event
   if(entry!=-2){

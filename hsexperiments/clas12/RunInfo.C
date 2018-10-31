@@ -14,11 +14,10 @@
 #include <TFile.h>
 #include "RunInfo.h"
 
-using namespace HS;
 
 ////////////////////////////////////////////////////////////
 ///Load the run info from file filename
-void RunInfo::LoadTree(TString filename){
+void HS::CLAS12::RunInfo::LoadTree(TString filename){
   TFile* file=new TFile(filename);
   TTree* tree=(TTree*) file->Get("HSRunInfo");
   RunInfo* info=nullptr;

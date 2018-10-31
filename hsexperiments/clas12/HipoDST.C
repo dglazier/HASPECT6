@@ -17,14 +17,11 @@
 
 using namespace HS;
 
-HipoDST::HipoDST(){
-  fEventInfo=new EventInfo();
-}
 
 /////////////////////////////////////////////////////////////
 /// Configure the REC::Event and RAW::Scaler banks
 /// Additional items may be added in a similar fashion
-Bool_t HipoDST::Init(TString filename,TString name){
+Bool_t  CLAS12::HipoDST::Init(TString filename,TString name){
 
   if(!fRawScalBank){
     //Add the trigger banks to those to be configured
@@ -49,7 +46,7 @@ Bool_t HipoDST::Init(TString filename,TString name){
   return kTRUE;
 }
 
-void HipoDST::InitOutput(TString filename){
+void  CLAS12::HipoDST::InitOutput(TString filename){
   DataManager::InitOutput(filename);
 }
 
@@ -58,7 +55,7 @@ void HipoDST::InitOutput(TString filename){
 /// Write RunInfo at the end of file (when the gated charge is known).
 /// Call HipoReader::ReadEvent to fill event THSParticle vector.
 /// Fill the EventInfo from REC::Event.
-Bool_t HipoDST::ReadEvent(Long64_t entry){
+Bool_t  CLAS12::HipoDST::ReadEvent(Long64_t entry){
 
   //cout<<"HipoDST::ReadEvent("<<endl;    
 
@@ -67,10 +64,10 @@ Bool_t HipoDST::ReadEvent(Long64_t entry){
     //End of file write the total current
     if(fRunTree){
       fEvBank->SetEntry(0);
-      fRunInfo->SetNRun(fRecEvNRun->Val());
-      if(fAddGenerated)fRunInfo->SetType(1);
-      else fRunInfo->SetType(0);
-      fRunInfo->SetTotalCharge(fTotCharge);
+      fRunInfo->fNRun=(fRecEvNRun->Val());
+      if(fAddGenerated)fRunInfo->fType=(1);
+      else fRunInfo->fType=(0);
+      fRunInfo->fTotCharge=(fTotCharge);
     }
     cout<<"HipoDST::ReadEvent total charge for this file "<<fTotCharge<<endl;
     //cout<<"  at average of current of "<<fTotCharge/fNScalerReads/0.033<<"nA per read. "<<endl; 
@@ -98,11 +95,11 @@ Bool_t HipoDST::ReadEvent(Long64_t entry){
   if(fEvBank->GetEntry()<0) return kTRUE;
   fWriteThis=kTRUE; //Got a REC::Event 
   
-  fEventInfo->SetTrigBit(fRecEvTRG->Val());
-  fEventInfo->SetCJStartTime(fRecEvSTTime->Val());
-  fEventInfo->SetRFTime(fRecEvRFTime->Val());
-  fEventInfo->SetBeamHel(fRecEvHelic->Val());
-  fEventInfo->SetNEvent(fRecEvNEVENT->Val());
+  fEventInfo->fTrigBit=(fRecEvTRG->Val());
+  fEventInfo->fCJSTTime=(fRecEvSTTime->Val());
+  fEventInfo->fRFTime=(fRecEvRFTime->Val());
+  fEventInfo->fBeamHel=(fRecEvHelic->Val());
+  fEventInfo->fNEvent=(fRecEvNEVENT->Val());
 
   //Keep our own running total of  beam charge
   fTotCharge+=fRecEvBCG->Val()-fCharge;
