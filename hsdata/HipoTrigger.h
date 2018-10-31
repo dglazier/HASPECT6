@@ -20,7 +20,10 @@ namespace HS{
   
   
     void  RawScaler();
-  
+    Int_t makeVTPTriggers();
+    void decodeVTPTrigger(Int_t word1vtp, Int_t word2vtp);
+    void addVTPTriggerToEvent(Long_t pattern);
+
   private :
   
  
@@ -29,13 +32,17 @@ namespace HS{
     Short_t fHelicity=0;
     Int_t fNScalerReads=0;
   
-    Int_t fTrigBits[sizeof(int) * 8];
+    //Int_t fTrigBits[sizeof(int) * 8];
+    //vector<Long_t> fVTPTriggers;
+    std::bitset<32> fVTPBitSet
 
+      
     Float_t fCurFactor=1; //attenuation factor due to beam blocker
     //@(10.7)=9.808%  CLAS-NOTE 2018 - 003
     //@(6.4) =16.283% CLAS-NOTE 2018 - 004
 
     THipoBank* fRawScalBank=nullptr;
+    THipoBank* fVTPTrigBank=nullptr;
 
     //items in banks
     THipoItemL* fRunTrig=nullptr;
@@ -56,7 +63,9 @@ namespace HS{
     THipoItemI* fRawScalVal=nullptr;;
     THipoItemB* fRawScalHel=nullptr;;
 
- 
+    THipoItemB* fVTPDBCrate=nullptr;
+    THipoItemI* fVTPDBWord=nullptr;
+    
   };
 }//namepsace HS
 

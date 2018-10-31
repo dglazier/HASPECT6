@@ -30,6 +30,7 @@ Bool_t HipoTrigger::Init(TString filename,TString name){
     //Add the trigger banks to those to be configured
     Info("HipoTrigger","Opened file");
     fHipo->ConfigOnlyBank("RAW::scaler");
+    fHipo->ConfigOnlyBank("RAW::vtp");
   }
   HipoReader::Init(filename,name);
   
@@ -49,6 +50,10 @@ Bool_t HipoTrigger::Init(TString filename,TString name){
   fRawScalVal=dynamic_cast<THipoItemI*>(fRawScalBank->GetItem("value"));
   fRawScalHel=dynamic_cast<THipoItemB*>(fRawScalBank->GetItem("helicity"));
   
+  fVTPTrigBank=fHipo->GetBank("RAW::vtp");
+  fVTPDBCrate=dynamic_cast<THipoItemB*>(fVTPTrigBank->GetItem("crate"));
+  fVTPDBWord=dynamic_cast<THipoItemI*>(fVTPTrigBank->GetItem("word"));
+
   fCharge=0;
   // fHelicity=-1;
   fTotCharge=0;
@@ -113,7 +118,13 @@ Bool_t HipoTrigger::ReadEvent(Long64_t entry){
   fEventInfo->SetBeamHel(fRecEvHelic->Val());
   fEventInfo->SetNEvent(fRecEvNEVENT->Val());
 
- 
+  makeVTPTriggers();
+  fEventInfo->SetVTPTrigBit(fVTPBitSet.to_ulong());
+  
+  // for(auto &jt : fVTPTriggers)
+  //   cout<<jt<<" ";
+  // cout<<"\n";
+  
   return kTRUE;
 
 }
@@ -141,4 +152,64 @@ void  HipoTrigger::RawScaler()
   fTotCharge+=fCharge;
   fNScalerReads++;
 
+}
+
+Int_t HipoTrigger::makeVTPTriggers() {
+
+  fVTPBitSet.reset();
+  Int_t nVTPTriggers = 0;
+  
+  Int_t nrows1 = 0;
+  
+  Int_t crate= 0;
+  Int_t nwords= 0;
+  Int_t word1VTP, word2VTP, word3VTP= 0;
+  const Int_t trig2VTP=100;
+  
+ 
+  while (fVTPTrigBank->NextEntry()) {
+
+    crate = fVTPDBCrate->Val();
+    
+    if (crate == trig2VTP) {
+      nwords = fVTPDBWord->Val();
+      if (nwords == 4)
+	nVTPTriggers = 0;
+      else
+	nVTPTriggers = (nwords - 4) / 2;
+      // decode them
+      fVTPTrigBank->SetEntry(fVTPTrigBank->GetEntry()+4); //like loop1+=4
+      for (Int_t loop2 = 0; loop2 < nVTPTriggers; loop2++) {
+	word1VTP = fVTPDBWord->Val();
+	fVTPTrigBank->NextEntry(); //loop1++
+	if (((word1VTP >> 27) & 0x1F) == 0x1D) {
+	  word2VTP = fVTPDBWord->Val();
+	  fVTPTrigBank->NextEntry(); //loop1++
+	 
+	  decodeVTPTrigger(word1VTP, word2VTP);
+	}
+      }
+    } 
+    else {
+      fVTPTrigBank->NextEntry(); //loop1++ 
+    }
+  }
+  
+  return 0;
+  
+}
+
+void HipoTrigger::decodeVTPTrigger(Int_t word1vtp, Int_t word2vtp) {
+  Int_t time, trgL, trgH;
+  time = (word1vtp >> 16) & 0x7FF; // 11 bits time
+  trgL = (word1vtp & 0xFFFF); // 16 bits
+  trgH = (word2vtp & 0xFFFF); // 16 bits
+  Long_t pattern=(trgL&0xFFFF)|((trgH<<16)&0xFFFF0000);
+  addVTPTriggerToEvent(pattern);
+}
+
+void HipoTrigger::addVTPTriggerToEvent(Long_t pattern){
+  const UInt_t bitsize= fVTPBitSet.size();
+  for(UInt_t ib=0;ib<bitsize;ib++)
+    fVTPBitSet.set(i,(pattern& (1<<ib)) !=0);
 }
