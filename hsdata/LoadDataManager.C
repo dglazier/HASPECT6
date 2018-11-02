@@ -12,8 +12,21 @@ void LoadDataManager(){
   
   TString HSCODE=gSystem->Getenv("HSCODE");
   TString dmpath="/hsdata/";
+ 
+  //Need THSParticle first this should be in HSEXE
+  if(TString(gSystem->Getenv("HSEXP"))==TString("")){
+    cout<<"Error LoadDataManager need to define HSEXE envirment variable so I can get THSParticle"<<endl;
+    exit(1);
+  }
 
-  //Add HSDataManager include path
+  TString HSEXP=gSystem->Getenv("HSEXP");
+  if(!TString(gInterpreter->GetIncludePath()).Contains(HSEXP)){
+    gInterpreter->AddIncludePath(HSEXP);
+  }
+  gROOT->LoadMacro(HSEXP+"/THSParticle.C+");
+  
+
+ //Add HSDataManager include path
   if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+dmpath)){
     gInterpreter->AddIncludePath(HSCODE+dmpath);
     gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+dmpath).Data()));

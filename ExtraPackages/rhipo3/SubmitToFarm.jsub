@@ -3,7 +3,7 @@ MEMORY: 2000 MB
 TIME: 1440
 DISK_SPACE: 4 GB
 COMMAND: root
-OPTIONS: -l -b -q  --farm --hsdata ConvertAll.C --in=./ --out=./outfiles
+OPTIONS: -l -b -q  --farm --hsexp ConvertAll.C --in=./ --out=./outfiles
 OS: centos7
 TRACK: analysis
 SINGLE_JOB

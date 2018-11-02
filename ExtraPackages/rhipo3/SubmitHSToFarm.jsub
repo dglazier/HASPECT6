@@ -4,10 +4,10 @@ TIME: 1440
 DISK_SPACE: 4 GB
 SINGLE_JOB:
 COMMAND: root
-OPTIONS: -l -b -q  --farm --hsdata ConvertHSHipoTriggerChain.C --hsin=./ --hsout=outfiles/
+OPTIONS: -l -b -q  --farm --hsexp ConvertHSHipoTriggerChain.C --hsin=./ --hsout=outfiles/
 OS: centos7
 TRACK: analysis
-OTHER_FILES: $HSCODE/Projects/hshiporeader/ConvertHSHipoTriggerChain.C
+OTHER_FILES: $HSEXP/scripts/ConvertHSHipoTriggerChain.C
 OUTPUT_DATA: outfiles/*.root
 OUTPUT_TEMPLATE:
 INPUT_FILES: 

@@ -10,7 +10,7 @@ namespace HS{
 };
 using namespace HS::CLAS12;
 
-void LoadCLAS12(){
+void LoadExperiment(){
   
   TString HSCODE=gSystem->Getenv("HSCODE");
   //Now CLAS12 specific setup  

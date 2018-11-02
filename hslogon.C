@@ -24,7 +24,9 @@
 #include <TProof.h> //Make sure gProof can be seen here
 
 void HSfit();//Load hsfit classes
+void HSdata();//Load hsdata classes
 void HSselector(); //load hsselector classes
+void HSexp(); //Load experiment classes
 void startproof(Int_t Nw); //intialise proof for hsselector classes
 void LoadMacro(TString macro); //Load class via its source code
 TString HSin(); //return in files directory
@@ -53,6 +55,7 @@ void hslogon(){
   TString HSANA=gSystem->Getenv("HSANA");
   TString HSUSER=gSystem->Getenv("HSUSER");
   TString HSCODE=gSystem->Getenv("HSCODE");
+  TString HSEXP=gSystem->Getenv("HSEXP");
  
   if(gSystem->Getenv("HSUSER")){
     gROOT->SetMacroPath(Form("%s:%s",HSUSER.Data(),gROOT->GetMacroPath()));
@@ -98,11 +101,13 @@ void hslogon(){
       gSystem->Exec(Form("mkdir hscode"));
       gSystem->Exec(Form("cp %s/CleanAll.csh hscode/.",HSCODE.Data()));
       gSystem->Exec(Form("cp -r %s/hsdata hscode/.",HSCODE.Data()));
+      gSystem->Exec(Form("cp -r %s/. hscode/.",HSEXP.Data()));
 
       //make sure hscode clean
       gSystem->Exec(Form("cd hscode/ ; ./CleanAll.csh ; cd .."));
 
       gSystem->Setenv("HSCODE","./hscode");
+      gSystem->Setenv("HSEXP","./hscode");
       if(gSystem->Getenv("RHIPO")){
 	TString RHIPO=gSystem->Getenv("RHIPO");
 	gSystem->Exec(Form("cp %s/THipo.h hscode/.",RHIPO.Data()));
@@ -126,7 +131,9 @@ void hslogon(){
     if(opt.Contains("--hsin")) {HSin(TString(opt(7,opt.Sizeof())));} //Set input tree directory
     if(opt.Contains("--hsout")) {HSout(TString(opt(8,opt.Sizeof())));} //Set input tree directory
     if((opt==TString("--hsfit"))) HSfit(); //Load fit classes
-    if((opt==TString("--hssel"))) HSselector(); //Load selector classes
+    if((opt==TString("--hssel"))) HSselector(); //Load selector classes                                                                                                                           
+    if((opt==TString("--hsdata"))) HSdata(); //Load selector classes
+    if((opt==TString("--hsexp"))) HSexp(); //Load experiment classes
     if(opt.Contains("--")&&opt.Contains(".cxx")){opt.Remove(0,2); cout<<"Loading "<<opt<<endl;LoadMacro(opt);} //Load additional THS classes
     if(opt.Contains("--")&&opt.Contains(".cpp")){opt.Remove(0,2); cout<<"Loading "<<opt<<endl;LoadMacro(opt);} //Load additional THS classes
     if(opt.Contains("--")&&opt.Contains(".C")){opt.Remove(0,2); cout<<"Loading "<<opt<<endl;LoadMacro(opt);} //Load additional THS classes
@@ -137,16 +144,24 @@ void hslogon(){
 }
 
 
-void hsCleanExperiments(){gROOT->ProcessLine(".x $HSCODE/hsexperiments/CleanExperiments.C+");}
-void hsCleanData(){ gROOT->ProcessLine(".x $HSCODE/hsdata/CleanData.C+");}
-void hsCleanFinal(){ gROOT->ProcessLine(".x $HSCODE/hsfinalstate/CleanFinalState.C+");}
-void hsCleanHSMVA(){ gROOT->ProcessLine(".x $HSCODE/hsmva/CleanHSMVA.C+");}
+void hsCleanExperiments(){gROOT->ProcessLine(".x $HSCODE/hsexperiments/CleanExperiments.C");}
+void hsCleanData(){ gROOT->ProcessLine(".x $HSCODE/hsdata/CleanData.C");}
+void hsCleanFinal(){ gROOT->ProcessLine(".x $HSCODE/hsfinalstate/CleanFinalState.C");}
+void hsCleanHSMVA(){ gROOT->ProcessLine(".x $HSCODE/hsmva/CleanHSMVA.C");}
 
 void CleanAll(){
   hsCleanExperiments();
+  hsCleanFinal();
+  hsCleanHSMVA();
   hsCleanData();
-}
 
+}
+void HSdata(){
+  gROOT->ProcessLine(".x $HSCODE/hsdata/LoadDataManager.C+");
+}
+void HSexp(){
+  gROOT->ProcessLine(".x $HSEXP/LoadExperiment.C+");
+}
 /** Function is called with \--hsfit \n
  * It loads necessary functions to perform RooFit/RooStats fits:\n
  * THSBins.C
