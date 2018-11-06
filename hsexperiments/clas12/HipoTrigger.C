@@ -116,6 +116,11 @@ Bool_t  CLAS12::HipoTrigger::ReadEvent(Long64_t entry){
   fEventInfo->fNEvent=(fRecEvNEVENT->Val());
 
   makeVTPTriggers();
+  //  for(Int_t i=0;i<32;i++){
+  ///  cout<<i<<"="<<fVTPBitSet[i]<<" ";
+  // }
+  // cout<<"/n"<<endl;
+  // cout<<fVTPBitSet.to_ulong()<<endl;
   fEventInfo->fVTPTrigBit=(fVTPBitSet.to_ulong());
   
   // for(auto &jt : fVTPTriggers)
@@ -206,7 +211,15 @@ void  CLAS12::HipoTrigger::decodeVTPTrigger(Int_t word1vtp, Int_t word2vtp) {
 }
 
 void  CLAS12::HipoTrigger::addVTPTriggerToEvent(Long_t pattern){
+  //Add this pattern to this event
+  //Eaxh pattern only contains 1 sector
+  //here we make a new bit pattern containing all
+  //set the bits that are =1
   const UInt_t bitsize= fVTPBitSet.size();
-  for(UInt_t ib=0;ib<bitsize;ib++)
-    fVTPBitSet.set(ib,(pattern& (1<<ib)) !=0);
+  //cout<<"pattern "<<pattern<<endl;
+  for(UInt_t ib=0;ib<bitsize;ib++){
+    short is1=(pattern& (1<<ib)) != 0;
+    if(is1)
+      fVTPBitSet.set(ib,1);
+  }
 }
