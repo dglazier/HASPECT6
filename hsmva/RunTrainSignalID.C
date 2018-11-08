@@ -12,7 +12,7 @@ void RunTrainSignalID(){
 
   TrainSignalID train("TMVAClassificationTut");
 
-  // train.SetOutDir("/work/dump/tmva/");
+  train.SetOutDir("/work/dump/tmva/");
   train.IgnoreBranches("");//Any branches in tree not used must be flagged!
   train.AddSignalTree(signalTree);
   train.AddBackgroundTree(background);

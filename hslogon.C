@@ -24,6 +24,7 @@
 #include <TProof.h> //Make sure gProof can be seen here
 
 void HSfit();//Load hsfit classes
+void HSmva();//Load hsmva classes
 void HSdata();//Load hsdata classes
 void HSselector(); //load hsselector classes
 void HSexp(); //Load experiment classes
@@ -37,6 +38,7 @@ void HSin(TString hsin){gSystem->Setenv("HSIN",hsin);} //set in files directory
 void HSout(TString hsout){gSystem->Setenv("HSOUT",hsout);} //set out file
 void HSfinal(TString hsfinal){gSystem->Setenv("HSFINAL",hsfinal);} //set out file
 void CleanAll();
+void hsCleanHSFit();
 void hsCleanData();
 void hsCleanFinal();
 void hsCleanHSMVA();
@@ -71,6 +73,7 @@ void hslogon(){
     if((opt.Contains("--cleanfinal"))) hsCleanFinal();
     if((opt.Contains("--cleanexp"))) hsCleanExperiments();
     if((opt.Contains("--cleanmva"))) hsCleanHSMVA();
+    if((opt.Contains("--cleanfit"))) hsCleanHSFit();
     if((opt.Contains("--fortran")))  gSystem->Load("libgfortran.so");
     
   }
@@ -131,7 +134,8 @@ void hslogon(){
     if(opt.Contains("--hsin")) {HSin(TString(opt(7,opt.Sizeof())));} //Set input tree directory
     if(opt.Contains("--hsout")) {HSout(TString(opt(8,opt.Sizeof())));} //Set input tree directory
     if((opt==TString("--hsfit"))) HSfit(); //Load fit classes
-    if((opt==TString("--hssel"))) HSselector(); //Load selector classes                                                                                                                           
+    if((opt==TString("--hssel"))) HSselector(); //Load selector classes
+    if((opt==TString("--hsmva"))) HSmva(); //Load selector classes
     if((opt==TString("--hsdata"))) HSdata(); //Load selector classes
     if((opt==TString("--hsexp"))) HSexp(); //Load experiment classes
     if(opt.Contains("--")&&opt.Contains(".cxx")){opt.Remove(0,2); cout<<"Loading "<<opt<<endl;LoadMacro(opt);} //Load additional THS classes
@@ -146,6 +150,7 @@ void hslogon(){
 
 void hsCleanExperiments(){gROOT->ProcessLine(".x $HSCODE/hsexperiments/CleanExperiments.C");}
 void hsCleanData(){ gROOT->ProcessLine(".x $HSCODE/hsdata/CleanData.C");}
+void hsCleanHSFit(){ gROOT->ProcessLine(".x $HSCODE/hsfit/CleanHSFit.C");}
 void hsCleanFinal(){ gROOT->ProcessLine(".x $HSCODE/hsfinalstate/CleanFinalState.C");}
 void hsCleanHSMVA(){ gROOT->ProcessLine(".x $HSCODE/hsmva/CleanHSMVA.C");}
 
@@ -155,6 +160,9 @@ void CleanAll(){
   hsCleanHSMVA();
   hsCleanData();
 
+}
+void HSmva(){
+  gROOT->ProcessLine(".x $HSCODE/hsmva/LoadHSMVA.C+");
 }
 void HSdata(){
   gROOT->ProcessLine(".x $HSCODE/hsdata/LoadDataManager.C+");
@@ -177,18 +185,8 @@ void HSexp(){
 void HSfit(){
   cout<<"Loading HSFit classes"<<endl;
   //set prompt
-  if(!gProof)((TRint*)gROOT->GetApplication())->SetPrompt("hsroot [%d] ");
-  //Load extra classes for roofit
-  LoadMacro("THSBins.C"); 
-  LoadMacro("THSWeights.C");
-  LoadMacro("RooHSEventsPDF.C");
-  LoadMacro("RooHSEventsHistPDF.C");
-  LoadMacro("HSMCMC.C");
-  LoadMacro("THSRooFit.C");
-  LoadMacro("THSsPlot.C");
-  LoadMacro("RooHS1StepStudy.C");
-  LoadMacro("RooHSsPlotAndFitStudy.C");
-  LoadMacro("RooHSStudyManager.C");
+  gROOT->ProcessLine(".x $HSCODE/hsfit/LoadHSFit.C+");
+
 }
 
 /** Function is called with \--hssel \n
