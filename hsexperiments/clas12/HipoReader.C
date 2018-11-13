@@ -318,7 +318,6 @@ Bool_t CLAS12::HipoReader::ReadEvent(Long64_t entry){
       //Trackers	
       while(fTrPindex->FindEntry(PEntry)){
 	particle.SetTrChi2(fTrChi2->Val()/fTrNDF->Val());
-	
       }
   	
       while(fFTPindex->FindEntry(PEntry)){

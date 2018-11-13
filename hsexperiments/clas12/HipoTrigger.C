@@ -97,7 +97,7 @@ Bool_t  CLAS12::HipoTrigger::ReadEvent(Long64_t entry){
 
   
   fEntry++;
- 
+  fTotEntry++; 
   fWriteThis=kFALSE; //don't write scaler events on their own, accumulate and write at end or with other events
   RawScaler();
 
@@ -116,13 +116,93 @@ Bool_t  CLAS12::HipoTrigger::ReadEvent(Long64_t entry){
   fEventInfo->fNEvent=(fRecEvNEVENT->Val());
 
   makeVTPTriggers();
-  //  for(Int_t i=0;i<32;i++){
-  ///  cout<<i<<"="<<fVTPBitSet[i]<<" ";
-  // }
-  // cout<<"/n"<<endl;
-  // cout<<fVTPBitSet.to_ulong()<<endl;
   fEventInfo->fVTPTrigBit=(fVTPBitSet.to_ulong());
+  //  for(Int_t i=0;i<32;i++){
+  //  cout<<i<<"="<<fVTPBitSet[i]<<" ";
+  //  }
+  /*  Int_t Nbits=fVTPBitSet[13]+fVTPBitSet[14]+fVTPBitSet[15]+fVTPBitSet[16]+fVTPBitSet[17]+fVTPBitSet[18];
+
+  //  fBit13=0;fBit14=0;fBit13=0;fBit15=0;fBit16=0;fBit17=0;fBit18=0;
+  if( fVTPBitSet[13]) fBit13++;
+  if( fVTPBitSet[14]) fBit14++;
+
+  if( fVTPBitSet[15]) fBit15++;
+
+  if( fVTPBitSet[16]) fBit16++;
+
+  if( fVTPBitSet[17]) fBit17++;
+
+  if( fVTPBitSet[18]) fBit18++;
+
+
+  //cout<<"N "<<Nbits<<"\n";  
+  Int_t Np=0;
+  Int_t Npip=0;
+  Int_t Npim=0;
+  Int_t Nother=0;
+  for(Int_t i=0;i<fParticles.size();i++){
+    //if(fParticles[i].PreE()>0.015&&fParticles[i].Detector()>0&&fParticles[i].Detector()<9999){
+    if(fParticles[i].PreE()>0.015&&fParticles[i].DeltaE()>1&&fParticles[i].TrChi2()>0&&fParticles[i].Detector()<9999&&fParticles[i].Detector()>999){
+      //  cout<<"D"<<fParticles[i].Detector()<<" P"<<fParticles[i].PDG()<<" ";
+      if(fParticles[i].PDG()==211)Npip++;     
+      else if(fParticles[i].PDG()==2212)Np++;
+      else if(fParticles[i].PDG()==-211)Npim++;
+      else Nother++;
+    }
+  }
+ 
+  if(Np==1&&Npim==1&&Npip==0&&Nother==0){
+    fNppim++; 
+    if(Nbits>0)fNppim1++;
+    if(Nbits>1)fNppim2++;
+  }
+ 
+  if(Np==1&&Npip==1&&Npim==1&&Nother==0){
+    fNppippim++;
+    if(Nbits>0)fNppippim1++;
+    if(Nbits>1)fNppippim2++;
+  }
+  if(Np==1&&Npip==1&&Npim==0&&Nother==0){
+    fNppip++; 
+    if(Nbits>0)fNppip1++;
+    if(Nbits>1)fNppip2++;
+  }
+  if(Np==0&&Npip==1&&Npim==0&Nother==0){
+    fNpip++;
+    if(Nbits>0)fNpip1++;
+    if(Nbits>1)fNpip2++;
+  }
   
+  
+  if(Npip==1&&Npim==1&&Np==0&Nother==0){
+    fNpippim++;
+    if(Nbits>0)fNpippim1++;
+    if(Nbits>1)fNpippim2++;
+  }
+ 
+  if(fNppip%10==0){
+    cout<<"ppippim "<<fNppippim<<" "<<fNppippim1<<" "<<fNppippim2<<endl;
+    cout<<"ppip "<<fNppip<<" "<<fNppip1<<" "<<fNppip2<<endl;
+    cout<<"ppim "<<fNppim<<" "<<fNppim1<<" "<<fNppim2<<endl;
+    cout<<"pippim "<<fNpippim<<" "<<fNpippim1<<" "<<fNpippim2<<endl;
+    cout<<"pip "<<fNpip<<" "<<fNpip1<<" "<<fNpip2<<endl;
+    cout<<fBit13<<" "<<fBit14<<" "<<fBit15<<" "<<fBit16<<" "<<fBit17<<" "<<fBit18<<" "<<fTotEntry<<endl;
+ 
+   
+  }
+ 
+ //   cout<<"Nparticels "<< Np<<"\n";
+  // cout<<fVTPBitSet.to_ulong()<<enndl;
+  */
+  /*
+  Int_t Nbits2= (fEventInfo->fVTPTrigBit & (1<<13))!=0; 
+  Nbits2+= (fEventInfo->fVTPTrigBit & (1<<14))!=0;
+  Nbits2+= (fEventInfo->fVTPTrigBit & (1<<15))!=0; 
+  Nbits2+= (fEventInfo->fVTPTrigBit & (1<<16))!=0; 
+  Nbits2+= (fEventInfo->fVTPTrigBit & (1<<17))!=0; 
+  Nbits2+= (fEventInfo->fVTPTrigBit & (1<<18))!=0 ;
+  //  if(Nbits>0)cout<<"Nbit s "<<Nbits<<" "<<Nbits2<<endl;
+  */
   // for(auto &jt : fVTPTriggers)
   //   cout<<jt<<" ";
   // cout<<"\n";
@@ -175,11 +255,13 @@ Int_t  CLAS12::HipoTrigger::makeVTPTriggers() {
     
     if (crate == trig2VTP) {
       nwords = fVTPDBWord->Val();
+      fVTPTrigBank->NextEntry();
       if (nwords == 4)
 	nVTPTriggers = 0;
       else
 	nVTPTriggers = (nwords - 4) / 2;
       // decode them
+      //     fVTPTrigBank->SetEntry(fVTPTrigBank->GetEntry()+4); //like loop1+=4                                         
       fVTPTrigBank->SetEntry(fVTPTrigBank->GetEntry()+4); //like loop1+=4
       for (Int_t loop2 = 0; loop2 < nVTPTriggers; loop2++) {
 	word1VTP = fVTPDBWord->Val();

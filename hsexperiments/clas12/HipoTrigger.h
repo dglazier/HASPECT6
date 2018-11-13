@@ -25,6 +25,39 @@ namespace HS{
       void addVTPTriggerToEvent(Long_t pattern);
       
     private :
+      Long64_t fBit13=0;
+      Long64_t fBit14=0;
+
+      Long64_t fBit15=0;
+
+      Long64_t fBit16=0;
+
+      Long64_t fBit17=0;
+
+      Long64_t fBit18=0;
+      Long64_t fTotEntry=0;
+   
+
+      Long64_t fNppippim=0;
+      Long64_t fNppippim1=0;
+      Long64_t fNppippim2=0;
+      Long64_t fNpippim=0;
+      Long64_t fNpippim1=0;
+      Long64_t fNpippim2=0;
+      Long64_t fNppip=0;
+      Long64_t fNppip1=0;
+      Long64_t fNppip2=0;
+      Long64_t fNpip=0;
+      Long64_t fNpip1=0;
+      Long64_t fNpip2=0;
+
+
+      Long64_t fNppim=0;
+      Long64_t fNppim1=0;
+      Long64_t fNppim2=0;
+
+
+
       
       
       Float_t fCharge=0;
