@@ -18,7 +18,7 @@ class FinalTemp : public HS::FinalState{
 
 
   void FileStart() override;
-  Bool_t  CheckParticle(THSParticle* part) override;
+  Bool_t  CheckParticle(HS::THSParticle* part) override;
   void FinalStateOutTree(TTree* tree) override;
   void Kinematics() override;
   void UserPostTopo() override;
@@ -43,7 +43,7 @@ class FinalTemp : public HS::FinalState{
   private:
 
   //Initial state
-  HSLorentzVector fTarget=HSLorentzVector(0,0,0,0.938272);
+  HS::HSLorentzVector fTarget=HS::HSLorentzVector(0,0,0,0.938272);
 
   //Final Particles Detected
  

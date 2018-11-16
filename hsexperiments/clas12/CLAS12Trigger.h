@@ -76,7 +76,7 @@ namespace HS{
       
       Float_t fStartTime=0;
       Float_t fSTimePeak=124.25;
-      Float_t fTimeShiftFT=-384.65;
+      Float_t fTimeShiftFT=0;
       //Float_t fStartTime=124.25; //GEMC
       //Float_t fSTimePeak=124.25; //GEMC
       //Float_t fTimeShiftFT=0; // GEMC

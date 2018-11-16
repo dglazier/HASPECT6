@@ -8,7 +8,7 @@
 namespace HS{};
 using namespace HS;
 
-void LoadDataManager(){
+void LoadDataManager(TString Selection=""){
   
   TString HSCODE=gSystem->Getenv("HSCODE");
   TString dmpath="/hsdata/";
@@ -33,9 +33,12 @@ void LoadDataManager(){
   }
 
   //Add classes
-  std::vector<TString > DMClasses={"BaseEventInfo","BaseRunInfo","THSWeights","DataManager","LundReader"};
+  std::vector<TString > DMClasses={"BaseEventInfo","BaseRunInfo","Weights","Bins","DataManager","LundReader"};
 
   for(auto const& name : DMClasses){
+    if(Selection!=TString())
+      if(!Selection.Contains(name)) continue;    
+
     std::cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%    "<<name<<std::endl;
     if(!gROOT->GetListOfClasses()->Contains(name))
       gROOT->LoadMacro(HSCODE+dmpath+name+".C+");

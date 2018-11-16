@@ -111,10 +111,10 @@ void FSSkeleton::DeclareDetected(){
     TString sparticle=fFinals->At(io)->GetName();
     TString pname=TString(sparticle(0,sparticle.First(":")));
     if(pname==TString("Beam")){ //hack for tagged photons!
-      ContinueLineAfter(Form("  THSParticle fBeam=THSParticle(-22);"));
+      ContinueLineAfter(Form("  HS::THSParticle fBeam=THSParticle(-22);"));
     }
     else {
-      ContinueLineAfter(Form("  THSParticle f%s=THSParticle(\"%s\");",TString(sparticle(0,sparticle.First(":"))).Data(),TString(sparticle(sparticle.First(":")+1,sparticle.Sizeof())).Data()));
+      ContinueLineAfter(Form("  HS::THSParticle f%s=HS::THSParticle(\"%s\");",TString(sparticle(0,sparticle.First(":"))).Data(),TString(sparticle(sparticle.First(":")+1,sparticle.Sizeof())).Data()));
     }
   }
 }
@@ -126,7 +126,7 @@ void FSSkeleton::DeclareParents(){
      FindNextLineLike("//Final Parents");
      for(Int_t io=0;io<fParents->GetEntries();io++){
       TString sparticle=fParents->At(io)->GetName();
-      ContinueLineAfter(Form("  THSParticle f%s=THSParticle(\"%s\");",TString(sparticle(0,sparticle.First(":"))).Data(),TString(sparticle(sparticle.First(":")+1,sparticle.First(";")-sparticle.First(":")-1)).Data()));
+      ContinueLineAfter(Form("  HS::THSParticle f%s=HS::THSParticle(\"%s\");",TString(sparticle(0,sparticle.First(":"))).Data(),TString(sparticle(sparticle.First(":")+1,sparticle.First(";")-sparticle.First(":")-1)).Data()));
     }
   }
 }
@@ -257,8 +257,8 @@ void FSSkeleton::CreateLoader(){
   TString HSCODE=gSystem->Getenv("HSCODE");
 
   ContinueLineAfter(Form("{"));
-  // ContinueLineAfter(Form("HSCODE=gSystem->Getenv(\"HSCODE\");"));
-  ContinueLineAfter(Form("gROOT->ProcessLine(\".x %s/hsfinalstate/LoadFinalState.C+\");",HSCODE.Data()));
+  ContinueLineAfter(Form("gSystem->Setenv(\"HSFINAL\",\"1\");"));
+  ContinueLineAfter(Form("gROOT->ProcessLine(\".x $HSEXP/LoadExperiment.C+\");"));
   ContinueLineAfter(Form("gROOT->LoadMacro(\"TreeData%s.C+\");",fFinalName.Data()));
   ContinueLineAfter(Form("gROOT->LoadMacro(\"%s.C+\");",fFinalName.Data()));
   ContinueLineAfter(Form("}"));

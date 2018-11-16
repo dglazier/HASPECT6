@@ -6,36 +6,37 @@
 #include "THSParticle.h"
 #include <cfloat>
 
-class Cuts: public TNamed {
- public :
-
-  Cuts()=default;
+namespace HS{
+  class Cuts: public TNamed {
+  public :
+    
+    Cuts()=default;
   Cuts(TString name):TNamed(name,name){};
+    
+    ~Cuts()=default;
+    
+    
+    virtual Bool_t ParticleCut(HS::THSParticle* part) const =0;
+    
+  protected:
+    
+  };
   
-  ~Cuts()=default;
-  
-  
-  virtual Bool_t ParticleCut(HS::THSParticle* part) const =0;
-  
- protected:
-  
-};
-
-//A simple derived cuts class
-class DeltaTimeCut : public Cuts{
-  
- public:
-  DeltaTimeCut(Float_t cut=FLT_MAX){fTimeCut=cut;}
-
-  Bool_t ParticleCut(HS::THSParticle* part) const{
-    if(TMath::Abs(part->DeltaTime())<fTimeCut) return kTRUE;
-    return kFALSE;
-  }
-  void SetTimeCut(Float_t val){fTimeCut=val;}
-
- private:
-  Float_t fTimeCut=FLT_MAX;
-
-};
-
+  //A simple derived cuts class
+  class DeltaTimeCut : public Cuts{
+    
+  public:
+    DeltaTimeCut(Float_t cut=FLT_MAX){fTimeCut=cut;}
+    
+    Bool_t ParticleCut(HS::THSParticle* part) const{
+      if(TMath::Abs(part->DeltaTime())<fTimeCut) return kTRUE;
+      return kFALSE;
+    }
+    void SetTimeCut(Float_t val){fTimeCut=val;}
+    
+  private:
+    Float_t fTimeCut=FLT_MAX;
+    
+  };//class DeltaTimeCut
+}//namespace HS
 #endif

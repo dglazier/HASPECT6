@@ -74,7 +74,7 @@ DataManager::~DataManager(){
   
   CloseReadTree();
   // if(fReadParticles) delete fReadParticles;
-  if(fWeights)delete fWeights;
+  //if(fWeights)delete fWeights;
   if(fEntryList)delete fEntryList;
 
   if(fBaseEventInfo) delete fBaseEventInfo;
@@ -293,17 +293,17 @@ void DataManager::AddUID(TString filename,TString treename){
    delete file;
    
 }
-void DataManager::LoadWeights(TString fname,TString wname){
-    Info("LoadWeights"," Opening weights file %s name %s",fname.Data(),wname.Data());
-    fWeights=new THSWeights();
-    fWeights->LoadSaved(fname,wname);
-    fWeights->PrintWeight();
+// void DataManager::LoadWeights(TString fname,TString wname){
+//     Info("LoadWeights"," Opening weights file %s name %s",fname.Data(),wname.Data());
+//     fWeights=new Weights();
+//     fWeights->LoadSaved(fname,wname);
+//     fWeights->PrintWeight();
    
-}
-void DataManager::GetWeightEvent(){
-  //if(fWeights)fWeights->GetEntryBinarySearch((Long64_t)fTUID);
-}
-Double_t DataManager::GetWeight(Int_t species){
-  if(fWeights) fWeight=fWeights->GetWeight(species);
-  return fWeight;
-}
+// }
+// void DataManager::GetWeightEvent(){
+//   //if(fWeights)fWeights->GetEntryBinarySearch((Long64_t)fTUID);
+// }
+// Double_t DataManager::GetWeight(Int_t species){
+//   if(fWeights) fWeight=fWeights->GetWeight(species);
+//   return fWeight;
+// }

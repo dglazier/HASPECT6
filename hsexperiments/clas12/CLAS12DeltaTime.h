@@ -12,7 +12,7 @@ namespace HS{
 
     public :
       CLAS12DeltaTime()=default;
-    CLAS12DeltaTime(Float_t FT,Float_t FD,Float_t CD,Float_t FDCAL):Cuts(){
+      CLAS12DeltaTime(Float_t FT,Float_t FD,Float_t CD,Float_t FDCAL):Cuts(){
 	fCLAS12TimeCuts[0]=FT;
 	fCLAS12TimeCuts[1]=FD;
 	fCLAS12TimeCuts[2]=CD;
@@ -20,7 +20,7 @@ namespace HS{
       };
       ~CLAS12DeltaTime()=default;
     
-      Bool_t ParticleCut(THSParticle* part) const override ;
+      Bool_t ParticleCut(HS::THSParticle* part) const override ;
     
       Short_t Detector(Int_t det) const;
       //   Bool_t Cherenkov(Int_t det);

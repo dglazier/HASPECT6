@@ -35,11 +35,11 @@ void CLAS12Skeleton::DeclareCLAS12(){
     
     FindNextLineLike("//Initial state");
     fPlace-=2;
-    ContinueLineAfter("  HS::CLAS12Trigger fTrigger;//For CLAS12 trigger info");
-    ContinueLineAfter("  HS::CLAS12DeltaTime fCuts; //For particle cuts");
+    ContinueLineAfter("  HS::CLAS12::CLAS12Trigger fTrigger;//For CLAS12 trigger info");
+    ContinueLineAfter("  HS::CLAS12::CLAS12DeltaTime fCuts; //For particle cuts");
 
     FindNextLineLike("//Initial state");
-    ContinueLineAfter("  HSLorentzVector fBeam=HSLorentzVector(0,0,10.6,10.6);");
+    ContinueLineAfter("  HS::HSLorentzVector fBeam=HS::HSLorentzVector(0,0,10.6,10.6);");
    
 }
 
@@ -54,8 +54,8 @@ void CLAS12Skeleton::DefineCLAS12(){
   ContinueLineAfter("  fTrigger.SetEventInfo(fEventInfo);//once per event info");
   ContinueLineAfter("  fTrigger.SetRunInfo(fRunInfo);//once per run info");
   ContinueLineAfter("");
-  ContinueLineAfter("");
-  ContinueLineAfter("  if(fRunInfo->Type()) fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment");
+  ContinueLineAfter("  //fTrigger.SetTimeShiftFT(16.45)");
+  ContinueLineAfter("  //fTrigger.SetSTimePeak(125.45);");
 
   FindNextLineLike("UserPostTopo()");
   ContinueLineAfter("  //configure trigger for this event");

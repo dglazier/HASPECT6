@@ -117,7 +117,7 @@ namespace HS{
       void SetHypPMu(Double_t pp){fHypPList[5]=pp;};
       void SetHypPMisc(Double_t pp){fHypPList[0]=pp;};
 
-      void TakePDGMass(){SetVectPDG(fP4);}; //Preserves momentum
+      void TakePDGMass(){fMeasMass=fP4.M();SetVectPDG(fP4);}; //Preserves momentum
       void TakeCorrectedP(){if(fHypIndex==gHSParticleHypMap.size()) return; Double_t rho0=fP4.P();Double_t rho=fHypPList[fHypIndex];if(!rho) return; rho/=rho0;fP4.SetXYZT(fP4.X()*rho,fP4.Y()*rho,fP4.Z()*rho,fP4.E());SetVectPDG(fP4);};
       void TakePDGMassFromE(){Double_t rho0=fP4.P();Double_t rho=sqrt(fP4.E()*fP4.E()-fPDGMass*fPDGMass);rho/=rho0;fP4.SetXYZT(fP4.X()*rho,fP4.Y()*rho,fP4.Z()*rho,fP4.E());}; //preserves energy
       // void CreateTruth(){fTruth=new THSParticle();};

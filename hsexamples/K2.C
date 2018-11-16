@@ -26,9 +26,9 @@ K2::K2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   //Note if particle is added to final with a valid genID it will be used
   //to determine the correct permutation of the simulated event
   AddParticle("Beam",&fBeam,kTRUE,-1);
-  AddParticle("Proton",&fProton,kTRUE,-1);
-  AddParticle("Kp",&fKp,kTRUE,-1);
-  AddParticle("Km",&fKm,kTRUE,-1);
+  AddParticle("Proton",&fProton,kTRUE,0);
+  AddParticle("Kp",&fKp,kTRUE,1);
+  AddParticle("Km",&fKm,kTRUE,2);
 
   //Set final state parents
   
@@ -55,7 +55,6 @@ K2::K2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
              fPID,fINCLUSIVE);
 
   
-  
   FinalState::InitFS();
 }
 
@@ -66,8 +65,8 @@ void K2::FileStart(){
   fTrigger.SetEventInfo(fEventInfo);//once per event info
   fTrigger.SetRunInfo(fRunInfo);//once per run info
 
-
-  if(fRunInfo->Type()) fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment
+  //fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment
+  //SetAccurateTruth(5); //rec angle within 5deg of sim truth 
   
 }
 ///Will be called after the Topo_ functions

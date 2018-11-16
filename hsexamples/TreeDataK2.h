@@ -16,7 +16,24 @@ class TreeDataK2: public HS::TreeData{
   Double_t HyperonCosTh=0;
   Double_t HyperonPhi=0;
   Double_t Eg=0;
+  Double_t t=0;
   
+  Double_t HelCosTh=0;
+  Double_t HelPhi=0;
+  
+  Double_t ProtP=0;
+  Double_t ProtTh=0;
+  Double_t ProtTime=0;
+  Double_t KpP=0;
+  Double_t KpTh=0;
+  Double_t KpTime=0;
+  Double_t KmP=0;
+  Double_t KmTh=0;
+  Double_t KmTime=0;
+  Double_t BeamTime=0;
+
+  Double_t Pol=0;
+  Int_t PolState=0;
   
   ClassDef(TreeDataK2,1);
 };

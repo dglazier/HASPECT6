@@ -11,11 +11,11 @@
 
 #include "TDatabasePDG.h"
 #include "FinalTemp.h"
-#include "KinematicsFinalTemp.h"
-#include "ToposFinalTemp.h"
 #include <algorithm>
 
 using namespace HS;
+#include "KinematicsFinalTemp.h"
+#include "ToposFinalTemp.h"
 
 FinalTemp::FinalTemp(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   SetVerbose(1);
@@ -61,6 +61,6 @@ void FinalTemp::FinalStateOutTree(TTree* tree){
 /// good in event. Adding conditions on junk tracks
 ///  can greatly reduce combitorials etc.
 /// kFALSE=> track ignored completely
-Bool_t FinalTemp::CheckParticle(THSParticle* part){
+Bool_t FinalTemp::CheckParticle(HS::THSParticle* part){
   return kTRUE;
 }

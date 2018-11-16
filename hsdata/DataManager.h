@@ -16,10 +16,10 @@
 #include "THSParticle.h"
 #include "BaseRunInfo.h"
 #include "BaseEventInfo.h"
-#include "THSWeights.h"
+//#include "Weights.h"
 
 namespace HS{
-  class THSWeights;
+  //  class Weights;
   
   class DataManager{
 
@@ -68,61 +68,67 @@ namespace HS{
     void PrintPerfStats();
 
 
-    void LoadWeights(TString fname,TString wname);
-    void GetWeightEvent();
-    Double_t GetWeight(Int_t species);
-    THSWeights* GetWeights(){return fWeights;}
+    /* void LoadWeights(TString fname,TString wname); */
+    /* void GetWeightEvent(); */
+    /* Double_t GetWeight(Int_t species); */
+    /* Weights* GetWeights(){return fWeights;} */
+
     TTree* GetReadTree(){return fReadTree;}
 
 
   protected :
 
     TEntryList* fEntryList=nullptr;
-    //GENERAL VECTORS FOR READING/WRITING
-    vector<HS::THSParticle> fParticles; //vector of  particles
-    vector<HS::THSParticle> * fReadParticles=nullptr; //vector of input particles from some source
-    vector<HS::THSParticle> fGenerated; //vector of generated particles
-    vector<HS::THSParticle> * fReadGenerated=nullptr; //vector of input particles from some source
     TBranch *fBParticles=nullptr;
-    UInt_t fNin=0; //number of iinput particles
-    UInt_t fNgen=0; //number of generated particles
-    
+    TFile* fWriteFile=0;
+    TFile* fReadFile=0;
+    TTree* fWriteTree=0;
+    TTree* fRunTree=nullptr;
+    TTree* fReadTree =0;
+    TObjArray *fChainFiles=nullptr; //list of filenames to be processed
+    TTreePerfStats* fPerfstats=nullptr;
+    //Weight handling
+    // Weights* fWeights=nullptr; //weights tree
+
     //Run and event info
     //Note ROOT tree do not like smart pointers?
     BaseEventInfo* fBaseEventInfo=nullptr;
     BaseRunInfo* fBaseRunInfo=nullptr;
     
-    TTree* fRunTree=nullptr;
+    vector<HS::THSParticle> * fReadParticles=nullptr; //vector of input particles from some source
+    vector<HS::THSParticle> * fReadGenerated=nullptr; //vector of input particles from some source
     
-    //default HS::THSParticles tree reader
-    TFile* fReadFile=0;
-    TTree* fReadTree =0;
-    TTreePerfStats* fPerfstats=nullptr;
+    //GENERAL VECTORS FOR READING/WRITING
+    vector<HS::THSParticle> fParticles; //vector of  particles
+    vector<HS::THSParticle> fGenerated; //vector of generated particles
+    
+     
     TString fTreeName;
-    Long64_t fEntry=0;
-    Long64_t fNIgnoreEntry=0;
     TString fReadBName="Particles"; //default branchname
     TString fReadGName="Generated"; //by default no gnereated branch
     TString fWriteGName=""; //by default no gnereated branch
     TString fIDName="UID"; //by default uid
+    TString fOutDir;
+    TString fFileAppend;
+    TString fCurFileName;
+
+    //  Double_t fWeight=1; //weight for set species for current event
+    Double_t UID=0;//needs to be double for RooFit
+
+    Long64_t fEntry=0;
+    Long64_t fNIgnoreEntry=0;
+
+    Int_t fChainFileN=0;//index of current chain file
+ 
+     
+    UInt_t fNin=0; //number of iinput particles
+    UInt_t fNgen=0; //number of generated particles
+ 
     Bool_t fAddGenerated=kFALSE; //also generated vector?
     Bool_t fInGenerated=kFALSE; //also generated vector?
     //default HS::THSParticle.qs tree writer
     Bool_t fWriteThis=kTRUE; //write this event?
-    TFile* fWriteFile=0;
-    TTree* fWriteTree=0;
-    TObjArray *fChainFiles=nullptr; //list of filenames to be processed
-    Int_t fChainFileN=0;//index of current chain file
-    TString fOutDir;
-    TString fFileAppend;
-    TString fCurFileName;
-    
-    Double_t UID=0;//needs to be double for RooFit
-    
-    //Weight handling
-    THSWeights* fWeights=nullptr; //weights tree
-    Double_t fWeight=1; //weight for set species for current event
-    
+
     
   };
 }//namespace HS

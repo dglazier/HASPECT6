@@ -8,7 +8,7 @@
 namespace HS{};
 using namespace HS;
 
-void LoadFinalState(){
+void LoadFinalState(TString Selection=""){
   
   TString HSCODE=gSystem->Getenv("HSCODE");
   TString mvapath="/hsmva";
@@ -38,6 +38,9 @@ void LoadFinalState(){
   vector<TString > FSClasses={"HSKinematics","Cuts","Combitorial","ParticleIter","Topology","FinalState","FiledTree","TreeData","TopoActionManager","ParticleCuts","VarsParticle","TreePrepParticle","MVASignalID","ParticleCutsManager","TreePrepManager","MVASignalIDManager"};
 
   for(auto const& name : FSClasses){
+    if(Selection!=TString())
+      if(!Selection.Contains(name)) continue;
+    
     cout<<"&&&&&&&&&&&&&&&&&&&&&&&&&&&& "<<name<<endl;
     if(!gROOT->GetListOfClasses()->Contains(name))
       gROOT->LoadMacro(name+".C+");

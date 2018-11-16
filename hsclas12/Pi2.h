@@ -53,8 +53,8 @@ class Pi2 : public HS::FinalState{
   protected :
 
   private:
-  CLAS12::CLAS12Trigger fTrigger;//For CLAS12 trigger info
-  CLAS12::CLAS12DeltaTime fCuts; //For particle cuts
+  HS::CLAS12::CLAS12Trigger fTrigger;//For CLAS12 trigger info
+  HS::CLAS12::CLAS12DeltaTime fCuts; //For particle cuts
 
   //Initial state
   HS::HSLorentzVector fBeam=HSLorentzVector(0,0,10.6,10.6);
