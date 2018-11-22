@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace HS{
-  namespace CLASG8{
+  //namespace CLASG8{
   
     class CLASTrigger{
 
@@ -36,8 +36,8 @@ namespace HS{
       Bool_t TrigStatus(Short_t status);
     
       void SetParticles(vector<THSParticle> *parts){fParticles=parts;}
-      void SetEventInfo(BaseEventInfo* info){fEventInfo=dynamic_cast<HS::CLASG8::EventInfo*>(info);}
-      void SetRunInfo(BaseRunInfo* info){fRunInfo=dynamic_cast<HS::CLASG8::RunInfo*>(info);if(fRunInfo->fType)SetSim();}
+      void SetEventInfo(BaseEventInfo* info){fEventInfo=dynamic_cast<HS::EventInfo*>(info);}
+      void SetRunInfo(BaseRunInfo* info){fRunInfo=dynamic_cast<HS::RunInfo*>(info);if(fRunInfo->fType)SetSim();}
       void SetSim(){if(fRunInfo->fType==1)fIsSim=kTRUE;else fIsSim=kFALSE;};
       void SetSim(Bool_t sim){fIsSim=sim;};
       Bool_t IsSim(){return (Bool_t)(fRunInfo->fType);};
