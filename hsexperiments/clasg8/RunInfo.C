@@ -17,7 +17,7 @@
 
 ////////////////////////////////////////////////////////////
 ///Load the run info from file filename
-void HS::CLASG8::RunInfo::LoadTree(TString filename){
+void HS::RunInfo::LoadTree(TString filename){
   cout<<":RunInfo::LoadTree"<<endl;
   TFile* file=new TFile(filename);
   TTree* tree=(TTree*) file->Get("HSRunInfo");
