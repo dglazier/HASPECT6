@@ -1,7 +1,7 @@
 
 #include "Cuts.h"
 
-class DeltaTimePCut : public Cuts{
+class DeltaTimePCut : public HS::Cuts{
   
  public:
  //Define consructor taking cut value arguments
