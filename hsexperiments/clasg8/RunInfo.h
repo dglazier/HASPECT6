@@ -6,7 +6,7 @@
 #include <TTree.h>
 
 namespace HS{
-  namespace CLASG8{
+  //namespace CLASG8{
     class RunInfo : public BaseRunInfo{
       
     public :
@@ -37,7 +37,7 @@ namespace HS{
       
       
     };
-  }//namespace CLAS12
+    // }//namespace CLAS12
 }//namespace HS
 #endif //
   

@@ -45,10 +45,14 @@
 // THSParticle::THSParticle() {
 // }
 HS::THSParticle::THSParticle(int code) {
+  if(!TDatabasePDG::Instance()->GetParticle(code))
+    cout<<"THSParticle::THSParticle, sorry particle "<<code<<" does not exist in ROOT PDG table"<<endl;
   SetPDGcode(code);
 
 }
 HS::THSParticle::THSParticle(TString pdgname){
+  if(!TDatabasePDG::Instance()->GetParticle(pdgname))
+    cout<<"THSParticle::THSParticle, sorry particle "<<pdgname<<" does not exist in ROOT PDG table"<<endl;
   SetPDGcode(TDatabasePDG::Instance()->GetParticle(pdgname)->PdgCode());
 }
 void HS::THSParticle::Print(Option_t *) const{

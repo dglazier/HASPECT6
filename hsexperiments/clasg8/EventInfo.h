@@ -7,7 +7,7 @@
 
 
 namespace HS{
-  namespace CLASG8{
+  //  namespace CLASG8{
 
     class EventInfo : public BaseEventInfo{
 
@@ -45,7 +45,7 @@ namespace HS{
       
          
     };
-  } //namespace CLAS12
+    //  } //namespace CLAS12
 }//namespace HS
   
 #endif //
