@@ -1,7 +1,8 @@
+//Run with root $HSCODE/hsmva/LoadHSMVA.C+ RunTrainSignalID.C
+
 #include "GetTutorialFile.h"
 #include "TrainSignalID.h"
 
-using namespace HS::MVA;
 
 void RunTrainSignalID(){
  

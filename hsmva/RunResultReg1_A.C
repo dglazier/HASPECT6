@@ -1,3 +1,4 @@
+//run with root $HSCODE/hsmva/LoadHSMVA.C+ RunResultReg1_A.C
 //Based on $ROOTSYS/tutorials/tmva/TMVARegressionApplication.C
 //You can replace the default classifier name with any other you trained pervious (here defMLP)
 ////////////////////////////////////////////////////////////////////////////////
@@ -9,7 +10,6 @@
 #include "ResultInterface.h"
 #include "GetTutorialFile.h"
 
-using namespace HS::MVA;
 
 void RunResultReg1_A(){
 

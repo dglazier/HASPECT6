@@ -1,10 +1,9 @@
 //Recast version of $ROOTSYS/tutorials/tmva/TMVARegression.C
-//To run :  root  --TrainingInterface.C --TrainReg1.C RunTrainReg1.C
+//To run :  root  $HSCODE/hsmva/LoadHSMVA.C+ RunTrainReg1.C
 
 #include "TrainReg.h"
 #include "GetTutorialFile.h"
 
-using namespace HS::MVA;
 
 void RunTrainReg(){
  
