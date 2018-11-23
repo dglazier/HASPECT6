@@ -66,16 +66,16 @@ namespace HS{
       void SubtractStartTime(THSParticle* part0,THSParticle* part1,THSParticle* part2,THSParticle* part3,THSParticle* part4,THSParticle* part5,THSParticle* part6,THSParticle* part7,THSParticle* part8,THSParticle* part9);
     
     };
-  }//namespace CLASG8
+    //}//namespace CLASG8
 }//namespace HS
 
-inline Short_t HS::CLASG8::CLASTrigger::Sector(Int_t det){
+inline Short_t HS::CLASTrigger::Sector(Int_t det){
   //return sector of particle and increment counter
   if(det<0) {fEventSectors[8]++;return 0;} //Tagger
   fEventSectors[det]++;
   return det;
 }
-inline Short_t  HS::CLASG8::CLASTrigger::HitsInFD(){
+inline Short_t  HS::CLASTrigger::HitsInFD(){
   return fEventSectors[1]+			\
     fEventSectors[2]+				\
     fEventSectors[3]+				\
@@ -83,26 +83,26 @@ inline Short_t  HS::CLASG8::CLASTrigger::HitsInFD(){
     fEventSectors[5]+				\
     fEventSectors[6];
 }
-inline Short_t  HS::CLASG8::CLASTrigger::NFDSectorsHit(){
+inline Short_t  HS::CLASTrigger::NFDSectorsHit(){
   Short_t nsect=0;
   for(Int_t i=1;i<7;i++) //only the 6 FD sectors
     nsect+=(fEventSectors[i]!=0);
   return nsect;
 }
-inline void  HS::CLASG8::CLASTrigger::EventReset(){
-for(UInt_t i=0;i<fEventSectors.size();i++)
+inline void  HS::CLASTrigger::EventReset(){
+  for(UInt_t i=0;i<fEventSectors.size();i++)
   fEventSectors[i]=0;
 }
-Bool_t  HS::CLASG8::CLASTrigger::TrigStatus(Short_t status){
-//Use the EB status to tell what CAL,TOF fired
-
-return kTRUE; //everything else
+Bool_t  HS::CLASTrigger::TrigStatus(Short_t status){
+  //Use the EB status to tell what CAL,TOF fired
+  
+  return kTRUE; //everything else
 }
 
-void HS::CLASG8::CLASTrigger::ReadParticles(){
-EventReset();
-for(UInt_t i=0;i<fParticles->size();i++)
-  if(TrigStatus(fParticles->at(i).Status()))Sector(fParticles->at(i).Detector());
+void HS::CLASTrigger::ReadParticles(){
+  EventReset();
+  for(UInt_t i=0;i<fParticles->size();i++)
+    if(TrigStatus(fParticles->at(i).Status()))Sector(fParticles->at(i).Detector());
 }
 
 #endif
