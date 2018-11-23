@@ -1,0 +1,77 @@
+;; This buffer is for notes you don't want to save, and for Lisp evaluation.
+;; If you want to create a file, visit that file with C-x C-f,
+;; then enter the text in that file's own buffer.
+
+TreeCache = 50 MBytes
+N leaves  = 51
+ReadTotal = 806.091 MBytes
+ReadUnZip = 3550.93 MBytes
+ReadCalls = 9884
+ReadSize  =  81.555 KBytes/read
+Readahead = 256 KBytes
+Readextra =  0.00 per cent
+Real Time =  91.435 seconds
+CPU  Time =  86.620 seconds
+Disk Time =   3.462 seconds
+Disk IO   = 232.870 MBytes/s
+ReadUZRT  =  38.835 MBytes/s
+ReadUZCP  =  40.994 MBytes/s
+ReadRT    =   8.816 MBytes/s
+ReadCP    =   9.306 MBytes/s
+
+TreeCache = 50 MBytes
+N leaves  = 29
+ReadTotal = 1786.33 MBytes
+ReadUnZip = 4882.04 MBytes
+ReadCalls = 5169
+ReadSize  = 345.585 KBytes/read
+Readahead = 256 KBytes
+Readextra =  0.00 per cent
+Real Time = 858.692 seconds
+CPU  Time = 859.500 seconds
+Disk Time =   0.637 seconds
+Disk IO   = 2803.030 MBytes/s
+ReadUZRT  =   5.685 MBytes/s
+ReadUZCP  =   5.680 MBytes/s
+ReadRT    =   2.080 MBytes/s
+ReadCP    =   2.078 MBytes/s
+Done 7479677 events 
+
+
+MLP
+TreeCache = 50 MBytes
+N leaves  = 29
+ReadTotal = 1786.33 MBytes
+ReadUnZip = 4882.04 MBytes
+ReadCalls = 5169
+ReadSize  = 345.585 KBytes/read
+Readahead = 256 KBytes
+Readextra =  0.00 per cent
+Real Time = 204.473 seconds
+CPU  Time = 204.500 seconds
+Disk Time =   0.520 seconds
+Disk IO   = 3433.698 MBytes/s
+ReadUZRT  =  23.876 MBytes/s
+ReadUZCP  =  23.873 MBytes/s
+ReadRT    =   8.736 MBytes/s
+ReadCP    =   8.735 MBytes/s
+Done 7479677 events 
+
+MLP INC
+TreeCache = 50 MBytes
+N leaves  = 29
+ReadTotal = 1786.33 MBytes
+ReadUnZip = 4882.04 MBytes
+ReadCalls = 5169
+ReadSize  = 345.585 KBytes/read
+Readahead = 256 KBytes
+Readextra =  0.00 per cent
+Real Time = 453.673 seconds
+CPU  Time = 453.140 seconds
+Disk Time =   0.620 seconds
+Disk IO   = 2879.426 MBytes/s
+ReadUZRT  =  10.761 MBytes/s
+ReadUZCP  =  10.774 MBytes/s
+ReadRT    =   3.937 MBytes/s
+ReadCP    =   3.942 MBytes/s
+Done 7479677 events 
