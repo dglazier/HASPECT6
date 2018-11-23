@@ -32,7 +32,7 @@ void CLASSkeleton::DefineCLAS(){
   ContinueLineAfter("  fTrigger.SetRunInfo(fRunInfo);//once per run info");
   ContinueLineAfter("");
   ContinueLineAfter("");
-  ContinueLineAfter("  if(fRunInfo->Type()) fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment");
+  ContinueLineAfter("  //if(fRunInfo->fType) fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment");
 
   FindNextLineLike("UserPostTopo()");
   ContinueLineAfter("  //configure trigger for this event");
