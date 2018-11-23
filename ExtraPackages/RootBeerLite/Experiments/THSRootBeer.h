@@ -8,6 +8,8 @@
 #include "TRootBeer.h"
 #include "THSParticle.h"
 #include "DataManager.h"
+#include "RunInfo.h"
+#include "EventInfo.h"
 
 class THSRootBeer: public HS::DataManager{
 
@@ -26,6 +28,9 @@ class THSRootBeer: public HS::DataManager{
   Int_t fRun_number;
   TString fMyBanks;
   Bool_t fIsSim=kFALSE;
+
+  HS::RunInfo *fRunInfo=nullptr;
+  HS::EventInfo *fEventInfo=nullptr;
 
  public :
   virtual void MakeDetected();
