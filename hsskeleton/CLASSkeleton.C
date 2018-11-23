@@ -17,8 +17,7 @@ void CLASSkeleton::DeclareCLAS(){
     //ContinueLineAfter("  CLASDeltaTime fCuts; //For particle cuts");
 
     FindNextLineLike("//Initial state");
-    // ContinueLineAfter("  HSLorentzVector fBeam=HSLorentzVector(0,0,10.6,10.6);");
-   
+    
 }
 
 void CLASSkeleton::DefineCLAS(){
