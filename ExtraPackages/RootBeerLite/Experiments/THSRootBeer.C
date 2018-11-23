@@ -1,5 +1,5 @@
-#include "include/RootBeerUtil.h"	//gets everything for RootBeer scheme
-#include "include/TDST.h"
+#include "RootBeerUtil.h"	//gets everything for RootBeer scheme
+#include "TDST.h"
 //#include "RootBeerUtil.h"	//gets everything for RootBeer scheme
 //#include "TDST.h"
 #include "THSRootBeer.h"
@@ -22,13 +22,17 @@ Bool_t THSRootBeer::Init(TString filename,TString name){
   // start the server running
   fRootBeer->StartServer(); 
   // list the banks which will be served
-  fRootBeer->ListServedBanks();	
+  fRootBeer->ListServedBanks();
+
+  fRunInfo=new HS::RunInfo();
+  fBaseRunInfo=fRunInfo;
+	
   //Get run number from filename		       	
   TString tsinFile(filename);
   fRun_number=TString(tsinFile(tsinFile.Index(".root")-6,6)).Atoi();
-  fRunInfo->SetNRun(fRun_number);
-  if(fIsSim) fRunInfo->SetType(1);
-  else  fRunInfo->SetType(0);
+  fRunInfo->fNRun=fRun_number;
+  if(fIsSim) fRunInfo->fType=1;
+  else  fRunInfo->fType=0;
   return kTRUE;
 
 }
@@ -73,7 +77,7 @@ Bool_t THSRootBeer::ReadEvent(Long64_t entry){
  
 }
 void THSRootBeer::MakeParticle(Int_t ip){
-  THSParticle hsp;
+  HS::THSParticle hsp;
     //set the vertex
   hsp.SetPDGcode(EVNT[ip].ID);
   hsp.SetVertex(EVNT[ip].X,EVNT[ip].Y,EVNT[ip].Z);
