@@ -13,7 +13,6 @@ THSCLASg8::THSCLASg8() : THSRootBeer("EPIC:EVNT:ECPB:SCPB:TAGR:TGBI:DCPB:STPB:MC
   //for PM momentum and enrgy loss corrections
   
   fEventInfo=new HS::EventInfo();
-  //  fEventInfo.reset(new HS::EventInfo());
 }
 
 Bool_t THSCLASg8::Init(TString filename,TString name){
@@ -21,7 +20,7 @@ Bool_t THSCLASg8::Init(TString filename,TString name){
   //Load fake MC run number
   if(fAddGenerated){
     fRun_number = TString("054044").Atoi();
-    fRunInfo->SetType(1);
+    fRunInfo->fType=1;
    // LoadMCCor("/home/dglazier/Dropbox/g13Sim/MCCor/totalSept16.root");
   }
    //initialise eloss
@@ -31,7 +30,7 @@ Bool_t THSCLASg8::Init(TString filename,TString name){
   TString G8=gSystem->Getenv("G8");	
   TString tsinFile(filename);
   fRun_number=TString(tsinFile(tsinFile.Index(".root")-10,10)).Atoi();
-  fRunInfo->SetNRun(fRun_number);
+  fRunInfo->fNRun=fRun_number;
   cout<<"Analysing run "<<fRun_number<<endl;
   sprintf(edgeTable,"%s/poltabs/run_%d_pol_edges.dat",G8.Data(),fRun_number);
   if(fpolTableN[0]==0&&fpolTableN[1]==0)LoadPolarisations();
@@ -49,8 +48,7 @@ Bool_t THSCLASg8::ReadEvent(Long64_t entry){
   if(EVNT_NH>0){
     Double_t vl = 29.9792458;
     Double_t  starttime=SCPB[EVNT[0].SCstat-1].Time-(SCPB[EVNT[0].SCstat-1].Path)/vl/EVNT[0].Betta;//OR THIS COULD BE FROM THE HEVT STT
-    if(!fIsSim)fEventInfo->SetCJStartTime(starttime);
-   
+    if(!fIsSim)fEventInfo->fCJSTTime=starttime;
     //make particles for this event
     MakeDetected();
     //get tagged photons for this event
@@ -67,7 +65,7 @@ Bool_t THSCLASg8::ReadEvent(Long64_t entry){
      if((EVNT[ip].DCstat == 0)||((EVNT[ip].ECstat == 0)&&(EVNT[ip].SCstat == 0))) { continue;}
      if(EVNT[ip].Status == 0) { continue;}
      //recalcualte the mass2 for this event
-     if(EVNT[ip].Betta==0) continue;//need to chack effect of this
+     if(EVNT[ip].Betta==0) continue; //need to chack effect of this
 
      MakeParticle(ip);
   }
@@ -75,8 +73,8 @@ Bool_t THSCLASg8::ReadEvent(Long64_t entry){
 }
 void THSCLASg8::MakeParticle(Int_t ip){
  
-  THSParticle hsp;
-  hsp.SetPDGcode(EVNT[ip].Charge *1E4);
+  HS::THSParticle hsp;
+  hsp.SetPDGcode(EVNT[ip].Charge *1E6);
   hsp.SetVertex(EVNT[ip].X,EVNT[ip].Y,EVNT[ip].Z);
   //set the intitial Lorentz Vector
   hsp.SetXYZM(EVNT[ip].Pmom*EVNT[ip].Cx,
@@ -130,11 +128,11 @@ Bool_t THSCLASg8::MakeBeam(Float_t Tmid,Float_t Tcut){
   if(!TAGR_NH) return kFALSE;
   
   Double_t Egamma=0;
-  THSParticle* fHSgamma=0;
+  HS::THSParticle* fHSgamma=0;
   for(Int_t im=0;im<TAGR_NH;im++) {
   if((TAGR[im].TPHO)<40&&(TAGR[im].TPHO)>0){
       if((TAGR[im].STAT!=15)&&(TAGR[im].STAT!=7)) continue; //check good photon 	
-      THSParticle hsp(-22);
+      HS::THSParticle hsp(-22);
       Egamma=TAGR[im].ERG;
       hsp.SetXYZT(0,0,Egamma,Egamma);
       hsp.SetTime(TAGR[im].TPHO);//TPHO=TRF+zcentre/c
@@ -164,7 +162,7 @@ void THSCLASg8::MakeTruth(){
 }
 void THSCLASg8::MakeTruthParticle(Int_t ip){
  
-  THSParticle hsp;	
+  HS::THSParticle hsp;	
   hsp.SetPDGcode(MCTK[0][ip].id);
   hsp.SetXYZM(MCTK[0][ip].cx*MCTK[0][ip].pmom,MCTK[0][ip].cy*MCTK[0][ip].pmom,MCTK[0][ip].cz*MCTK[0][ip].pmom,MCTK[0][ip].mass);
   hsp.SetVertex(MCVX[ip].x,MCVX[ip].y,MCVX[ip].z);
