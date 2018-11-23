@@ -12,7 +12,7 @@
 //Note Sim Beam does not need +20
 
 using namespace HS;
-using namespace HS::CLASG8;
+//using namespace HS::CLASG8;
 
 ////////////////////////////////////////////////////////////////////////
 ///subtract the event startime from the given particle
