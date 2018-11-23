@@ -111,7 +111,7 @@ void FSSkeleton::DeclareDetected(){
     TString sparticle=fFinals->At(io)->GetName();
     TString pname=TString(sparticle(0,sparticle.First(":")));
     if(pname==TString("Beam")){ //hack for tagged photons!
-      ContinueLineAfter(Form("  HS::THSParticle fBeam=THSParticle(-22);"));
+      ContinueLineAfter(Form("  HS::THSParticle fBeam=HS::THSParticle(-22);"));
     }
     else {
       ContinueLineAfter(Form("  HS::THSParticle f%s=HS::THSParticle(\"%s\");",TString(sparticle(0,sparticle.First(":"))).Data(),TString(sparticle(sparticle.First(":")+1,sparticle.Sizeof())).Data()));
