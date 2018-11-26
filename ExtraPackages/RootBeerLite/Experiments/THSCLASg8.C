@@ -13,6 +13,7 @@ THSCLASg8::THSCLASg8() : THSRootBeer("EPIC:EVNT:ECPB:SCPB:TAGR:TGBI:DCPB:STPB:MC
   //for PM momentum and enrgy loss corrections
   
   fEventInfo=new HS::EventInfo();
+  fBaseEventInfo=fEventInfo;
 }
 
 Bool_t THSCLASg8::Init(TString filename,TString name){
@@ -74,7 +75,7 @@ Bool_t THSCLASg8::ReadEvent(Long64_t entry){
 void THSCLASg8::MakeParticle(Int_t ip){
  
   HS::THSParticle hsp;
-  hsp.SetPDGcode(EVNT[ip].Charge *1E6);
+  hsp.SetPDGcode(EVNT[ip].Charge *1E4);
   hsp.SetVertex(EVNT[ip].X,EVNT[ip].Y,EVNT[ip].Z);
   //set the intitial Lorentz Vector
   hsp.SetXYZM(EVNT[ip].Pmom*EVNT[ip].Cx,
