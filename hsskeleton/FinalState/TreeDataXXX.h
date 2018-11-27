@@ -13,6 +13,6 @@ class TreeDataXXX: public HS::TreeData{
   void Branches(TTree* tree) override{
     TreeData::Branches(tree,Class()->GetListOfDataMembers());
   }
-  ClassDef(TreeDataXXX,1);
+  ClassDefOverride(TreeDataXXX,1);
 };
 #endif
