@@ -190,7 +190,7 @@ namespace HS{
       Double_t ResP(){return fP4.P()-fTruthP4.P();};
       Double_t ResE(){return fP4.E()-fTruthP4.E();};
       Double_t ResAngle(){return ROOT::Math::VectorUtil::Angle(fP4,fTruthP4);};
-      ClassDef(HS::THSParticle,5); //class THSParticle
+      ClassDef(THSParticle,6); //class THSParticle
     };
 }//namespace HS
 

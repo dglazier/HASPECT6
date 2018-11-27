@@ -216,6 +216,7 @@ Bool_t CLAS12::HipoReader::ReadEvent(Long64_t entry){
     }
     fEntry++;
   }
+  // return kTRUE;
   
   if(fEntry%100000==0) cout<<fEntry<<endl;
   fParticles.clear();//reset fParticles
@@ -244,9 +245,9 @@ Bool_t CLAS12::HipoReader::ReadEvent(Long64_t entry){
     Int_t ip=0;
     fParticles.reserve(Nin);
     //fPIDs.reserve(Nin);
+    THSParticle particle;
     while(fPBank->NextEntry()){
-      THSParticle particle;
-      // particle.Clear();
+      particle.Clear();
       particle.SetXYZM(fPx->Val(),fPy->Val(),fPz->Val(),0);
       particle.SetVertex(fVx->Val(),fVy->Val(),fVz->Val());
       //if(fBeta->Val())particle->SetMeasMass(particle->P4p()->Rho()/fBeta->Val());
