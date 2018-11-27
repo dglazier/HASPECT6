@@ -52,6 +52,7 @@ void FinalTemp::FinalStateOutTree(TTree* tree){
   tree->Branch("Correct",&fCorrect,"Correct/I");
   tree->Branch("NPerm",&fNPerm,"NPerm/I");
   tree->Branch("NDet",&fNDet,"NDet/I");
+  tree->Branch("UID",&fUID,"UID/D");
 
   //make branches with TreeData object
   TD.Branches(tree);
