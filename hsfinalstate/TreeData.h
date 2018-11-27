@@ -14,6 +14,7 @@
 #include <TTree.h>
 #include <TString.h>
 #include <TObject.h>
+#include <TList.h>
 
 namespace HS{
   
@@ -24,12 +25,10 @@ namespace HS{
     TreeData(){fName=ClassName();}
     virtual ~TreeData()=default;
     
-    void Branches(TTree* tree,TreeData* data){
-      tree->Branch(data->GetName(),data);
-    }
+    void Branches(TTree* tree,TList* dmList);
+    virtual void Branches(TTree* tree)=0;
 
-    //TString GetName() override {return fName;}
-    
+     
   private:
     TString fName="TreeData";//!
 

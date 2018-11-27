@@ -54,7 +54,7 @@ void FinalTemp::FinalStateOutTree(TTree* tree){
   tree->Branch("NDet",&fNDet,"NDet/I");
 
   //make branches with TreeData object
-  TD.Branches(tree,&TD);
+  TD.Branches(tree);
 }
 //////////////////////////////////////////////////
 /// Define conditions for track to be considered

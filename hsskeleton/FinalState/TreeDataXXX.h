@@ -7,7 +7,12 @@ class TreeDataXXX: public HS::TreeData{
   //data member for tree branches below here
   Double_t MissMass=0;
   Double_t MissMass2=0;
-  
+
+
+  //Function required to set tree branches
+  void Branches(TTree* tree) override{
+    TreeData::Branches(tree,Class()->GetListOfDataMembers());
+  }
   ClassDef(TreeDataXXX,1);
 };
 #endif
