@@ -11,24 +11,24 @@
 
 #include "TDatabasePDG.h"
 #include "K2.h"
-#include "KinematicsK2.h"
-#include "ToposK2.h"
 #include <algorithm>
 
 using namespace HS;
+#include "KinematicsK2.h"
+#include "ToposK2.h"
 
 K2::K2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   SetVerbose(1);
-  //  CheckCombi(); //comment out to remove messages
+  // CheckCombi(); //comment out to remove messages
   
   //Set final state detected particles
   //AddParticle(particle,true/false you want to write in final vector, genID for linking to generated truth value)
   //Note if particle is added to final with a valid genID it will be used
   //to determine the correct permutation of the simulated event
   AddParticle("Beam",&fBeam,kTRUE,-1);
-  AddParticle("Proton",&fProton,kTRUE,0);
-  AddParticle("Kp",&fKp,kTRUE,1);
-  AddParticle("Km",&fKm,kTRUE,2);
+  AddParticle("Proton",&fProton,kTRUE,-1);
+  AddParticle("Kp",&fKp,kTRUE,-1);
+  AddParticle("Km",&fKm,kTRUE,-1);
 
   //Set final state parents
   
@@ -55,6 +55,7 @@ K2::K2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
              fPID,fINCLUSIVE);
 
   
+  
   FinalState::InitFS();
 }
 
@@ -65,8 +66,8 @@ void K2::FileStart(){
   fTrigger.SetEventInfo(fEventInfo);//once per event info
   fTrigger.SetRunInfo(fRunInfo);//once per run info
 
-  //fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment
-  //SetAccurateTruth(5); //rec angle within 5deg of sim truth 
+
+  //if(fRunInfo->fType) fTrigger.SetSim();//Should get this from RunInfo but not correct in EB at the moment
   
 }
 ///Will be called after the Topo_ functions
@@ -84,20 +85,17 @@ void K2::FinalStateOutTree(TTree* tree){
   tree->Branch("Correct",&fCorrect,"Correct/I");
   tree->Branch("NPerm",&fNPerm,"NPerm/I");
   tree->Branch("NDet",&fNDet,"NDet/I");
+  tree->Branch("UID",&fUID,"UID/D");
 
   //make branches with TreeData object
-  TD.Branches(tree,&TD);
+  TD.Branches(tree);
 }
 //////////////////////////////////////////////////
 /// Define conditions for track to be considered
 /// good in event. Adding conditions on junk tracks
 ///  can greatly reduce combitorials etc.
 /// kFALSE=> track ignored completely
-Bool_t K2::CheckParticle(THSParticle* part){
-  //Can place some cuts on tracks we do not like...
-  //These will be completly ignored
-  //if(part->Time()==0)return kFALSE;   //Track needs time
-
+Bool_t K2::CheckParticle(HS::THSParticle* part){
   return kTRUE;
 }
 void K2::Init_Iter0(){
@@ -124,3 +122,7 @@ void K2::Init_Iter3(){
 
    AutoIter(); //Let finalstate try and work out the iterattor for you, you can remove this if you want to do it yourself
 }
+  //Can place some cuts on tracks we do not like...
+  //These will be completly ignored
+  //if(part->Time()==0)return kFALSE;   //Track needs time
+

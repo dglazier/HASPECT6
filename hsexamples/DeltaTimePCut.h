@@ -1,7 +1,7 @@
 
 #include "Cuts.h"
 
-class DeltaTimePCut : public Cuts{
+class DeltaTimePCut : public HS::Cuts{
   
  public:
  //Define consructor taking cut value arguments
@@ -9,7 +9,7 @@ class DeltaTimePCut : public Cuts{
     fTimeCut=cutT; fPCut=cutP;
     }
 //Define function to test cut
-  Bool_t ParticleCut(THSParticle* part) const{
+  Bool_t ParticleCut(HS::THSParticle* part) const{
     if(TMath::Abs(part->DeltaTime())<fTimeCut
         &&TMath::Abs(part->P4p()->P())<fPCut) return kTRUE;
     return kFALSE;

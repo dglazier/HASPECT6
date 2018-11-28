@@ -34,7 +34,13 @@ class TreeDataK2: public HS::TreeData{
 
   Double_t Pol=0;
   Int_t PolState=0;
+  Float_t dummy=1;
+  Double_t dummy2=2;
+
+  void Branches(TTree* tree) override{
+    TreeData::Branches(tree,Class()->GetListOfDataMembers());
+  }
   
-  ClassDef(TreeDataK2,1);
+  ClassDefOverride(TreeDataK2,1);
 };
 #endif

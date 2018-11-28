@@ -19,7 +19,7 @@ class K2 : public HS::FinalState{
 
 
   void FileStart() override;
-  Bool_t  CheckParticle(THSParticle* part) override;
+  Bool_t  CheckParticle(HS::THSParticle* part) override;
   void FinalStateOutTree(TTree* tree) override;
   void Kinematics() override;
   void UserPostTopo() override;
@@ -54,13 +54,13 @@ class K2 : public HS::FinalState{
   HS::CLASTrigger fTrigger;//For CLAS trigger info
 
   //Initial state
-  HSLorentzVector fTarget=HSLorentzVector(0,0,0,0.938272);
+  HS::HSLorentzVector fTarget=HS::HSLorentzVector(0,0,0,0.938272);
 
   //Final Particles Detected
-  THSParticle fBeam=THSParticle(-22);
-  THSParticle fProton=THSParticle("proton");
-  THSParticle fKp=THSParticle("K+");
-  THSParticle fKm=THSParticle("K-");
+  HS::THSParticle fBeam=HS::THSParticle(-22);
+  HS::THSParticle fProton=HS::THSParticle("proton");
+  HS::THSParticle fKp=HS::THSParticle("K+");
+  HS::THSParticle fKm=HS::THSParticle("K-");
  
   //Final Parents
  

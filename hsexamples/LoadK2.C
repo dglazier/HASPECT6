@@ -1,8 +1,6 @@
-#include <TROOT.h>
-
-void LoadK2(){
-  //HSCODE=gSystem->Getenv("HSCODE");
-gROOT->ProcessLine(".x $HSCODE/hsfinalstate/LoadFinalState.C+");
+{
+gSystem->Setenv("HSFINAL","1");
+gROOT->ProcessLine(".x $HSEXP/LoadExperiment.C+");
 /////////////////////////////////////////////////////////////
 gROOT->LoadMacro("DeltaTimePCut.C+"); //ADD MY NEW CUT HERE
 ////////////////////////////////////////////////////////////
