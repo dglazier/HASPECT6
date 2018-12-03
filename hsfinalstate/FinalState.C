@@ -430,8 +430,9 @@ Bool_t HS::FinalState::WorkOnEvent(){
   
   //Check if assigned vectors agree with true generated
   //Simulation only
-  CheckTruth();
-
+  if(frGenParts)
+    if(frGenParts->size())
+      CheckTruth();
   //Check for any user loaded post process action
   //e.g filling tree, cutting on Kinematics
   for(const auto& act : fPostWorkAction)
@@ -490,8 +491,6 @@ void HS::FinalState::MatchWithGen(THSParticle *part){
 ///Loop through generated and record momentum distance 
 ///if the nearest generated track is the same as the TRUTH return true
 Bool_t HS::FinalState::IsCorrectTruth(THSParticle *part){
-  if(!frGenParts) return kFALSE;
-  if(!frGenParts->size())return kFALSE;
   UInt_t match=0;
   Double_t mindist=1E10;
   for(UInt_t ip=0;ip<frGenParts->size();ip++){

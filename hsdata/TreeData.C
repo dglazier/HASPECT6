@@ -21,12 +21,15 @@ void HS::TreeData::Branches(TTree* tree,TList* dmList){
   for(Int_t i=0;i<dmList->GetEntries();i++){
     auto member=dynamic_cast<TDataMember*> (dmList->At(i));
     auto moffset = member->GetOffset()/sizeOfInt;
-    auto mtype=member->GetFullTypeName();
-    TString mname=member->GetName();
+    auto mtype=TString(member->GetFullTypeName());
+    TString mname=fName+member->GetName();
     if(typelabel.find(mtype)==typelabel.end()){
-      std::cout<<" HS::TreeData::Branches(TTree* tree) Type not defined "<<mname<<" "<<mtype<<" branch will be omitted " <<endl;
       continue;
     }
+    
+    if(fForBranch.size()) //if list of allowed branches 
+      if(std::find(fForBranch.begin(),fForBranch.end(),mname)==fForBranch.end())
+	continue;  //if not in list don't make branch
     //make the branch, giving the address of this member
     tree->Branch(mname,(((int*)&(*this))+moffset),mname+typelabel[mtype]);
     

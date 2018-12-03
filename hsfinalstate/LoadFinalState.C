@@ -35,7 +35,7 @@ void LoadFinalState(TString Selection=""){
     gROOT->LoadMacro("ResultInterface.C+");
   
   //Now finalsstate classes
-  vector<TString > FSClasses={"HSKinematics","Cuts","Combitorial","ParticleIter","Topology","FinalState","FiledTree","TreeData","TopoActionManager","ParticleCuts","VarsParticle","TreePrepParticle","MVASignalID","ParticleCutsManager","TreePrepManager","MVASignalIDManager"};
+  vector<TString > FSClasses={"HSKinematics","Cuts","Combitorial","ParticleIter","Topology","FinalState","FiledTree","TopoActionManager","ParticleCuts","TreeParticleData","MVASignalID","ParticleCutsManager","ParticleDataManager","MVASignalIDManager"};
 
   for(auto const& name : FSClasses){
     if(Selection!=TString())

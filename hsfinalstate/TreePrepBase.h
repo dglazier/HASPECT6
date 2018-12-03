@@ -26,8 +26,8 @@ namespace HS{
     
   public:
     TreePrepBase(TString tname,TString fname):FiledTree(tname,fname) {};
-    TreePrepBase(){};
-    virtual ~TreePrepBase(){}
+    TreePrepBase()=default;
+    // virtual ~TreePrepBase(){}
  
     virtual void SetBranches()=0; //branches of tree to variabels in derived class
     virtual void Fill()=0;    //Fill fVars data vector before TTree::Fill

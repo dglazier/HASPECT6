@@ -1,55 +1,45 @@
-// Author: Michael Williams 2018 
-// Modified: Derek Glazier 2018
+////////////////////////////////////////////////////////////////
+///
+///Class:               MVASignalID
+///Description:
+///         Class to hold ParticleData for each topology
+///         and link it to MVA ResultByRefLink to evaluate classifier
+///         Each detected particle in the topolgy adds a
+///         ParticleData object into fPData vector
+///         MVASignalIDManager holds a vector of MVASignalIDs
+///         with an entry for each topology
 
-/**********************************************************************************
-* Project: HSFinalState 			                                 *
-* Package:                                                                      *
-* Class  : MVASignalID                                                            *
-*                                                                                *
-* Description:                                                                   *
-*                                                                                * 
-*     Tree in THSFinalState                                                      *
-*     Given a THSParticle it will create default branches                        *
-*     from datamembers of the THSParticle class                                  *
-*     For each combitorial event it will then fill the tree                      *
-*                                                                                *
-**********************************************************************************/
 #ifndef HSFS_MVASIGNALID_h
 #define HSFS_MVASIGNALID_h
 
 #include "THSParticle.h"
-#include "TreePrepBase.h"
-#include "VarsParticle.h"
+#include "TreeParticleData.h"
 #include "ResultInterface.h"
 
 namespace HS{
 
 
-  class MVASignalID : public VarsParticle {
+  class MVASignalID : public TreeParticleData {
 
   public:
-    //    MVASignalID(TString tname,TString fname):TreePrepBase(tname,fname){};
-    MVASignalID(){};
-    virtual ~MVASignalID()=default;
- 
     void SetVarLinks();
     Float_t  Eval(){
-      VarsParticle::FillVars();
+      FillVars();
       return fResult.get()->Eval();
-    };
-  
- 
+    }
+    
     void CreateResult(TString methname,TString dirname);
 
-private:
- 
-
+  private:
     unique_ptr<HS::MVA::ResultByRefLink> fResult;
-
+    
     HS::MVA::mapNameFloat fParticleLinks;
 
-  };//class MVASignalID
+  }; //class MVASignalID
 
-};//namespace HSFinalState
+}//namespace HS
 
-#endif //
+
+#endif
+
+ 

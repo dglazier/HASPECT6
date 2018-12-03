@@ -34,7 +34,7 @@ namespace HS{
       return kFALSE;
     }
 
-    void ConfigureResults(TString mvaName,FinalState* fs,vecNames defList={"P","Th","Phi","Time","Edep","DeltaE"});
+    void ConfigureResults(TString mvaName,FinalState* fs,vecNames defList={});
 
     //this will now have ownership of signalID
     void Register( MVASignalIDPtr sigid ){fMVASignalIDs.push_back(std::move(sigid));};
