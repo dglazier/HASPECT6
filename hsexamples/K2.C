@@ -75,7 +75,7 @@ void K2::FileStart(){
 void K2::UserPostTopo() {
   //configure trigger for this event
   fTrigger.ReadParticles();
-}
+ }
 void K2::FinalStateOutTree(TTree* tree){
   HS::FinalState::fFinalTree=tree;
   //tree->Branch("Final",&fFinal);//If you want to save the final THSParticles
