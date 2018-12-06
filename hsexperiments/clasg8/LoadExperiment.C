@@ -28,7 +28,7 @@ void LoadExperiment(){
   gROOT->ProcessLine(".x $HSCODE/hsdata/LoadDataManager.C+");
  
 
-  vector<TString > DataClasses={"EventInfo","RunInfo"};
+  vector<TString > DataClasses={"EventInfo","RunInfo","ParticleData"};
   
   for(auto const& name : DataClasses){
     cout<<"12121212121212121212121212 "<<name<<endl;
