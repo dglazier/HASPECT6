@@ -26,9 +26,9 @@ K2::K2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   //Note if particle is added to final with a valid genID it will be used
   //to determine the correct permutation of the simulated event
   AddParticle("Beam",&fBeam,kTRUE,-1);
-  AddParticle("Proton",&fProton,kTRUE,-1);
-  AddParticle("Kp",&fKp,kTRUE,-1);
-  AddParticle("Km",&fKm,kTRUE,-1);
+  AddParticle("Proton",&fProton,kTRUE,0);
+  AddParticle("Kp",&fKp,kTRUE,1);
+  AddParticle("Km",&fKm,kTRUE,2);
 
   //Set final state parents
   
