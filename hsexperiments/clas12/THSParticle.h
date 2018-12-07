@@ -49,7 +49,7 @@ namespace HS{
       Double32_t fEdep=0;
       Double32_t fDeltaE=0;
       Double32_t fPreE=0;
-      std::vector<Double32_t> fHypPList={0,0,0,0,0,0}; //List of corrected momenta for different species hypothesis
+      //std::vector<Double32_t> fHypPList={0,0,0,0,0,0}; //List of corrected momenta for different species hypothesis
 
       Float_t fTrChi2=0;
       Int_t fNPhot=0;
@@ -59,7 +59,7 @@ namespace HS{
       Short_t fStatus=0;
       Short_t fFiducialCut=1;
       UShort_t fHypIndex=0;//!
-      std::map<Long64_t,Int_t> gHSParticleHypMap{{11*11,1},{211*211,2},{321*321,3},{2212*2212,4},{2112*2112,4},{22*22,1},{13*13,5}};//!
+      //std::map<Long64_t,Int_t> gHSParticleHypMap{{11*11,1},{211*211,2},{321*321,3},{2212*2212,4},{2112*2112,4},{22*22,1},{13*13,5}};//!
  
       //Allow space for covariance matrix
       //The vector will need decoded into the TMatrix for calculations
@@ -84,7 +84,7 @@ namespace HS{
 	  fPDGMass = part->Mass();}
 	else fPDGMass=0;
 	//Get Hypothesis index, will by =6 if not predefined
-	fHypIndex=gHSParticleHypMap.find(code*code)->second;
+	//fHypIndex=gHSParticleHypMap.find(code*code)->second;
       }
       void SetP4(HSLorentzVector v){fP4=v;}
       void FixP4(HSLorentzVector v){fP4=v;TakePDGMass();}
@@ -110,15 +110,15 @@ namespace HS{
       void SetFidCut(Int_t fc){fFiducialCut=fc;}
       void SetMeasMass(Double_t mass){fMeasMass=mass;};
 
-      void SetHypPElGam(Double_t pp){fHypPList[1]=pp;};
-      void SetHypPPi(Double_t pp){fHypPList[2]=pp;};
-      void SetHypPK(Double_t pp){fHypPList[3]=pp;};
-      void SetHypPNuc(Double_t pp){fHypPList[4]=pp;};
-      void SetHypPMu(Double_t pp){fHypPList[5]=pp;};
-      void SetHypPMisc(Double_t pp){fHypPList[0]=pp;};
+      /* void SetHypPElGam(Double_t pp){fHypPList[1]=pp;}; */
+      /* void SetHypPPi(Double_t pp){fHypPList[2]=pp;}; */
+      /* void SetHypPK(Double_t pp){fHypPList[3]=pp;}; */
+      /* void SetHypPNuc(Double_t pp){fHypPList[4]=pp;}; */
+      /* void SetHypPMu(Double_t pp){fHypPList[5]=pp;}; */
+      /* void SetHypPMisc(Double_t pp){fHypPList[0]=pp;}; */
 
       void TakePDGMass(){fMeasMass=fP4.M();SetVectPDG(fP4);}; //Preserves momentum
-      void TakeCorrectedP(){if(fHypIndex==gHSParticleHypMap.size()) return; Double_t rho0=fP4.P();Double_t rho=fHypPList[fHypIndex];if(!rho) return; rho/=rho0;fP4.SetXYZT(fP4.X()*rho,fP4.Y()*rho,fP4.Z()*rho,fP4.E());SetVectPDG(fP4);};
+      //void TakeCorrectedP(){if(fHypIndex==gHSParticleHypMap.size()) return; Double_t rho0=fP4.P();Double_t rho=fHypPList[fHypIndex];if(!rho) return; rho/=rho0;fP4.SetXYZT(fP4.X()*rho,fP4.Y()*rho,fP4.Z()*rho,fP4.E());SetVectPDG(fP4);};
       void TakePDGMassFromE(){Double_t rho0=fP4.P();Double_t rho=sqrt(fP4.E()*fP4.E()-fPDGMass*fPDGMass);rho/=rho0;fP4.SetXYZT(fP4.X()*rho,fP4.Y()*rho,fP4.Z()*rho,fP4.E());}; //preserves energy
       // void CreateTruth(){fTruth=new THSParticle();};
       void SetTruth(THSParticle* part){fTruthP4=part->P4();fTruthV=part->Vertex();fTruthPDG=part->PDG();};
@@ -218,8 +218,8 @@ inline void HS::THSParticle::Clear(){
   fEdep=0;
   fDeltaE=0;
   fPreE=0;
-  for(UInt_t ip=0;ip<5;ip++)
-    fHypPList.at(ip)=0;
+  /* for(UInt_t ip=0;ip<5;ip++) */
+  /*   fHypPList.at(ip)=0; */
   fTrChi2=0;
   fNPhot=0;
   fPDGCode=0;           //PDG number
@@ -238,8 +238,8 @@ inline void HS::THSParticle::MinorClear(){
   fEdep=0;
   fDeltaE=0;
   fPreE=0;
-  for(UInt_t ip=0;ip<5;ip++)
-    fHypPList.at(ip)=0;
+  /* for(UInt_t ip=0;ip<5;ip++) */
+  /*   fHypPList.at(ip)=0; */
   fTrChi2=0;
   fNPhot=0;
   fDetector=0; //detector code

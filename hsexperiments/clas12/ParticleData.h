@@ -29,8 +29,11 @@ namespace HS{
     Float_t Time=0;
     Float_t Edep=0;
     Float_t DeltaE=0;
+    Float_t PreE=0;
+    Float_t NPhot=0;
     Float_t Vz=0;
-    /////////////////////////////////////////////////
+    Float_t TrChi2=0;
+   /////////////////////////////////////////////////
  
     ParticleData()=default;
     ParticleData(TString name,HS::THSParticle* p)
@@ -68,7 +71,10 @@ namespace HS{
     Time  =  fParticle->DeltaTime();
     Edep  =  fParticle->Edep();
     DeltaE=  fParticle->DeltaE();
+    PreE  =  fParticle->PreE();
+    NPhot =  fParticle->NPhot();
     Vz    =  fParticle->Vertex().Z();
+    TrChi2=  fParticle->TrChi2();
 
   }
 }//namespace HS
