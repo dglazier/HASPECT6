@@ -1,0 +1,43 @@
+
+#ifndef HS_HIPOTOOLSREADER_h
+#define HS_HIPOTOOLSREADER_h
+
+#include <iostream>
+#include <fstream>
+
+#include "THSParticle.h"
+#include "DataManager.h"
+#include "EventInfo.h"
+#include "RunInfo.h"
+#include "reader.h"
+#include "hallB_event.h"
+
+namespace HS{
+  namespace CLAS12{
+
+    class HipoToolsReader: public DataManager{
+      
+    public :
+      HipoToolsReader();
+      virtual ~HipoToolsReader()=default;
+      
+      Bool_t Init(TString filename,TString name="") override;
+      Bool_t ReadEvent(Long64_t entry=0) override;
+      
+      const hipo::reader* GetHipoReader()const {return &fReader;}
+    private :
+      
+      //clas12tools
+      hipo::reader  fReader;
+      unique_ptr<clas12::hallB_event> fEvent;
+
+      //HS data objects
+      HS::THSParticle fParticle;
+      CLAS12::EventInfo *fEventInfo=nullptr;
+      CLAS12::RunInfo *fRunInfo=nullptr;
+    
+    
+    };//	class HipoToolsReader
+  }//namespace CLAS12
+}//namespace HS
+#endif //
