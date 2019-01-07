@@ -94,7 +94,8 @@ namespace HS{
       Bool_t FSProcess();
       virtual void UserProcess();
       virtual void ProcessData(const Long64_t Nev=-1);
-  
+      void FSGenProcess();
+      
       virtual void MatchWithGen(THSParticle* part);  
       virtual Bool_t IsCorrectTruth(THSParticle *part);
       virtual void FinalStateOutTree(TTree* tree){tree->Branch("Final",&fFinal);};

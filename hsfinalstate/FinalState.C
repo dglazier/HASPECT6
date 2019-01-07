@@ -357,6 +357,11 @@ void HS::FinalState::ProcessEvent(){
   //Process one input event
   InitEvent();
   if(frDetParts)fNDet=frDetParts->size();
+
+  if(fIsGenerated){
+    FSGenProcess(); //If only analysing generated events
+    return;
+  }
   Int_t ntopo=0;
   while(FindTopology()){ //Find all valid topologies
     //Init particle vectors, this should only be done once for each event
@@ -366,7 +371,6 @@ void HS::FinalState::ProcessEvent(){
     if(fCurrTopo) //in case >MaxParticle
       while(FSProcess()); //Process all combitorials
   }
-  if(fIsGenerated) FSProcess(); //If only analysing generated events
   
   FinaliseEvent();
 }
@@ -396,6 +400,11 @@ Bool_t HS::FinalState::FSProcess(){
   }
   return kFALSE;
 }
+void HS::FinalState::FSGenProcess(){
+  InitGenerated();
+  Kinematics(); //variable calculations
+  UserProcess(); //could histogram
+}
 
 void HS::FinalState::UserProcess(){
   if(fFinalTree) fFinalTree->Fill(); //fill for first combination
@@ -408,12 +417,10 @@ Bool_t HS::FinalState::WorkOnEvent(){
   HS::FinalState::fCorrect=0; //Correct permutation? used for simulation only
   //If generated MC events
   InitGenerated();
-  if(!fIsGenerated){
     //Look for reconstructed events
     //if reconstructed Find the detected particles in this event
     //Found a topology execute its Topo function
-    fCurrTopo->Exec();
-   }
+  fCurrTopo->Exec();
   if(!fGoodEvent) return kTRUE;
   //User post topo function
   UserPostTopo();
@@ -860,13 +867,13 @@ void HS::FinalState::SetDataManager(shared_ptr<DataManager> dm){
   SetEventInfo(dm->GetEventInfo());
   SetRunInfo(dm->GetRunInfo());
 
-  if(!fEventInfo){
-    cout<<"no event info "<<dm->GetEventInfo()<<" "<<dm->GetRunInfo()<<endl;
-    exit(1);
-    }
   if(dynamic_pointer_cast<LundReader>(dm)){//LUND reader=>only Generated
     SetGenerated();
   }
+  else if(!fEventInfo){
+    cout<<"no event info "<<dm->GetEventInfo()<<" "<<dm->GetRunInfo()<<endl;
+    exit(1);
+    }
   if(fIsGenerated)
     fData->SetWriteGenBranch("Generated");
   
