@@ -1,32 +1,30 @@
-//root --hsdata --hsfinal=THSXXX RunFSHipoXXX.C
+//root  LoadXXX.C RunFSHipoXXX.C
 //You need to replace XXX with your final state class name
 {
   //Create FinalState
-  THSXXX* fs=new THSXXX();
+  XXX fs();
    // fs->SetGenerated(); //just analyse gemc generated branch
+
+  //create ouput tree
+   fs.CreateFinalTree("FinalTree","OUTPUT.root");
+   
   //create datamanager
-  THSHipoTrigger* dm=new THSHipoTrigger();
+  auto dm=std::make_shared<HipoToolsReader>();
   TChain chain("HSParticles");
   chain.Add("/indir/out_*hipo");
   dm->InitChain(&chain);
+  
   //connect Project to HSParticles
   fs->SetDataManager(dm);
   Int_t counter=0;
   
-  //create ouput tree
-  TFile* outfile=new TFile("OUTPUT.root","recreate");
-  TTree* outtree=new TTree("FinalTree","output tree");
-  fs->FinalStateOutTree(outtree); //connect ouput tree to project branches
   
   gBenchmark->Start("timer");
   
-  while(dm->ReadEvent()){//loop over events
-    fs->ProcessEvent();
-  }
+  fs.ProcessData();
+  
   gBenchmark->Stop("timer");
   gBenchmark->Print("timer");
   
-  outfile->cd();
-  outtree->Write();
-  delete outfile;
+  fs.EndAndWrite();
 }

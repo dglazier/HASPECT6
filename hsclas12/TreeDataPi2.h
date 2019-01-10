@@ -1,6 +1,7 @@
 #ifndef TREEDATAPi2_h
 #define TREEDATAPi2_h 
 #include "TreeData.h"
+#include "FiledTree.h"
 
 class TreeDataPi2: public HS::TreeData{
  public:
@@ -8,8 +9,6 @@ class TreeDataPi2: public HS::TreeData{
   Double_t MissMass=0;
   Double_t MissMass2=0;
   
-  Double_t TrigNSector=0;
-  Double_t TrigNSectorRoads=0;
 
   Double_t MesonMass=0;
   Double_t DppMass=0;
@@ -36,7 +35,10 @@ class TreeDataPi2: public HS::TreeData{
   Double_t PimP=0;
   Double_t PimTime=0;
 
-
-  ClassDef(TreeDataPi2,1);
+  void Branches(HS::ttree_ptr tree) final{
+    TreeData::Branches(tree,Class()->GetListOfDataMembers());
+  }
+ 
+  ClassDefOverride(TreeDataPi2,1);
 };
 #endif

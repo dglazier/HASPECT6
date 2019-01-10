@@ -13,7 +13,6 @@
 *     define and control the variables                                           *
 **********************************************************************************/
 #include "ParticleDataManager.h"
-#include "TreePrepParticle.h"
 #include "Topology.h"
 using namespace HS;
 
@@ -49,6 +48,10 @@ void ParticleDataManager::ConfigureTreeParticles(FinalState* fs,vecNames defList
 }
 
 
+void ParticleDataManager::End(){
+  for(auto& prep : fPreps) 
+    prep->SaveTree();
+}
 Bool_t ParticleDataManager::IsEnough(){
   Bool_t is_enough=kTRUE;
   for(auto& prep : fPreps) 

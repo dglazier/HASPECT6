@@ -12,6 +12,7 @@
 #include <climits>
 
 
+#include "FiledTree.h"
 #include "THSParticle.h"
 #include "ParticleIter.h"
 #include "HSKinematics.h"
@@ -83,8 +84,8 @@ namespace HS{
 
       void SetDataManager(shared_ptr<DataManager> dm);
 
-      void RegisterPostWorkAction(TopoActionManager* tam){fPostWorkAction.push_back(tam);}
-      void RegisterPostTopoAction(TopoActionManager* tam){fPostTopoAction.push_back(tam);}
+      void RegisterPostWorkAction(topoActMan_ptr tam){fPostWorkAction.push_back(std::move(tam));}
+      void RegisterPostTopoAction(topoActMan_ptr tam){fPostTopoAction.push_back(std::move(tam));}
 
       void Finish();
       Bool_t IsGoodEvent(){return fGoodEvent;}
@@ -98,56 +99,23 @@ namespace HS{
       
       virtual void MatchWithGen(THSParticle* part);  
       virtual Bool_t IsCorrectTruth(THSParticle *part);
-      virtual void FinalStateOutTree(TTree* tree){tree->Branch("Final",&fFinal);};
+      virtual void FinalStateOutTree(ttree_ptr tree){tree->Branch("Final",&fFinal);};
       virtual void CheckTruth();
       void SetAccurateTruth(Float_t ang){fAccurateTruth=TMath::DegToRad()*ang;};
       void SetVerbose(Int_t ver){fPrintVerbose=ver;}
       void CheckCombi(){fCheckCombi=kTRUE;}
       Bool_t IsCorrect(){return fCorrect;}
-      TTree* FinalTree(){return fFinalTree;}
 
+      void CreateFinalTree(TString tname,TString fname){
+	fFinalTree=(FiledTree::Recreate(tname,fname));
+	FinalStateOutTree(FinalTree());
+      }
+      ttree_ptr FinalTree(){return fFinalTree->Tree();}
+      void EndAndWrite();
+      Long64_t GetUID(){return static_cast<Long64_t>(fUID);}
+      
     protected :
-      
-      //     DataManager* fData=nullptr;
-      shared_ptr<DataManager> fData;
-      //Run and event info
-      BaseEventInfo* fEventInfo=nullptr;
-      BaseRunInfo* fRunInfo=nullptr;
-      
-      vector<TopoActionManager*> fPostWorkAction;
-      vector<TopoActionManager*> fPostTopoAction;
-
-      Topology *fCurrTopo=nullptr;
-      vecTopologies fTopos; //vector of topologies
-      Int_t fTopoID=0; //Topo ID for this event
-      Int_t fNTopo=0; //Number of added topologies
-      
-      ParticleIter* fCurrIter=nullptr;
-      
-      vector<Short_t> fThisTopo; //topology for this event
-      vector<Int_t> fIncParts; //particle allowed to be inclusive
-      //Int_t fCurrTopo=-1;
-      Int_t fCheckTopo=0;
-      UInt_t fMaxPart=500;//limit the number of particles allowed in event
-      UInt_t fNParts=0; //Number of particles detected
-      UInt_t fNGen=0; //Number of generated particles
-      Int_t fNDet=0;
-      Int_t fNTried=0;
-      const Short_t fMISSING=-9999;
-      Bool_t fGoodEvent = kTRUE;
-      Long64_t fNUsedReadEvent=0; //Number of read events with at least 1 GoodEvent
-      //Special behaviour for generated MC events
-      Bool_t fIsGenerated=kFALSE;
-      
-      //For simulated events flag with correct permutation
-      Int_t fCorrect=kTRUE;
-      Bool_t fGotCorrectOne=kFALSE;
-      //Flag to do PID by charge not given pdg code
-      Bool_t fUseChargePID=kFALSE;
-      Bool_t fIsInclusive=kFALSE;
-      
-      Int_t fPrintVerbose=0;
-      //Combitorial
+    //Combitorial
       Bool_t IsMissing(THSParticle* part){if(part->Detector()==fMISSING){return kTRUE;}return kFALSE;}
       //  Bool_t IsMissing(THSParticle* part){if(part->P4p()->Theta()==0){return kTRUE;}return kFALSE;}
       Bool_t fTryPerm=kTRUE;
@@ -180,6 +148,46 @@ namespace HS{
       vector<Int_t> fDetTypes;
       
       
+        
+      //     DataManager* fData=nullptr;
+      shared_ptr<DataManager> fData;
+      //Run and event info
+      BaseEventInfo* fEventInfo=nullptr;
+      BaseRunInfo* fRunInfo=nullptr;
+      
+      topoActMans fPostWorkAction;
+      topoActMans fPostTopoAction;
+
+      Topology *fCurrTopo=nullptr;
+      vecTopologies fTopos; //vector of topologies
+      Int_t fTopoID=0; //Topo ID for this event
+      Int_t fNTopo=0; //Number of added topologies
+      
+      ParticleIter* fCurrIter=nullptr;
+      
+      vector<Short_t> fThisTopo; //topology for this event
+      vector<Int_t> fIncParts; //particle allowed to be inclusive
+      //Int_t fCurrTopo=-1;
+      Int_t fCheckTopo=0;
+      UInt_t fMaxPart=500;//limit the number of particles allowed in event
+      UInt_t fNParts=0; //Number of particles detected
+      UInt_t fNGen=0; //Number of generated particles
+      Int_t fNDet=0;
+      Int_t fNTried=0;
+      const Short_t fMISSING=-9999;
+      Bool_t fGoodEvent = kTRUE;
+      Long64_t fNUsedReadEvent=0; //Number of read events with at least 1 GoodEvent
+      //Special behaviour for generated MC events
+      Bool_t fIsGenerated=kFALSE;
+      
+      //For simulated events flag with correct permutation
+      Int_t fCorrect=kTRUE;
+      Bool_t fGotCorrectOne=kFALSE;
+      //Flag to do PID by charge not given pdg code
+      Bool_t fUseChargePID=kFALSE;
+      Bool_t fIsInclusive=kFALSE;
+      
+      Int_t fPrintVerbose=0;
       Int_t fIterLevel=0;
       
       
@@ -188,7 +196,7 @@ namespace HS{
       Bool_t fIsPermutating0=kFALSE;
       Bool_t fIsPermutating1=kFALSE;
       
-      TTree* fFinalTree=nullptr;
+      filed_uptr fFinalTree;
       
       //Kinematics calculator
       HSKinematics fKine;

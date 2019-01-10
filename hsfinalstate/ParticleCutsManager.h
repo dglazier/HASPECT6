@@ -30,8 +30,9 @@ namespace HS{
       AddParticleCut(0,fDefaultCut);
     }
     virtual ~ParticleCutsManager()=default;
- 
-    Bool_t Execute(TopoIndex ti) override{
+
+    
+    Bool_t Execute(TopoIndex ti) final{
       return fParticleCuts[ti]->CheckCuts();
     }
 

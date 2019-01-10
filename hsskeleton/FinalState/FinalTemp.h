@@ -17,11 +17,11 @@ class FinalTemp : public HS::FinalState{
 
 
 
-  void FileStart() override;
-  Bool_t  CheckParticle(HS::THSParticle* part) override;
-  void FinalStateOutTree(TTree* tree) override;
-  void Kinematics() override;
-  void UserPostTopo() override;
+  void FileStart() final;
+  Bool_t  CheckParticle(HS::THSParticle* part) final;
+  void FinalStateOutTree(HS::ttree_ptr tree) final;
+  void Kinematics() final;
+  void UserPostTopo() final;
   
   //Init functions
 

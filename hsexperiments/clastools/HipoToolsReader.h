@@ -21,10 +21,16 @@ namespace HS{
       HipoToolsReader();
       virtual ~HipoToolsReader()=default;
       
-      Bool_t Init(TString filename,TString name="") override;
-      Bool_t ReadEvent(Long64_t entry=0) override;
+      Bool_t Init(TString filename,TString name="") final;
+      Bool_t ReadEvent(Long64_t entry=0) final;
+      void SetEventInfo();
+      void SetStartRunInfo();
+      void SetEndRunInfo();
+      void FillParticles();
+      void FillGenerated();
       
       const hipo::reader* GetHipoReader()const {return &fReader;}
+      
     private :
       
       //clas12tools
@@ -35,7 +41,9 @@ namespace HS{
       HS::THSParticle fParticle;
       CLAS12::EventInfo *fEventInfo=nullptr;
       CLAS12::RunInfo *fRunInfo=nullptr;
-    
+
+      Float_t fTotCharge=0;
+      Bool_t fRunEnd=kTRUE;
     
     };//	class HipoToolsReader
   }//namespace CLAS12

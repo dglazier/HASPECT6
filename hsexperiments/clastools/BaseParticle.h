@@ -1,11 +1,3 @@
-//--Author      DI Glazier 23/03/2018
-//--Rev
-//--Update
-//--Description
-//HASPECT Event Reconstruction
-//BaseParticle
-//Optimised Persistant Data structure
-//Contains reconstructed information required for data analysis
 
 #ifndef HS_BASEPARTICLE_H
 #define HS_BASEPARTICLE_H
@@ -89,6 +81,7 @@ namespace HS{
       void SetTruth(HSLorentzVector part,HSPosition ver,Int_t pdg){fTruthP4=part;fTruthV=ver;fTruthPDG=pdg;};
       void SetDetector(Short_t det){fDetector=det;}
       void SetTime(Short_t ti){fTime=ti;};
+      void SetMeasMass(Short_t ti){fMeasMass=ti;};
       
       //Getting functions
       HSLorentzVector P4() const {return fP4;}
@@ -102,6 +95,7 @@ namespace HS{
       void ShiftTime(Float_t shift){fTime+=shift;}
       virtual Double_t DeltaTime(){return fTime;};
       Double_t Time()const { return fTime;}
+      Double_t MeasMass()const { return fMeasMass;}
       Short_t Detector()const {return fDetector;}
       virtual Short_t Status(){return 0;}
       virtual void Clear();
@@ -173,6 +167,9 @@ inline void HS::BaseParticle::CopyParticle(const BaseParticle* part,Bool_t andPD
 inline void HS::BaseParticle::CopyTransient(const BaseParticle* part){
   SetP4(part->P4());
   SetVertex(part->Vertex());
+  fMeasMass=part->MeasMass();
+  fTime=part->Time();
+  fDetector=part->Detector();
 }
 inline void HS::BaseParticle::Add(const BaseParticle* hsp1, const BaseParticle* hsp2,Int_t pdg){
   //  SetVertex(hsp1->Vertex()+hsp2->Vertex()); //average vertex

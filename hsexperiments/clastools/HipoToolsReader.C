@@ -63,6 +63,8 @@ Bool_t CLAS12::HipoToolsReader::ReadEvent(Long64_t entry){
 
   //get the next hallb_event
   if(!fEvent->next()) {//end of 1 file
+    SetEndRunInfo();
+    
     if(fChainFiles){
       if(!NextChainFile())//check if another file and initilaise
 	return kFALSE; //end of all files
@@ -70,53 +72,112 @@ Bool_t CLAS12::HipoToolsReader::ReadEvent(Long64_t entry){
     }
     else return kFALSE; //Only analysing 1 file
   }
-  fEntry++;
- 
-  if(fEntry%100000==0) cout<<fEntry<<endl;
-  fParticles.clear();//reset fParticles
-  fGenerated.clear();//reset fParticles
-  //fPIDs.clear();//reset pid values
-  if(fAddGenerated) fGenerated.clear();//reset fGenerated
+  if(fRunEnd) SetStartRunInfo();
   
+  fEntry++;
+
+  SetEventInfo();
+  
+  if(fEntry%100000==0) cout<<fEntry<<endl;
+  
+  
+  FillParticles();
+  FillGenerated();
+  
+  return kTRUE;
+}
+
+///////////////////////////////////////////////////////
+///Fill all the detected particles for this event
+void CLAS12::HipoToolsReader::FillParticles(){
+  fParticles.clear();//reset fParticles
+
   const Int_t Nin=fEvent->getNParticles();
   fParticles.reserve(Nin);
  
   //Get the particles for this event
   for(auto& p : fEvent->getDetParticles()){
 
-    //give this particle the clas12 data
+    //give this particle all the clas12 data
     fParticle.Clear();
     fParticle.SetCLAS12Particle(p);
 
     //directly import the most used information
-    clas12::par_ptr pbank=p->par(); //get particle bank, this is only OK in loop!
+    auto pbank=p->par(); //get particle bank, this is only OK in loop!
     fParticle.SetXYZM(pbank->getPx() ,pbank->getPy() ,pbank->getPz() ,0);
     fParticle.SetVertex(pbank->getVx() ,pbank->getVy() ,pbank->getVz());
     //fParticle.SetStatus(pbank->getStatus());
 
     Short_t pid=pbank->getPid();
-    if(!pid) fParticle.SetPDGcode(pbank->getCharge()*HS::UndefinedPDG); //unknown
+    if(!pid) fParticle.SetPDGcode(pbank->getCharge()*HS::UndefinedPDG);
     else  fParticle.SetPDGcode(pid);
-
+    
     fParticle.SetTime(p->getTime());
-    fParticle.SetPath(p->getPath());
-    // particle.SetDeltaEnergy(p->getDeltaEnergy());
-    // particle.SetDetEnergy(p->getDetEnergy());
-    // particle.SetSector(p->getSector());
-
+    fParticle.SetPath(p->getPath()/100);
     //possibly do other stuff depending on region
-    switch(p->region()) {
-    case clas12::FD :
-      break;
-    case clas12::FT :
-      break;
-    case clas12::CD :
-      break;
-    }
-
+    // switch(p->region()) {
+    // case clas12::FD :
+    //   break;
+    // case clas12::FT :
+    //   break;
+    // case clas12::CD :
+    //   break;
+    // }
     fParticles.emplace_back(fParticle);
     
   }
+}
+
+///////////////////////////////////////////////////////
+///Fill all the generated particles for this event
+void CLAS12::HipoToolsReader::FillGenerated(){
+
+  auto mcpbank=fEvent->mcparts();
+  const Int_t  Ngen=mcpbank->getSize();
+
+  fGenerated.clear();
+  fGenerated.reserve(Ngen);
+
+  for(Int_t i=0;i<Ngen;i++){
+    fParticle.Clear();
+    mcpbank->setEntry(i);
+    
+    fParticle.SetXYZM(mcpbank->getPx() ,mcpbank->getPy() ,mcpbank->getPz() ,mcpbank->getMass());
+    fParticle.SetVertex(mcpbank->getVx() ,mcpbank->getVy() ,mcpbank->getVz());
+    fParticle.SetPDGcode(mcpbank->getPid());
+    fGenerated.emplace_back(fParticle);
+  }
+
+    
+}
+//////////////////////////////////////////////////////
+///Read event info from header bank (REC::EVENT)
+void CLAS12::HipoToolsReader::SetEventInfo(){
+
+  fEventInfo->fTrigBit=fEvent->head()->getTrigger();
+  fEventInfo->fCJSTTime=fEvent->head()->getStartTime();
+  fEventInfo->fRFTime=fEvent->head()->getRFTime();
+  fEventInfo->fBeamHel=fEvent->head()->getHelicity();
+  fEventInfo->fNEvent=fEvent->head()->getEventNumber();
+
   
-  return kTRUE;
+}
+//////////////////////////////////////////////////////
+///Read run info from header bank (REC::EVENT)
+void CLAS12::HipoToolsReader::SetStartRunInfo(){
+  cout<<fEvent->head()->getType()<<" "<<fAddGenerated<<endl;
+  fRunInfo->fNRun=fEvent->head()->getRunNumber();
+  if(fAddGenerated)fRunInfo->fType=(1);
+  else fRunInfo->fType=(0);
+
+  fRunEnd=kFALSE;
+  
+}
+//////////////////////////////////////////////////////
+///store the accumulated charge
+void CLAS12::HipoToolsReader::SetEndRunInfo(){
+
+  fRunInfo->fNRun=fTotCharge;//at some point need to accumulate charge!
+  fRunEnd=kTRUE;
+  
 }

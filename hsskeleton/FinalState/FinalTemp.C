@@ -43,7 +43,7 @@ void FinalTemp::FileStart(){
 ///And before PostTopoManager
 void FinalTemp::UserPostTopo() {
 }
-void FinalTemp::FinalStateOutTree(TTree* tree){
+void FinalTemp::FinalStateOutTree(ttree_ptr tree){
   HS::FinalState::fFinalTree=tree;
   //tree->Branch("Final",&fFinal);//If you want to save the final THSParticles
 

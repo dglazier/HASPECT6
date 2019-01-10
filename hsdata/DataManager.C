@@ -123,7 +123,7 @@ Bool_t DataManager::InitReader(TString filename,TString name){
   }
   //if(fFinalState) fFinalState->FileStart();
 
-  fReadTree->SetCacheSize(50E6);//10MB
+  fReadTree->SetCacheSize(50E6);//50MB
   fReadTree->StopCacheLearningPhase();
   fPerfstats = new TTreePerfStats("ioperf", fReadTree);
   

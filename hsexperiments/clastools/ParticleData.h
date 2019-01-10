@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////
-///     CLAS G8 EXPERIMENT
+///     CLAS12 EXPERIMENT
 ///Class:               ParticleData
 ///Description:
 ///            A derived class to be used as tree branches !
@@ -53,7 +53,7 @@ namespace HS{
 
     //Function required to set tree branches
     //This should not need changed
-    void Branches(TTree* tree) override{
+    void Branches(ttree_ptr tree) final{
       TreeData::Branches(tree,Class()->GetListOfDataMembers());
     }
     
@@ -87,11 +87,13 @@ namespace HS{
     Edep = c12p->getDetEnergy();
     Sector = c12p->getSector();
     Status = c12p->par()->getStatus();
- 
+   
     //All Charged
     DeltaE = c12p->getDeltaEnergy();
 
+    //Region(FT,FD,CD) specific variables
     switch(c12p->region()) {
+      
     case clas12::FD :
       PreE = c12p->cal(clas12::PCAL)->getEnergy();
       // ECINM2u = c12p->cal(clas12::ECIN)->M2u();
@@ -105,8 +107,8 @@ namespace HS{
     case clas12::FT :
       break;
     case clas12::CD :
-       TrChi2= c12p->trk(clas12::CVT)->getChi2N();
-     break;
+      TrChi2= c12p->trk(clas12::CVT)->getChi2N();
+      break;
     }
     
   }

@@ -1,6 +1,7 @@
 #ifndef TREEDATAXXX_h
 #define TREEDATAXXX_h 
 #include "TreeData.h"
+#include "FiledTree.h"
 
 class TreeDataXXX: public HS::TreeData{
  public:
@@ -10,7 +11,7 @@ class TreeDataXXX: public HS::TreeData{
 
 
   //Function required to set tree branches
-  void Branches(TTree* tree) override{
+  void Branches(HS::ttree_ptr tree) final{
     TreeData::Branches(tree,Class()->GetListOfDataMembers());
   }
   ClassDefOverride(TreeDataXXX,1);

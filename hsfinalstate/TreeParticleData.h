@@ -29,23 +29,25 @@ namespace HS{
   class TreeParticleData {
 
   public:
-  TreeParticleData(TString tname,TString fname):fTree(new FiledTree(tname,fname)) {};
+  TreeParticleData(TString tname,TString fname):fTree(FiledTree::Recreate(tname,fname)) {};
     TreeParticleData()=default;
     TreeParticleData(const TreeParticleData&)=default;
     TreeParticleData(TreeParticleData&&)=default;
     virtual ~TreeParticleData(){
-      delete fTree;
+      //  delete fTree;
     }
  
-  
+    void SaveTree(){ fTree.reset(); }
+    
     void SetBranches();
     
     void Fill(){
-      if(fFinalState->IsCorrect()){
+         if(fFinalState->IsCorrect()){
 	fSigWeight=1;fBckWeight=0;}
       else{
 	fSigWeight=0;fBckWeight=1;}
-      
+
+      fUID=fFinalState->GetUID();
       FillVars();
       fTree->Fill();
       //Count the number of non-zero signal weights
@@ -76,15 +78,19 @@ namespace HS{
     void AddParticle(TString name, THSParticle *part, vecNames variables={});
     void FillVars() ;
 
-    TTree* GetTree(){return fTree->Tree();}
+    ttree_ptr GetTree(){return fTree->Tree();}
+    
   private:
+    
     Float_t fSigWeight=1;    
     Float_t fBckWeight=1;    
     Long64_t fNSig=-1;
     Long64_t fNBck=-1;
     Long64_t fNRequested=-1;
+    Long64_t fUID=-1;
 
-    FiledTree* fTree=nullptr;
+    //    FiledTree* fTree=nullptr;
+    filed_uptr fTree;
     FinalState* fFinalState=nullptr;
 
   protected:

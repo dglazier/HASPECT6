@@ -16,12 +16,6 @@ namespace HS{
       CLAS12Trigger()=default;
       ~CLAS12Trigger()=default;
       
-      Short_t Sector(Int_t det);
-      Short_t HitsInCD(){ return fEventSectors[10];}
-      Short_t HitsInFT() {return fEventSectors[8];}
-      Short_t HitsInFD();
-      Short_t HitsInSector(Int_t sect){return fEventSectors[sect];}
-      Short_t NFDSectorsHit();
       void EventReset();
       Bool_t TrigStatus(Short_t status);
       
@@ -43,8 +37,8 @@ namespace HS{
       void FindTimeOffSetFT(TTree* tree,TString option="goff");
       void FindTimeRFTimePeak(TTree* tree,TString option="goff");
       
-      Short_t  TrigNSectors();
-      Short_t  TrigNSectorsRoads();
+      /* Short_t  TrigNSectors(); */
+      /* Short_t  TrigNSectorsRoads(); */
       
       void SubtractStartTime(THSParticle* part); //subtract from HSParticle  
       void SubtractStartTime(THSParticle* part0,THSParticle* part1);
@@ -86,7 +80,7 @@ namespace HS{
 }//namespace HS
 inline Float_t HS::CLAS12::CLAS12Trigger::StartTime(HS::THSParticle* part){
   //If FT shift time first
-  if(part->Detector()<0){part->ShiftTime(fTimeShiftFT);return StartTime(part->DeltaTime());}
+  if(part->CLAS12()->region()==clas12::FT){part->ShiftTime(fTimeShiftFT);return StartTime(part->DeltaTime());}
   //else
   return StartTime(part->DeltaTime());
 }
@@ -99,27 +93,6 @@ inline Float_t HS::CLAS12::CLAS12Trigger::StartTime(Float_t ptime){
   return fStartTime;
 }
 
-inline Short_t HS::CLAS12::CLAS12Trigger::Sector(Int_t det){
-  //return sector of particle and increment counter
-  if(det<0) {fEventSectors[8]++;return 0;} //FT
-  Short_t sect=(Short_t)det/1000; //FD 1-6, CD 10, unkown 0
-  fEventSectors[sect]++;
-  return sect;
-}
-inline Short_t  HS::CLAS12::CLAS12Trigger::HitsInFD(){
-  return fEventSectors[1]+			\
-    fEventSectors[2]+				\
-    fEventSectors[3]+				\
-    fEventSectors[4]+				\
-    fEventSectors[5]+				\
-    fEventSectors[6];
-}
-inline Short_t  HS::CLAS12::CLAS12Trigger::NFDSectorsHit(){
-  Short_t nsect=0;
-  for(Int_t i=1;i<7;i++) //only the 6 FD sectors
-    nsect+=(fEventSectors[i]!=0);
-  return nsect;
-}
 inline void  HS::CLAS12::CLAS12Trigger::EventReset(){
 for(UInt_t i=0;i<fEventSectors.size();i++)
   fEventSectors[i]=0;
@@ -134,21 +107,6 @@ if(status>2090&&status<3000) //FD with TOF
     return kTRUE;
 
 return kFALSE; //everything else
-}
-void HS::CLAS12::CLAS12Trigger::ReadParticles(){
-EventReset();
-for(UInt_t i=0;i<fParticles->size();i++)
-  if(TrigStatus(fParticles->at(i).Status()))Sector(fParticles->at(i).Detector());
-}
-inline Short_t  HS::CLAS12::CLAS12Trigger::TrigNSectors(){
-  return VTPTrigBit(13)+VTPTrigBit(14)
-    +VTPTrigBit(15)+VTPTrigBit(16)
-    +VTPTrigBit(17)+VTPTrigBit(18);
-}
-inline Short_t  HS::CLAS12::CLAS12Trigger::TrigNSectorsRoads(){
-  return VTPTrigBit(19)+VTPTrigBit(20)
-    +VTPTrigBit(21)+VTPTrigBit(22)
-    +VTPTrigBit(23)+VTPTrigBit(24);
 }
 
 #endif

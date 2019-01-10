@@ -11,22 +11,20 @@ void CleanMe(){
   gSystem->Exec(Form("rm %s/*.pcm",HSEXP.Data()));
   gSystem->Exec(Form("rm %s/*~",HSEXP.Data()));
 
-  if(gSystem->Getenv("RHIPO")){
-    TString RHIPO=gSystem->Getenv("RHIPO");
-    gSystem->Exec(Form("rm %s/*.so",RHIPO.Data()));
-    gSystem->Exec(Form("rm %s/*.d",RHIPO.Data()));
-    gSystem->Exec(Form("rm %s/*.pcm",RHIPO.Data()));
-    gSystem->Exec(Form("rm %s/*~",RHIPO.Data()));
+  TString C12TOOL=gSystem->Getenv("CLAS12TOOL");
 
-  }
-  if(gSystem->Getenv("CHIPO")){
-    TString CHIPO=gSystem->Getenv("CHIPO");
-    gSystem->Exec(Form("rm %s/*.so",CHIPO.Data()));
-    gSystem->Exec(Form("rm %s/*.d",CHIPO.Data()));
-    gSystem->Exec(Form("rm %s/*.pcm",CHIPO.Data()));
-    gSystem->Exec(Form("rm %s/*~",CHIPO.Data()));
+  TString HIPO=C12TOOL+"/Hipo";
+  gSystem->Exec(Form("rm %s/*.so",HIPO.Data()));
+  gSystem->Exec(Form("rm %s/*.d",HIPO.Data()));
+  gSystem->Exec(Form("rm %s/*.pcm",HIPO.Data()));
+  gSystem->Exec(Form("rm %s/*~",HIPO.Data()));
 
+  TString BANKS=C12TOOL+"/Banks";  
+  gSystem->Exec(Form("rm %s/*.so",BANKS.Data()));
+  gSystem->Exec(Form("rm %s/*.d",BANKS.Data()));
+  gSystem->Exec(Form("rm %s/*.pcm",BANKS.Data()));
+  gSystem->Exec(Form("rm %s/*~",BANKS.Data()));
 
-  }
-
+  
+ 
 }

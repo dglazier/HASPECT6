@@ -13,6 +13,7 @@
 #define HS_TREEDATA_h
 
 
+#include "FiledTree.h"
 #include <TTree.h>
 #include <TString.h>
 #include <TObject.h>
@@ -29,8 +30,10 @@ namespace HS{
     TreeData(TreeData&&)=default;
     virtual ~TreeData()=default;
     
-    void Branches(TTree* tree,TList* dmList);
-    virtual void Branches(TTree* tree)=0;
+    /* void Branches(TTree* tree,TList* dmList); */
+    /* virtual void Branches(TTree* tree)=0; */
+    void Branches(ttree_ptr tree,TList* dmList);
+    virtual void Branches(ttree_ptr tree)=0;
 
     TString GetName(){return fName;}
     void SetBranches(vector<TString > brs){fForBranch=brs;}

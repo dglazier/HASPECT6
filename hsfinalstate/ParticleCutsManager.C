@@ -24,7 +24,6 @@
             finalstate->RegisterPostTopoAction(cm.get());
 **********************************************************************************/
 #include "ParticleCutsManager.h"
-#include "TreePrepParticle.h"
 #include "Topology.h"
 using namespace HS;
 

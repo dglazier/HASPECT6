@@ -15,7 +15,7 @@ void HS::TreeParticleData::FillVars() {
 //////////////////////////////////////////////////////////
 ///Set TTree branches for variables necessary for MVA
 void HS::TreeParticleData::SetBranches() {
-  TTree* tree=fTree->Tree();  
+  auto tree=fTree->Tree();  
   if (!tree) {
         std::cout<<"ERROR : Base tree not found..."<<std::endl;
         std::cout<<"      : exiting..."                <<std::endl;
@@ -37,6 +37,7 @@ void HS::TreeParticleData::SetBranches() {
   
    // tree->Print();
    AddSigBck(); //Add branches for signal and background weights
+   tree->Branch("UID",&fUID,"UID/L");
 }
 //////////////////////////////////////////////////////////////////////////
 ///Add signal and background flags (for HSMVA)

@@ -39,7 +39,8 @@ namespace HS{
 	return kFALSE;
       };
       
-      TTree* Tree(){if(fTree.get()) return fTree.get()->Tree();return nullptr;}
+      ttree_ptr Tree(){return fTree->Tree();}
+      //      TTree* Tree(){if(fTree.get()) return fTree.get()->Tree();return nullptr;}
       TMVA::Reader *Reader(){return fReader.get();}
       TMVA::MethodBase* Method(){return fMethod;}
       TMVA::DataSetInfo* DataSetInfo(){return fDataSetInfo.get();}
@@ -47,7 +48,7 @@ namespace HS{
     protected:
   
       unique_ptr<HS::FiledTree> *TreePtr(){return &fTree;}
-      
+      void SetTreePtr(filed_uptr tp){fTree=std::move(tp);} 
       vecVars* Vars(){return &fVars;}
       
       void InitMethod(TString trainpath,TString methodname);

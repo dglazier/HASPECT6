@@ -1,7 +1,5 @@
 #include "Pi2.h"
 void Pi2::Kinematics(){
-  TD.TrigNSector=fTrigger.TrigNSectors();
-  TD.TrigNSectorRoads=fTrigger.TrigNSectorsRoads();
 
    //Calculate possible resonances
   HSLorentzVector pMeson=fPip.P4()+fPim.P4();

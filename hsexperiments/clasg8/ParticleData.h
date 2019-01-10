@@ -10,6 +10,7 @@
 #ifndef PARTICLEDATA_h
 #define PARTICLEDATA_h 
 #include "TreeData.h"
+#include "FiledTree.h"
 #include "THSParticle.h"
 #include <TMath.h>
 
@@ -43,7 +44,7 @@ namespace HS{
 
     //Function required to set tree branches
     //This should not need changed
-    void Branches(TTree* tree) override{
+    void Branches(HS::ttree_ptr tree) final{
       TreeData::Branches(tree,Class()->GetListOfDataMembers());
     }
     

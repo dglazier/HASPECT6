@@ -1,7 +1,6 @@
 #include "Pi2.h"
 void Pi2::Topo_0(){
   //For topology Electron:Proton:Pip:Pim
-
   //if(fElectron.Detector()>0) {fGoodEvent=kFALSE;return;} //Put some cuts on particle detectors etc...
   //Define starttime from electron candidate
   fTrigger.StartTime(&fElectron);

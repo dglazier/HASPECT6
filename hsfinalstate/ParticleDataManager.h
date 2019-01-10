@@ -13,7 +13,7 @@
 #define HSFS_PARTICLEDATAMANAGER_h
 
 #include "THSParticle.h"
-#include "TreePrepBase.h"
+//#include "TreePrepBase.h"
 #include "TreeParticleData.h"
 #include "TopoActionManager.h"
 #include "FinalState.h"
@@ -45,7 +45,9 @@ namespace HS{
     ParticleDataManager()=default;
     virtual ~ParticleDataManager()=default;
  
-    Bool_t Execute(TopoIndex ti) override{
+    void End() final;
+
+    Bool_t Execute(TopoIndex ti) final{
       fPreps[ti]->Fill();
       return kTRUE;
     }
@@ -76,7 +78,8 @@ namespace HS{
     TString fOutDir;
 
   };//class ParticleDataManager
-
+  using pDataMan_uptr = std::unique_ptr<ParticleDataManager>;
+  
 };//namespace HSFinalState
 
 #endif //

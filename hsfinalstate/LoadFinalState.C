@@ -12,7 +12,7 @@ void LoadFinalState(TString Selection=""){
   
   TString HSCODE=gSystem->Getenv("HSCODE");
   TString mvapath="/hsmva";
-  //TString dmpath="/hsdata";
+  TString dmpath="/hsdata";
   TString fspath="/hsfinalstate";
 
   //Add HSMVA include path
@@ -24,6 +24,11 @@ void LoadFinalState(TString Selection=""){
   if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+fspath)){
     gInterpreter->AddIncludePath(HSCODE+fspath);
     gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+fspath).Data()));
+  }
+  //Add HSDataManager include path
+  if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+fspath)){
+    gInterpreter->AddIncludePath(HSCODE+dmpath);
+    gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+dmpath).Data()));
   }
 
   //First need DataManager

@@ -1,0 +1,256 @@
+// Do NOT change. Changes will be lost next time file is generated
+
+#define R__DICTIONARY_FILENAME dIworkdIDropboxdIHaSpectdIdevdIHASPECT6dIhsexperimentsdIclastoolsdICLAS12DeltaTime_C_ACLiC_dict
+
+/*******************************************************************/
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#define G__DICTIONARY
+#include "RConfig.h"
+#include "TClass.h"
+#include "TDictAttributeMap.h"
+#include "TInterpreter.h"
+#include "TROOT.h"
+#include "TBuffer.h"
+#include "TMemberInspector.h"
+#include "TInterpreter.h"
+#include "TVirtualMutex.h"
+#include "TError.h"
+
+#ifndef G__ROOT
+#define G__ROOT
+#endif
+
+#include "RtypesImp.h"
+#include "TIsAProxy.h"
+#include "TFileMergeInfo.h"
+#include <algorithm>
+#include "TCollectionProxyInfo.h"
+/*******************************************************************/
+
+#include "TDataMember.h"
+
+// Since CINT ignores the std namespace, we need to do so in this file.
+namespace std {} using namespace std;
+
+// Header files passed as explicit arguments
+#include "/work/Dropbox/HaSpect/dev/HASPECT6/hsexperiments/clastools/CLAS12DeltaTime.C"
+
+// Header files passed via #pragma extra_include
+
+namespace HS {
+   namespace ROOT {
+      inline ::ROOT::TGenericClassInfo *GenerateInitInstance();
+      static TClass *HS_Dictionary();
+
+      // Function generating the singleton type initializer
+      inline ::ROOT::TGenericClassInfo *GenerateInitInstance()
+      {
+         static ::ROOT::TGenericClassInfo 
+            instance("HS", 0 /*version*/, "BaseParticle.h", 18,
+                     ::ROOT::Internal::DefineBehavior((void*)0,(void*)0),
+                     &HS_Dictionary, 0);
+         return &instance;
+      }
+      // Insure that the inline function is _not_ optimized away by the compiler
+      ::ROOT::TGenericClassInfo *(*_R__UNIQUE_DICT_(InitFunctionKeeper))() = &GenerateInitInstance;  
+      // Static variable to force the class initialization
+      static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstance(); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+      // Dictionary for non-ClassDef classes
+      static TClass *HS_Dictionary() {
+         return GenerateInitInstance()->GetClass();
+      }
+
+   }
+}
+
+namespace HS {
+   namespace CLAS12 {
+   namespace ROOT {
+      inline ::ROOT::TGenericClassInfo *GenerateInitInstance();
+      static TClass *HScLcLCLAS12_Dictionary();
+
+      // Function generating the singleton type initializer
+      inline ::ROOT::TGenericClassInfo *GenerateInitInstance()
+      {
+         static ::ROOT::TGenericClassInfo 
+            instance("HS::CLAS12", 0 /*version*/, "CLAS12DeltaTime.h", 13,
+                     ::ROOT::Internal::DefineBehavior((void*)0,(void*)0),
+                     &HScLcLCLAS12_Dictionary, 0);
+         return &instance;
+      }
+      // Insure that the inline function is _not_ optimized away by the compiler
+      ::ROOT::TGenericClassInfo *(*_R__UNIQUE_DICT_(InitFunctionKeeper))() = &GenerateInitInstance;  
+      // Static variable to force the class initialization
+      static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstance(); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+      // Dictionary for non-ClassDef classes
+      static TClass *HScLcLCLAS12_Dictionary() {
+         return GenerateInitInstance()->GetClass();
+      }
+
+   }
+}
+}
+
+namespace ROOT {
+   static TClass *HScLcLCLAS12cLcLCLAS12DeltaTime_Dictionary();
+   static void HScLcLCLAS12cLcLCLAS12DeltaTime_TClassManip(TClass*);
+   static void *new_HScLcLCLAS12cLcLCLAS12DeltaTime(void *p = 0);
+   static void *newArray_HScLcLCLAS12cLcLCLAS12DeltaTime(Long_t size, void *p);
+   static void delete_HScLcLCLAS12cLcLCLAS12DeltaTime(void *p);
+   static void deleteArray_HScLcLCLAS12cLcLCLAS12DeltaTime(void *p);
+   static void destruct_HScLcLCLAS12cLcLCLAS12DeltaTime(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::HS::CLAS12::CLAS12DeltaTime*)
+   {
+      ::HS::CLAS12::CLAS12DeltaTime *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::HS::CLAS12::CLAS12DeltaTime));
+      static ::ROOT::TGenericClassInfo 
+         instance("HS::CLAS12::CLAS12DeltaTime", "CLAS12DeltaTime.h", 14,
+                  typeid(::HS::CLAS12::CLAS12DeltaTime), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &HScLcLCLAS12cLcLCLAS12DeltaTime_Dictionary, isa_proxy, 4,
+                  sizeof(::HS::CLAS12::CLAS12DeltaTime) );
+      instance.SetNew(&new_HScLcLCLAS12cLcLCLAS12DeltaTime);
+      instance.SetNewArray(&newArray_HScLcLCLAS12cLcLCLAS12DeltaTime);
+      instance.SetDelete(&delete_HScLcLCLAS12cLcLCLAS12DeltaTime);
+      instance.SetDeleteArray(&deleteArray_HScLcLCLAS12cLcLCLAS12DeltaTime);
+      instance.SetDestructor(&destruct_HScLcLCLAS12cLcLCLAS12DeltaTime);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::HS::CLAS12::CLAS12DeltaTime*)
+   {
+      return GenerateInitInstanceLocal((::HS::CLAS12::CLAS12DeltaTime*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::HS::CLAS12::CLAS12DeltaTime*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *HScLcLCLAS12cLcLCLAS12DeltaTime_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::HS::CLAS12::CLAS12DeltaTime*)0x0)->GetClass();
+      HScLcLCLAS12cLcLCLAS12DeltaTime_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void HScLcLCLAS12cLcLCLAS12DeltaTime_TClassManip(TClass* theClass){
+      theClass->CreateAttributeMap();
+      TDictAttributeMap* attrMap( theClass->GetAttributeMap() );
+      attrMap->AddProperty("file_name","/work/Dropbox/HaSpect/dev/HASPECT6/hsexperiments/clastools/CLAS12DeltaTime.h");
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_HScLcLCLAS12cLcLCLAS12DeltaTime(void *p) {
+      return  p ? new(p) ::HS::CLAS12::CLAS12DeltaTime : new ::HS::CLAS12::CLAS12DeltaTime;
+   }
+   static void *newArray_HScLcLCLAS12cLcLCLAS12DeltaTime(Long_t nElements, void *p) {
+      return p ? new(p) ::HS::CLAS12::CLAS12DeltaTime[nElements] : new ::HS::CLAS12::CLAS12DeltaTime[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_HScLcLCLAS12cLcLCLAS12DeltaTime(void *p) {
+      delete ((::HS::CLAS12::CLAS12DeltaTime*)p);
+   }
+   static void deleteArray_HScLcLCLAS12cLcLCLAS12DeltaTime(void *p) {
+      delete [] ((::HS::CLAS12::CLAS12DeltaTime*)p);
+   }
+   static void destruct_HScLcLCLAS12cLcLCLAS12DeltaTime(void *p) {
+      typedef ::HS::CLAS12::CLAS12DeltaTime current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::HS::CLAS12::CLAS12DeltaTime
+
+namespace ROOT {
+   static TClass *vectorlEHScLcLTHSParticlegR_Dictionary();
+   static void vectorlEHScLcLTHSParticlegR_TClassManip(TClass*);
+   static void *new_vectorlEHScLcLTHSParticlegR(void *p = 0);
+   static void *newArray_vectorlEHScLcLTHSParticlegR(Long_t size, void *p);
+   static void delete_vectorlEHScLcLTHSParticlegR(void *p);
+   static void deleteArray_vectorlEHScLcLTHSParticlegR(void *p);
+   static void destruct_vectorlEHScLcLTHSParticlegR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<HS::THSParticle>*)
+   {
+      vector<HS::THSParticle> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<HS::THSParticle>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<HS::THSParticle>", -2, "vector", 216,
+                  typeid(vector<HS::THSParticle>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlEHScLcLTHSParticlegR_Dictionary, isa_proxy, 4,
+                  sizeof(vector<HS::THSParticle>) );
+      instance.SetNew(&new_vectorlEHScLcLTHSParticlegR);
+      instance.SetNewArray(&newArray_vectorlEHScLcLTHSParticlegR);
+      instance.SetDelete(&delete_vectorlEHScLcLTHSParticlegR);
+      instance.SetDeleteArray(&deleteArray_vectorlEHScLcLTHSParticlegR);
+      instance.SetDestructor(&destruct_vectorlEHScLcLTHSParticlegR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<HS::THSParticle> >()));
+      return &instance;
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<HS::THSParticle>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *vectorlEHScLcLTHSParticlegR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<HS::THSParticle>*)0x0)->GetClass();
+      vectorlEHScLcLTHSParticlegR_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void vectorlEHScLcLTHSParticlegR_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_vectorlEHScLcLTHSParticlegR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<HS::THSParticle> : new vector<HS::THSParticle>;
+   }
+   static void *newArray_vectorlEHScLcLTHSParticlegR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<HS::THSParticle>[nElements] : new vector<HS::THSParticle>[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_vectorlEHScLcLTHSParticlegR(void *p) {
+      delete ((vector<HS::THSParticle>*)p);
+   }
+   static void deleteArray_vectorlEHScLcLTHSParticlegR(void *p) {
+      delete [] ((vector<HS::THSParticle>*)p);
+   }
+   static void destruct_vectorlEHScLcLTHSParticlegR(void *p) {
+      typedef vector<HS::THSParticle> current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class vector<HS::THSParticle>
+
+namespace ROOT {
+   static TClass *vectorlEHScLcLTHSParticlemUgR_Dictionary();
+   static void vectorlEHScLcLTHSParticlemUgR_TClassManip(TClass*);
+   static void *new_vectorlEHScLcLTHSParticlemUgR(void *p = 0);
+   static void *newArray_vectorlEHScLcLTHSParticlemUgR(Long_t size, void *p);
+   static void delete_vectorlEHScLcLTHSParticlemUgR(void *p);
+   static void deleteArray_vectorlEHScLcLTHSParticlemUgR(void *p);
+   static void destruct_vectorlEHScLcLTHSParticlemUgR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<HS::THSParticle*>*)
+   {
+      vector<HS::THSParticle*> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<HS::THSParticle*>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<HS::THSParticle*>", -2, "vector", 216,
+                  typeid(vector<HS::THSParticle*>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlEHScLcLTHSParticlemUgR_Dictionary, isa_proxy, 4,
+                  sizeof(vector<HS::THSParticle*>) );
+      instance.SetNew(&new_vectorlEHScLcLTHSParticlemUgR);
+      instance.SetNewArray(&newArray_vectorlEHScLcLTHSParticlemUgR);
+      instance.SetDelete(&delete_vectorlEHScLcLTHSParticlemUgR);
+      instance.SetDeleteArray(&deleteArray_vectorlEHScLcLTHSParticlemUgR);
+      instance.SetDestructor(&destruct_vectorlEHScLcLTHSParticlemUgR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<HS::THSParticle*> >()));

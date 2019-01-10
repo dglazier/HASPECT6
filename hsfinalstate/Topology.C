@@ -263,7 +263,8 @@ UInt_t Topology::HowManyTrue(Short_t pdg){
   return np;
 }
 Bool_t Topology::AnyMissing(Short_t missID){
-  for(auto const& part : fParticles)
+  for(auto const& part : fParticles){
     if(part->Detector()==missID) return kTRUE;
+  }
   return kFALSE;
 }

@@ -445,10 +445,17 @@ Bool_t HS::FinalState::WorkOnEvent(){
   for(const auto& act : fPostWorkAction)
     if(!act->Execute(fTopoID)) {fGoodEvent=kFALSE;return kTRUE;};
    
-  if(fIsGenerated) return kTRUE; //Generated only 1 permutation
   return kTRUE;
 }
 void HS::FinalState::Finish(){
+}
+void HS::FinalState::EndAndWrite(){
+  //delete anything that may have filed trees associated
+  fFinalTree.reset();
+  for(auto& act : fPostWorkAction)
+    act->End();
+  for(auto& act : fPostTopoAction)
+    act->End();
 }
 //////////////////////////////////////////////////////////////
 ///returns true if another valid permuation to be tried \n

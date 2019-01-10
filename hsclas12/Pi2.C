@@ -15,6 +15,7 @@
 #include "ToposPi2.h"
 #include <algorithm>
 
+using namespace HS;
 
 Pi2::Pi2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   SetVerbose(1);
@@ -24,10 +25,10 @@ Pi2::Pi2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   //AddParticle(particle,true/false you want to write in final vector, genID for linking to generated truth value)
   //Note if particle is added to final with a valid genID it will be used
   //to determine the correct permutation of the simulated event
-  AddParticle("Electron",&fElectron,kTRUE,-1);
-  AddParticle("Proton",&fProton,kTRUE,-1);
-  AddParticle("Pip",&fPip,kTRUE,-1);
-  AddParticle("Pim",&fPim,kTRUE,-1);
+  AddParticle("Electron",&fElectron,kTRUE,3);
+  AddParticle("Proton",&fProton,kTRUE,2);
+  AddParticle("Pip",&fPip,kTRUE,0);
+  AddParticle("Pim",&fPim,kTRUE,1);
 
   //Set final state parents
   
@@ -64,8 +65,10 @@ void Pi2::FileStart(){
   fTrigger.SetParticles(frDetParts); //the detected particles
   fTrigger.SetEventInfo(fEventInfo);//once per event info
   fTrigger.SetRunInfo(fRunInfo);//once per run info
-  fTrigger.SetTimeShiftFT(16.45);
-  fTrigger.SetSTimePeak(125.45);
+  fTrigger.SetTimeShiftFT(0);
+  //  fTrigger.SetTimeShiftFT(16.45);
+  //  fTrigger.SetSTimePeak(125.45);
+  fTrigger.SetSTimePeak(124.2);
 
    
 }
@@ -73,10 +76,10 @@ void Pi2::FileStart(){
 ///And before PostTopoManager
 void Pi2::UserPostTopo() {
   //configure trigger for this event
-  fTrigger.ReadParticles();
+  //fTrigger.ReadParticles();
 }
-void Pi2::FinalStateOutTree(TTree* tree){
-  HS::FinalState::fFinalTree=tree;
+void Pi2::FinalStateOutTree(ttree_ptr tree){
+  //  HS::FinalState::fFinalTree=tree;
   //tree->Branch("Final",&fFinal);//If you want to save the final THSParticles
 
   //Variables held in the base HS::FinalState class
@@ -84,9 +87,10 @@ void Pi2::FinalStateOutTree(TTree* tree){
   tree->Branch("Correct",&fCorrect,"Correct/I");
   tree->Branch("NPerm",&fNPerm,"NPerm/I");
   tree->Branch("NDet",&fNDet,"NDet/I");
+  tree->Branch("UID",&fUID,"UID/D");
 
   //make branches with TreeData object
-  TD.Branches(tree,&TD);
+  TD.Branches(tree);
 }
 //////////////////////////////////////////////////
 /// Define conditions for track to be considered
@@ -97,7 +101,7 @@ Bool_t Pi2::CheckParticle(THSParticle* part){
   //Can place some cuts on tracks we do not like...
   //These will be completly ignored
   //if(part->Detector()<0)return kTRUE; //All FT tracks
-  //if(part->PDG()==45)return kFALSE; //? what are these?
+  if(part->PDG()==45)return kFALSE; //? what are these?
   //if(part->Time()==0)return kFALSE;   //Track needs time
   //if(part->Charge()&&part->DeltaE()<2)return kFALSE; //Charged track needs deltaE>2
 

@@ -1,4 +1,4 @@
-//root --hsdata --hsfinal=XXX RunFSRootXXX.C
+// root  LoadXXX.C RunFSRootXXX.C
 //You need to replace XXX with your final state class name
 {
   //Create FinalState
@@ -7,9 +7,7 @@
   // fs.SetMaxParticles(10); //max number of particles of any 1 type
   
   //create ouput tree
-  //strings = treename and filename (give full path)
-  auto output= new FiledTree("FinalTree","OutPUT.root");
-  fs.FinalStateOutTree(output->Tree()); //connect ouput tree to project branches
+   fs.CreateFinalTree("FinalTree","OUTPUT.root");
 
   
   //create datamanager
@@ -28,10 +26,9 @@
   //Analyse all the events in the data manager
   fs.ProcessData();
 
-  //write the tree to disk
-  delete output;
   
   gBenchmark->Stop("timer");
   gBenchmark->Print("timer");
   
+  fs.EndAndWrite();
 }
