@@ -1,6 +1,7 @@
 #ifndef TREEDATAK2_h
 #define TREEDATAK2_h 
 #include "TreeData.h"
+#include "FiledTree.h"
 
 class TreeDataK2: public HS::TreeData{
  public:
@@ -34,13 +35,12 @@ class TreeDataK2: public HS::TreeData{
 
   Double_t Pol=0;
   Int_t PolState=0;
-  Float_t dummy=1;
-  Double_t dummy2=2;
-
-  void Branches(TTree* tree) override{
+  
+    //Function required to set tree branches
+  void Branches(HS::ttree_ptr tree) final{
     TreeData::Branches(tree,Class()->GetListOfDataMembers());
   }
-  
-  ClassDefOverride(TreeDataK2,1);
+
+  ClassDef(TreeDataK2,1);
 };
 #endif

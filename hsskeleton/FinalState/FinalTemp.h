@@ -38,6 +38,8 @@ class FinalTemp : public HS::FinalState{
   //"e-" => inclusive of any number of e-, exact matches for others
   void SetInclusive(TString inc){fINCLUSIVE=inc;};
 
+  HS::TreeData* GetTreeData() final{return &TD;}
+
   protected :
 
   private:

@@ -29,7 +29,6 @@ void TreePrepManager::ConfigureTreeParticles(FinalState* fs,vecNames defList){
     auto prep=TreePrepPtr(new TreePrepParticle("ParticleVars",fOutDir+Form("ParticleVariables_%d.root",topo->ID()))); //construct tree
     //fPreps.push_back(prep);
     auto rawprep=dynamic_cast<TreePrepParticle*>(prep.get());
-    //auto prep=new TreePrepParticle("ParticleVars",fOutDir+Form("ParticleVariables_%d.root",topo->ID())); //construct tree
     rawprep->SetFinalState(fs);
     //Loop over particles and add variables
     UInt_t nparts=topo->NParts();
@@ -47,7 +46,6 @@ void TreePrepManager::ConfigureTreeParticles(FinalState* fs,vecNames defList){
 
 }
 
-
 Bool_t TreePrepManager::IsEnough(){
   Bool_t is_enough=kTRUE;
   for(auto& prep : fPreps) 
@@ -60,22 +58,3 @@ void  TreePrepManager::SetN(Long64_t nn){
     prep->SetN(nn);
 }
 
-// TreePrepManager::~TreePrepManager(){
-
-// }
-// TreePrepBase* TreePrepManager::GetPrep(TString name){
-//   for(auto&& prep : fPreps) 
-//     if(prep->GetName()==name) 
-//       return prep.get();
-//   return nullptr;
-// }
-// void PrepManager::WriteTrees(){
-//   for(auto&&  prep : fPreps){ 
-//     prep->WriteTree();
-//   }
-// }	
-// void PrepManager::LoadTreeTemplate(TTree* tree){
-//   for(auto&& prep : fPreps){ 
-//      prep->CopyTree(tree);
-//    }
-// }

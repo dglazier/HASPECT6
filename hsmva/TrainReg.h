@@ -4,6 +4,7 @@
 #include <TMVA/TMVARegGui.h>
 #include <TMVA/deviations.h>
 
+#include "FiledTree.h"
 #include "TrainingInterface.h"
 
 namespace HS{
@@ -18,6 +19,9 @@ namespace HS{
       virtual ~TrainReg()=default;
       
       void AddRegTree(TTree*  tree,TString wvar="",Double_t weight=1);
+      void AddRegTree(ttree_ptr tree,TString wvar="",Double_t weight=1){
+	AddRegTree(tree.get(),wvar,weight);
+      }
       void SetTarget(TString tar){IgnoreBranches(tar); DataLoader()->AddTarget(tar);}
       void SetTargets(TString tars);
       

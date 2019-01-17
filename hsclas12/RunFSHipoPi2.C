@@ -12,7 +12,7 @@
   
   auto treeman=make_shared<ParticleDataManager>("particleTrees3");
   treeman->ConfigureTreeParticles(&fs); //propogate through topologies
-   fs.RegisterPostWorkAction((treeman)); //register post-work i.e. after
+  fs.RegisterPostWorkAction((treeman)); //register post-work i.e. after
 
   auto dm=make_shared<HipoToolsReader>();
   TChain chain("HSParticles");

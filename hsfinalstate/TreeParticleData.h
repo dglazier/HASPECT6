@@ -79,7 +79,8 @@ namespace HS{
     void FillVars() ;
 
     ttree_ptr GetTree(){return fTree->Tree();}
-    
+    void AddFinal(); //Add FinalState::TreeData branches
+ 
   private:
     
     Float_t fSigWeight=1;    

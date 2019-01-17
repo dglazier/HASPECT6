@@ -241,10 +241,11 @@ ResultByRefLink::ResultByRefLink(TString trainpath,TString methodname,mapNameFlo
     //Here is different use external links rather than fVars
     TString name=DataSetInfo()->GetVariableInfo(i).GetInternalName();
     if(!links[name]){
-      cout<<" variable "<<name<<endl;
+      cout<<"Error  ResultByRefLink::ResultByRefLink variable "<<name<<endl;
       throw std::runtime_error{"ResultByRefLink variable does not exist in link map"};
     }
-    Reader()->AddVariable(name,links[name]);
+    else
+      Reader()->AddVariable(name,links[name]);
   }
   InitMethod(trainpath,methodname);
 

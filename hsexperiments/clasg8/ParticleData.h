@@ -9,14 +9,14 @@
 ///
 #ifndef PARTICLEDATA_h
 #define PARTICLEDATA_h 
-#include "TreeData.h"
+#include "BaseParticleData.h"
 #include "FiledTree.h"
 #include "THSParticle.h"
 #include <TMath.h>
 
 namespace HS{
 
-  class ParticleData: public HS::TreeData{
+  class ParticleData: public BaseParticleData{
 
   public:
     /////////////////////////////////////////////////
@@ -35,12 +35,12 @@ namespace HS{
  
     ParticleData()=default;
     ParticleData(TString name,HS::THSParticle* p)
-      : TreeData(name),fParticle(p) {};
+      : BaseParticleData(name,p){};
     ParticleData(const ParticleData&)=default;
     ParticleData(ParticleData&&)=default;
     virtual ~ParticleData()=default;
 
-    void FillData();
+    void FillData() final;
 
     //Function required to set tree branches
     //This should not need changed
@@ -51,8 +51,6 @@ namespace HS{
  
   private:
     
-    HS::THSParticle* fParticle=nullptr;//!
-
     ClassDefOverride(ParticleData,1);
 
   };//class ParticleData

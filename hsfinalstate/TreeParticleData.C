@@ -51,7 +51,7 @@ void HS::TreeParticleData::AddSigBck(){
 /////////////////////////////////////////////////////////////////////////
 /// Add a particle belonging to this TreeParticleData topology
 void HS::TreeParticleData::AddParticle(TString name, THSParticle *part, vecNames variables){
-  std::cout<<"Adding "<<name<<std::endl;
+  std::cout<<"TreeParticleData:: Adding "<<name<<std::endl;
   // fill vector of pointers
   fPData.push_back( ParticleData(name,part) );
   //Add particle name to variables so = BranchName
@@ -59,4 +59,8 @@ void HS::TreeParticleData::AddParticle(TString name, THSParticle *part, vecNames
     v.Prepend(name);
   }
   fPVars.push_back( variables);
+}
+void HS::TreeParticleData::AddFinal(){
+  if(fFinalState->GetTreeData())
+    fFinalState->GetTreeData()->Branches(fTree->Tree());
 }

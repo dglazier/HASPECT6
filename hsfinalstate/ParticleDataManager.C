@@ -47,7 +47,11 @@ void ParticleDataManager::ConfigureTreeParticles(FinalState* fs,vecNames defList
 
 }
 
+void ParticleDataManager::AddFinal(){
+  for(auto& prep : fPreps) 
+    prep->AddFinal();
 
+}
 void ParticleDataManager::End(){
   for(auto& prep : fPreps) 
     prep->SaveTree();

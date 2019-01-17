@@ -26,9 +26,9 @@ K2::K2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
   //Note if particle is added to final with a valid genID it will be used
   //to determine the correct permutation of the simulated event
   AddParticle("Beam",&fBeam,kTRUE,-1);
-  AddParticle("Proton",&fProton,kTRUE,0);
-  AddParticle("Kp",&fKp,kTRUE,1);
-  AddParticle("Km",&fKm,kTRUE,2);
+  AddParticle("Proton",&fProton,kTRUE,-1);
+  AddParticle("Kp",&fKp,kTRUE,-1);
+  AddParticle("Km",&fKm,kTRUE,-1);
 
   //Set final state parents
   
@@ -49,10 +49,10 @@ K2::K2(TString pid,TString inc):fPID(pid),fINCLUSIVE(inc){
              bind(&K2::Topo_2, this),
              fPID,fINCLUSIVE);
 
-  AddNamesTopology("Beam:Kp:Km",
-             bind(&K2::Init_Iter3, this),
-             bind(&K2::Topo_3, this),
-             fPID,fINCLUSIVE);
+  // AddNamesTopology("Beam:Kp:Km",
+  //            bind(&K2::Init_Iter3, this),
+  //            bind(&K2::Topo_3, this),
+  //            fPID,fINCLUSIVE);
 
   
   
@@ -75,11 +75,8 @@ void K2::FileStart(){
 void K2::UserPostTopo() {
   //configure trigger for this event
   fTrigger.ReadParticles();
- }
-void K2::FinalStateOutTree(TTree* tree){
-  HS::FinalState::fFinalTree=tree;
-  //tree->Branch("Final",&fFinal);//If you want to save the final THSParticles
-
+}
+void K2::FinalStateOutTree(ttree_ptr tree){
   //Variables held in the base HS::FinalState class
   tree->Branch("Topo",&fTopoID,"Topo/I");
   tree->Branch("Correct",&fCorrect,"Correct/I");

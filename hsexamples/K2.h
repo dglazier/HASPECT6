@@ -5,6 +5,7 @@
 #include "FinalState.h"
 #include "THSParticle.h"
 #include "CLASTrigger.h"
+//#include "TreeData.h"
 #include "TreeDataK2.h"
 #include <vector>
 
@@ -18,11 +19,11 @@ class K2 : public HS::FinalState{
 
 
 
-  void FileStart() override;
-  Bool_t  CheckParticle(HS::THSParticle* part) override;
-  void FinalStateOutTree(TTree* tree) override;
-  void Kinematics() override;
-  void UserPostTopo() override;
+  void FileStart() final;
+  Bool_t  CheckParticle(HS::THSParticle* part) final;
+  void FinalStateOutTree(HS::ttree_ptr tree) final;
+  void Kinematics() final;
+  void UserPostTopo() final;
   
   //Init functions
   void Init_Iter0();
@@ -47,6 +48,8 @@ class K2 : public HS::FinalState{
   // "ALL"=> completely inclusive
   //"e-" => inclusive of any number of e-, exact matches for others
   void SetInclusive(TString inc){fINCLUSIVE=inc;};
+
+  HS::TreeData* GetTreeData() final{return &TD;}
 
   protected :
 

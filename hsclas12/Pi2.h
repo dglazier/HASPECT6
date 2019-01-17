@@ -50,7 +50,9 @@ class Pi2 : public HS::FinalState{
   //"e-" => inclusive of any number of e-, exact matches for others
   void SetInclusive(TString inc){fINCLUSIVE=inc;};
 
-  protected :
+  HS::TreeData* GetTreeData() final{return &TD;}
+
+ protected :
 
   private:
   HS::CLAS12::CLAS12Trigger fTrigger;//For CLAS12 trigger info
@@ -70,7 +72,6 @@ class Pi2 : public HS::FinalState{
  
   //Tree Output Data
   TreeDataPi2 TD;
-
  
   //Topology Configuration options
   TString fPID={"NONE"}; //NONE=>No PIDs 

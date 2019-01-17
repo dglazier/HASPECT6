@@ -37,7 +37,7 @@ namespace HS{
 
       if(gSystem->MakeDirectory(fOutDir)){
 	cout<<"ParticleDataManager OutDir "<<fOutDir<<" cannot make this directory, you may need to delete it first or make sure its parent directory exists"<<endl;
-	throw std::runtime_error{"ParticleDataManager cannot make give output directory"};
+	//	throw std::runtime_error{"ParticleDataManager cannot make give output directory"};
       }
       fOutDir+="/";
     }
@@ -69,7 +69,8 @@ namespace HS{
     void SetN(Long64_t nn); //set total number of events requested for each topo
     TString OutDir(){return fOutDir;};
 
-
+    void AddFinal(); //Add FinalState::TreeData branches
+    
   private:
     
     //This class manages TreePreps so that is all the data it needs
