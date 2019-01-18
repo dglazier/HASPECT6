@@ -13,9 +13,9 @@ void LoadDataManager(TString Selection=""){
   TString HSCODE=gSystem->Getenv("HSCODE");
   TString dmpath="/hsdata/";
  
-  //Need THSParticle first this should be in HSEXE
+  //Need THSParticle first this should be in HSEXP
   if(TString(gSystem->Getenv("HSEXP"))==TString("")){
-    cout<<"Error LoadDataManager need to define HSEXE envirment variable so I can get THSParticle"<<endl;
+    cout<<"Error LoadDataManager need to define HSEXP envirment variable so I can get THSParticle"<<endl;
     exit(1);
   }
 
