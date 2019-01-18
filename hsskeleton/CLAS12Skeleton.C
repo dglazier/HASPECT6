@@ -59,7 +59,7 @@ void CLAS12Skeleton::DefineCLAS12(){
 
   FindNextLineLike("UserPostTopo()");
   ContinueLineAfter("  //configure trigger for this event");
-  ContinueLineAfter("  fTrigger.ReadParticles();");
+  // ContinueLineAfter("  fTrigger.ReadParticles();");
   
   fPlace=0;
   FindNextLineLike("CheckParticle(THSParticle* part){");
