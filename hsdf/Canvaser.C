@@ -14,7 +14,7 @@ namespace HS{
   void Canvaser::DrawHist(hist_uptr hist,TPad* pad,TString opt){
     pad->cd();
 
-    hist->DrawCopy(opt);
+    hist->Draw(opt);
     fDrawnHists.push_back(std::move(hist));
   }
    void Canvaser::DrawHist(TString hname,TString opt){
@@ -83,7 +83,7 @@ namespace HS{
       for(Int_t ipad=0;ipad<pads->GetEntries();ipad++){
 	if(ihist==Nhists)
 	  break;
-	DrawHist(std::move(dirHists[ihist++]),dynamic_cast<TPad*>(canvas->GetPad(ipad+1)),"");
+	DrawHist(std::move(dirHists[ihist++]),dynamic_cast<TPad*>(canvas->GetPad(ipad+1)),"col1z");
       }
       
       canvas->Draw();

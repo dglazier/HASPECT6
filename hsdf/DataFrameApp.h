@@ -38,6 +38,12 @@ namespace HS{
 
       TString TreeName() {return fTreeName;}
       TString FileName() {return fFileName;}
+
+      Bool_t CheckForColumn(TString cname){
+	auto cs=fDFrame->GetColumnNames();
+	return std::count(cs.begin(),cs.end(),cname.Data())!=0;
+      }
+
     private :
     
       dframe_ptr fDFrame;
@@ -85,9 +91,12 @@ namespace HS{
       void PrintSplitNames();
       void PrintSplitRangesFull();
       void PrintSingleSplitNames();
+
+      void TakeSplitterMembers(const Splitter& s);
+      
      protected:
       Bool_t fAreSingleSplits=kFALSE;
-      Bool_t fAreFullSplits=kTRUE;
+      Bool_t fAreFullSplits=kFALSE;
       
       Bool_t fDoneSplit=kFALSE;
       strings_t fSplitNamesFull;//names of individual splits
@@ -95,7 +104,7 @@ namespace HS{
       vector<strings_t> fSingleSplitNames; //vector containing name part for each axis
       vector<strings_t> fSingleSplitRanges; //vector containing ranges for each axis bin
  
-      unique_ptr<mfilters_t> fDFSingleSplits;
+      shared_ptr<mfilters_t> fDFSingleSplits;
  
     private :
     
@@ -134,7 +143,7 @@ namespace HS{
       using histo2Ds_t= std::vector<histo2D_t>;
       using mhisto1Ds_t= std::map<TString,histo1D_t>;
       using mhisto2Ds_t= std::map<TString,histo2D_t>;
-
+       
       class HistMaker  : public Splitter{
 
     public:
@@ -149,7 +158,9 @@ namespace HS{
       HistMaker(HistMaker&&)=default;
       virtual ~HistMaker()=default;
     
- 
+      using hm_uptr = std::unique_ptr<HistMaker>;
+      hm_uptr CloneWithNewFile(TString infname,TString outfname,TString tname="",std::vector<std::pair<TString,TString>> cuts={});
+      
       void Histo2D(TString vnameX,TString vnameY,
 		   TString htitle,Int_t NbinsX,
 		   Double_t lowX, Double_t highX,
@@ -157,10 +168,9 @@ namespace HS{
       
       void Histo1D(TString vname,TString htitle,
 		   Int_t Nbins,Double_t low, Double_t high);
-      /* void CutHisto1D(TString vname,TString htitle, */
-      /* 		   Int_t Nbins,Double_t low, Double_t high); */
-      
+     
       void PrintHist1DNames();
+      void PrintCuts();
       void DrawHist1D(TString name){(*fDFHistos1D)[name]->DrawCopy();}
       void DrawHist2D(TString name){(*fDFHistos2D)[name]->DrawCopy();}
       void AddCut(TString cutname,TString cut){
@@ -180,26 +190,45 @@ namespace HS{
     
       unique_ptr<mhisto1Ds_t> fDFHistos1D;
       unique_ptr<mhisto2Ds_t> fDFHistos2D;
+      std::vector<TH1S> fHistTemplates1D;
+      std::vector<TH2S> fHistTemplates2D;
+      
       std::vector<std::pair<TString,TString>> fCutSpecs;
+      
       unique_ptr<TFile> fOutFile;
       strings_t fCutNames;
       
+      Bool_t fConfigFileDirsDone=kFALSE;
+
       ClassDef(HistMaker,1);
       
     };//class HistMaker
-      // filters_t fDFSplits1D;
+      using hm_uptr = std::unique_ptr<HistMaker>;
+ 
+      /* using hms_t std::vector<HistMaker>; */
+
+      /* class MultiFileHists : public HistMaker{ */
+
+      /* public: */
+      /* 	MultiFileHists(strings_t files,TString dir); */
+      /* 	MultiFileHists(TString file,TString dir); */
+
+      /* 	void Spawn(); */
+	
+      /* private: */
+      /* 	hms_t fHistMakers; */
+      /* };//class MultFileHist */
       
-      //helper functions
+      /* //helper functions */
       
-      //filter vectors via a lambda function
+      /* //filter vectors via a lambda function */
 
       template <typename Cont, typename Pred>
-	Cont container_filter(const Cont &container, Pred predicate){
-	Cont result;
-	std::copy_if(container.begin(),container.end(),std::back_inserter(result), predicate);
-	return std::move(result);
+      	Cont container_filter(const Cont &container, Pred predicate){
+      	Cont result;
+      	std::copy_if(container.begin(),container.end(),std::back_inserter(result), predicate);
+      	return std::move(result);
       }
-      
       
   }//namespace DF
 }//namespace HS

@@ -78,24 +78,19 @@ namespace HS{
       fAreSingleSplits=kTRUE;
       if(!fDoneSplit) Split();
       if(!fDFSingleSplits.get())fDFSingleSplits.reset(new mfilters_t);
-      //  filters_t fDFSplits1D;
-      // for(auto& ar : fSingleSplitRanges){ //loop over axis
-      //  for(auto& r : ar){ //loop over axis bins (==splits)
       for(UInt_t i=0;i<fSingleSplitRanges.size();i++)
 	for(UInt_t j=0;j<fSingleSplitRanges[i].size();j++){
-	  cout<<fSingleSplitRanges[i][j]<<" "<<fSingleSplitNames[i][j]<<endl;
 	  filter_t split=DFrame()->Filter(fSingleSplitRanges[i][j].Data(),fSingleSplitNames[i][j].Data());
 	  fDFSingleSplits->insert(std::pair<TString,filter_t>(fSingleSplitNames[i][j], split));
 	}
     }
 
     void Splitter::ApplyFullSplits(){
-      fAreFullSplits=kTRUE;
+     fAreFullSplits=kTRUE;
       if(!fDoneSplit) Split();
       if(!fDFSingleSplits.get())fDFSingleSplits.reset(new mfilters_t);
       //filters_t fDFSplits1D;
       for(UInt_t i=0;i<fSplitRangesFull.size();i++){
-	cout<<fSplitRangesFull[i]<<" "<<fSplitNamesFull[i]<<endl;
 	filter_t split=DFrame()->Filter(fSplitRangesFull[i].Data(),fSplitNamesFull[i].Data());
 	fDFSingleSplits->insert(std::pair<TString,filter_t>(fSplitNamesFull[i], split));    
 	
@@ -148,6 +143,13 @@ namespace HS{
       std::cout<<std::endl<<std::endl;
     }
 
+    void Splitter::TakeSplitterMembers(const Splitter& s){
+      fSplitAxis=s.fSplitAxis;   
+      fNaxis=s.fNaxis;
+      if(s.fAreSingleSplits)ApplySingleSplits();
+      if(s.fAreFullSplits)ApplyFullSplits();
+         
+    }
     ///////////////////////////////////////////////////////////////////////
     ///TreeSplitter
     void TreeSplitter::SaveTrees(TString basedir){
@@ -170,28 +172,63 @@ namespace HS{
     }
    ///////////////////////////////////////////////////////////////////////
     ///HistMaker
-    // void HistMaker::Histo1D(TString vname,TString htitle,
-    // 			    Int_t Nbins,Double_t low, Double_t high){
-    //   if(!fDFHistos1D.get())fDFHistos1D.reset(new mhisto1Ds_t);
-    //   for(auto& split : *fDFSingleSplits){
-    // 	TString fullname=vname+split.first;
-    // 	histo1D_t hist=split.second.Histo1D(ROOT::RDF::TH1DModel{fullname.Data(),htitle.Data(),Nbins,low,high},vname.Data());
-    // 	fDFHistos1D->insert(std::pair<TString,histo1D_t>(fullname,hist));
-    //   }
-    // }
+    hm_uptr HistMaker::CloneWithNewFile(TString infname,TString outfname,TString tname,std::vector<std::pair<TString,TString>> cuts){
+      if(tname == TString(""))
+	tname=TreeName();
+      
+      hm_uptr p{new HistMaker(tname,infname,outfname)};
+
+      if(cuts.size()==0){
+	for(auto &cut : fCutSpecs){
+	  p->AddCut(cut.first,cut.second);
+	}
+      }
+      else{
+	for(auto &cut : cuts){
+	  p->AddCut(cut.first,cut.second);
+	}
+      }
+
+      p->TakeSplitterMembers(*this);
+      
+      p->ConfigureFileDirs();
+    
+      for(auto &hist : fHistTemplates1D){
+      	auto hax=hist.GetXaxis();
+       	p->Histo1D(hist.GetName(),hist.GetTitle(),hist.GetNbinsX(),hax->GetXmin(),hax->GetXmax());
+      }
+ 
+      for(auto &hist : fHistTemplates2D){
+      	auto hax=hist.GetXaxis();
+      	auto hay=hist.GetYaxis();
+      	p->Histo2D(hax->GetName(),hay->GetName(),hist.GetTitle(),hist.GetNbinsX(),hax->GetXmin(),hax->GetXmax(),hist.GetNbinsY(),hay->GetXmin(),hay->GetXmax());
+      }
+       p->SaveHists();
+
+      return std::move(p);
+    }
+   
     void HistMaker::Histo1D(TString vname,TString htitle,
 			       Int_t Nbins,Double_t low, Double_t high){
+      if(!CheckForColumn(vname)) return;
       if(!fDFHistos1D.get())fDFHistos1D.reset(new mhisto1Ds_t);
+      ConfigureFileDirs();
+
+      auto temph=TH1S(vname,htitle,Nbins,low,high);
+      temph.SetDirectory(0);
+      fHistTemplates1D.push_back(temph);
+      
       for(auto& split : *fDFSingleSplits){
-	TString fullname=vname+split.first;
 	if(fCutSpecs.size()){
 	  for(auto& cut : fCutSpecs){
+	    TString fullname=vname+":"+cut.first+":"+split.first;
 	    auto cutsplit=split.second.Filter(cut.second.Data());
 	    histo1D_t hist=cutsplit.Histo1D(ROOT::RDF::TH1DModel{(vname).Data(),htitle.Data(),Nbins,low,high},vname.Data());
-	    fDFHistos1D->insert(std::pair<TString,histo1D_t>((cut.first+":"+fullname),hist));
+	    fDFHistos1D->insert(std::pair<TString,histo1D_t>((fullname),hist));
 	  }
 	}
 	else{
+	  TString fullname=vname+":"+split.first;
 	  histo1D_t hist=split.second.Histo1D(ROOT::RDF::TH1DModel{fullname.Data(),htitle.Data(),Nbins,low,high},vname.Data());
 	  fDFHistos1D->insert(std::pair<TString,histo1D_t>(fullname,hist));
 	  
@@ -204,18 +241,30 @@ namespace HS{
 			    Double_t lowX, Double_t highX,
 			    Int_t NbinsY,
 			    Double_t lowY, Double_t highY){
-      if(!fDFHistos2D.get())fDFHistos2D.reset(new mhisto2Ds_t);
-      for(auto& split : *fDFSingleSplits){
-	TString histname=vnameY+"_V_"+vnameX;
-	TString fullname=histname+split.first;
-	if(fCutSpecs.size()){
+     if(!CheckForColumn(vnameX)) return;
+     if(!CheckForColumn(vnameY)) return;
+
+     if(!fDFHistos2D.get())fDFHistos2D.reset(new mhisto2Ds_t);
+     ConfigureFileDirs();
+     
+     TString histname=vnameY+"_V_"+vnameX;
+     auto temph=TH2S(histname,htitle,NbinsX,lowX,highX,NbinsY,lowY,highY);
+     temph.GetXaxis()->SetName(vnameX);
+     temph.GetYaxis()->SetName(vnameY);
+     temph.SetDirectory(0);
+     fHistTemplates2D.push_back(temph);
+     
+     for(auto& split : *fDFSingleSplits){
+ 	if(fCutSpecs.size()){
 	  for(auto& cut : fCutSpecs){
+	    TString fullname=histname+":"+cut.first+":"+split.first;
 	    auto cutsplit=split.second.Filter(cut.second.Data());
 	    histo2D_t hist=cutsplit.Histo2D(ROOT::RDF::TH2DModel{histname.Data(),htitle.Data(),NbinsX,lowX,highX,NbinsY,lowY,highY},vnameX.Data(),vnameY.Data());
-	    fDFHistos2D->insert(std::pair<TString,histo2D_t>((cut.first+":"+fullname),hist));
+	    fDFHistos2D->insert(std::pair<TString,histo2D_t>(fullname,hist));
 	  }
 	}
 	else{
+	  TString fullname=histname+":"+split.first;
 	  histo2D_t hist=split.second.Histo2D(ROOT::RDF::TH2DModel{histname.Data(),htitle.Data(),NbinsX,lowX,highX,NbinsY,lowY,highY},vnameX.Data(),vnameY.Data());
 	  fDFHistos2D->insert(std::pair<TString,histo2D_t>(fullname,hist));
 	  
@@ -224,28 +273,6 @@ namespace HS{
     }
     
   
-   //  void HistMaker::Histo2D(TString vnameX,TString vnameY,
-   // 			    TString htitle,Int_t NbinsX,
-   // 			    Double_t lowX, Double_t highX,
-   // 			    Int_t NbinsY,
-   // 			    Double_t lowY, Double_t highY){
-   //    if(!fDFHistos2D.get())fDFHistos2D.reset(new mhisto2Ds_t);
-   //    for(auto& split : *fDFSingleSplits){
-   // 	TString fullname=vnameY+"_V_"+vnameX+split.first;
-   // 	histo2D_t hist=split.second.Histo2D(ROOT::RDF::TH2DModel{fullname.Data(),htitle.Data(),NbinsX,lowX,highX,NbinsY,lowY,highY},vnameX.Data(),vnameY.Data());
-   // 	fDFHistos2D->insert(std::pair<TString,histo2D_t>(fullname,hist));
-   //    }
-   // }
-
-    // void HistMaker::Histo1DForFullSplits(TString vname,TString htitle,
-    // 					   Int_t Nbins,Double_t low, Double_t high){
-    //   fDFHistos1D.reset(new mhisto1Ds_t);
-    //   for(auto& split : *fDFSingleSplits){
-    // 	TString fullname=vname+split.first;
-    // 	histo1D_t hist=split.second.Histo1D(ROOT::RDF::TH1DModel{fullname.Data(),htitle.Data(),Nbins,low,high},vname.Data());
-    // 	fDFHistos1D->insert(std::pair<TString,histo1D_t>(fullname,hist));
-    //   }
-    // }
 
     void HistMaker::PrintHist1DNames(){
       using std::cout;
@@ -257,8 +284,20 @@ namespace HS{
       }
       std::cout<<std::endl<<std::endl;
     }
+    void HistMaker::PrintCuts(){
+      using std::cout;
+      using std::endl;
+    
+      cout<<endl<<"HistMaker::PrintCuts() ::"<<endl;
+      for(auto& cut : fCutSpecs){ //loop over cuts
+	std::cout<<"( "<<cut.first<<" =  "<<cut.second<<") ";
+      }
+      std::cout<<std::endl<<std::endl;
+    }
 
     void HistMaker::ConfigureFileDirs(){
+      if(fConfigFileDirsDone) return;
+      fConfigFileDirsDone=kTRUE;
       if(!fOutFile.get()) return;
       if(fAreFullSplits){
 	fOutFile->cd();
@@ -272,7 +311,6 @@ namespace HS{
       }
       if(fAreSingleSplits){
 	fOutFile->cd();
-	cout<<"KKKKKKKKKKKKKKK "<<endl;
 	if(fCutSpecs.size())
 	  for(auto& cut: fCutSpecs){
 	    //	    for(auto& snames:fSingleSplitNames)
@@ -294,13 +332,7 @@ namespace HS{
 		tsname.ReplaceAll(":","");
 		gDirectory->mkdir(tsname,fSingleSplitRanges[i][j]);
 	      }
-	  // for(auto& snames:fSingleSplitNames)
-	  //   for(auto& sname:snames){
-	  //     TString tsname(sname);
-	  //     tsname.ReplaceAll(":","");
-	  //     gDirectory->mkdir(tsname);
-	  //   }
-	  
+	    
 	}
 	
       }
@@ -325,31 +357,50 @@ namespace HS{
     TDirectory* HistMaker::FindDirectory(TString name){
       auto dirnames=name.Tokenize(":");
       for(Int_t i=0;i<dirnames->GetEntries();i++){
-	cout<<" HistMaker::FindDirectory"<<i<<" "<<dirnames->At(i)->GetName()<< endl;
 	gDirectory->cd(dirnames->At(i)->GetName());
       }
       return gDirectory;		       
     }
     
     void HistMaker::SaveHists(){
-      
+      cout<<"HistMaker::SaveHists "<<fOutFile->GetName()<<" "<<fDFHistos1D->size()<<endl;
+      //Don't save templates
+      for(auto& hist : fHistTemplates1D)
+	hist.SetDirectory(0);
+      for(auto& hist : fHistTemplates2D)
+	hist.SetDirectory(0);
+   
       if(fOutFile.get()){
-	for(auto& hist : *fDFHistos1D){ //loop over axis
-	  fOutFile->cd();
-	  std::cout<<hist.first<<"   ";
-	  TString fullname=hist.first;    
-	  fullname.ReplaceAll(hist.second->GetName(),"");
-	  hist.second->SetDirectory(FindDirectory(fullname));
-	}
-	for(auto& hist : *fDFHistos2D){ //loop over axis
-	  fOutFile->cd();
-	  std::cout<<hist.first<<"   "<<hist.second->GetName()<<endl;
-	  TString fullname=hist.first;    
-	  fullname.ReplaceAll(hist.second->GetName(),"");
-	  hist.second->SetDirectory(FindDirectory(fullname));
+	if(fDFHistos1D.get())
+	  for(auto& hist : *fDFHistos1D){ //loop over axis
+	    fOutFile->cd();
+	    TString fullname=hist.first;    
+	    fullname.Remove(0,fullname.First(":")+1);
+	    hist.second->SetDirectory(FindDirectory(fullname));
+	  }
+	if(fDFHistos2D.get()){
+	  cout<<"2d "<<fDFHistos2D->size()<<endl;
+	  for(auto& hist : *fDFHistos2D){ //loop over axis
+	    fOutFile->cd();
+	    TString fullname=hist.first;
+	    fullname.Remove(0,fullname.First(":")+1);	    
+	    hist.second->SetDirectory(FindDirectory(fullname));
+	  }
 	}
 	fOutFile->Write();
       }
     }
+    //////////////////////////////////////////////////////////////
+    // MultiFileHists::MultiFileHists(TString tname,strings_t files,TString dir){
+    //   for(auto& inname : files){
+    // 	auto outname= dir + "/"+gSystem->BaseName(inname);
+    // 	fHistMakers.push_back(HistMaker(tname,inname,outname));
+    //   }
+    // }
+    // MultiFileHists::MultiFileHists(TString file,TString dir){
+
+    // }
+
+    
   }//namespace DF
 }//namespace HS
