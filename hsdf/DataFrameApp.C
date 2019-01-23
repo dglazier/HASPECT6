@@ -172,6 +172,12 @@ namespace HS{
     }
    ///////////////////////////////////////////////////////////////////////
     ///HistMaker
+    ///////////////////////////////////////////////////////////////////////
+    ///reproduces same histograms for another root file (tree)
+    ///usage :
+    /// CloneWithNewFile("new/in/file.root","new/out/file.root");
+    /// CloneWithNewFile("new/in/file.root","new/out/file.root","newtree");v//in case different treename
+    /// CloneWithNewFile("new/in/file.root","new/out/file.root","",{{"Test2","BeamTime>0"},{"MassCut","Mass>1"}}); //in case you want to apply different cuts
     hm_uptr HistMaker::CloneWithNewFile(TString infname,TString outfname,TString tname,std::vector<std::pair<TString,TString>> cuts){
       if(tname == TString(""))
 	tname=TreeName();
