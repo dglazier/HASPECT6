@@ -46,7 +46,11 @@ namespace HS{
       SetTreeDirectory();
     }
     // FiledTree()=default;
-    
+    FiledTree(const FiledTree&)=default;
+    FiledTree(FiledTree&&)=default;
+    FiledTree& operator=(const FiledTree& other)=default;
+    FiledTree& operator=(FiledTree&& other) = default;
+
     virtual ~FiledTree();
     
     const ttree_ptr Tree() const {return fTree;}

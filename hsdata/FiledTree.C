@@ -1,9 +1,10 @@
 #include "FiledTree.h"
+#include <TDirectory.h>
 
 using namespace HS;
 
 FiledTree::~FiledTree(){
-  std::cout<<"       tree name "<<fTree->GetName()<<" "<<fTree->GetEntries()<<" "<<fFile->GetName()<<endl;
+  std::cout<<"FiledTree::~FiledTree()  tree name "<<fTree->GetName()<<" "<<fTree->GetEntries()<<" "<<fFile->GetName()<<endl;
   if(fMode==Mode_t::recreate||fMode==Mode_t::create||
      fMode==Mode_t::update||fMode==Mode_t::copyfull||
      fMode==Mode_t::copyempty){
@@ -20,16 +21,20 @@ FiledTree::~FiledTree(){
       }
     }
   }
+  fTree.reset();
 }
 filed_uptr FiledTree::Recreate(TString tname,TString fname){
+  auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"recreate");
   f->CreateTree(tname);
   f->SetMode(Mode_t::recreate);
   f->SetTreeDirectory();
+  saveDir->cd();
   return f;
 }
 filed_uptr FiledTree::Read(TString tname,TString fname){
+  auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   auto file=TFile::Open(fname,"read");
   auto tree=dynamic_cast<TTree*>(file->Get(tname));
@@ -37,9 +42,11 @@ filed_uptr FiledTree::Read(TString tname,TString fname){
   f->SetTree(std::move(tree));
   f->SetMode(Mode_t::read);
   f->SetTreeDirectory();
+  saveDir->cd();
   return f;
 }
 filed_uptr FiledTree::Update(TString tname,TString fname){
+  auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   auto file=TFile::Open(fname,"update");
   auto tree=dynamic_cast<TTree*>(file->Get(tname));
@@ -47,45 +54,56 @@ filed_uptr FiledTree::Update(TString tname,TString fname){
   f->SetTree(std::move(tree));
   f->SetMode(Mode_t::update);
   f->SetTreeDirectory();
+  saveDir->cd();
   return f;
 }
 filed_uptr FiledTree::Create(TString tname,TString fname){
+  auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"create");
   f->CreateTree(tname);
   f->SetMode(Mode_t::create);
   f->SetTreeDirectory();
+  saveDir->cd();
   return f;
 }
 filed_uptr FiledTree::CopyEmpty(TTree* tree,TString fname){
+  auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"create");
   f->SetTree(tree->CloneTree(0));
   f->SetMode(Mode_t::copyempty);
   f->SetTreeDirectory();
+  saveDir->cd();
   return f;
 }
 filed_uptr FiledTree::CopyFull(TTree* tree,TString fname){
+  auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"create");
   f->SetTree(tree->CloneTree(-1,"fast"));
   f->SetMode(Mode_t::copyfull);
   f->SetTreeDirectory();
+  saveDir->cd();
   return f;
 }
 filed_uptr FiledTree::CopyEmpty(ttree_ptr tree,TString fname){
+  auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"create");
   f->SetTree(tree->CloneTree(0));
   f->SetMode(Mode_t::copyempty);
   f->SetTreeDirectory();
- return f;
+  saveDir->cd();
+  return f;
 }
 filed_uptr FiledTree::CopyFull(ttree_ptr tree,TString fname){
+  auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"create");
   f->SetTree(tree->CloneTree(-1,"fast"));
   f->SetMode(Mode_t::copyfull);
   f->SetTreeDirectory();
+  saveDir->cd();
   return f;
 }

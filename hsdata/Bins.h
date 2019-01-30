@@ -26,6 +26,7 @@ namespace HS{
   protected:
     
     VecString_t fBinNames;//names of individual bins
+    VecString_t fFileNames;//names of individual files
     VecAxis_t fVarAxis;//bin limits for variables
     vector<VecString_t> fPartName; //vector containing name part for each axis
     TFile* fFile=nullptr;//! file for writing lists to disc in case they get large
@@ -37,7 +38,8 @@ namespace HS{
     Int_t fMAXFILES=490;
     TString fOutDir="./";
     TString fDataName="Data";
-  
+    const TString fBinnedTreeName="BinnedTree";
+
     vector<BinTree*> fTrees;//!
   
   public:
@@ -54,6 +56,7 @@ namespace HS{
     void AddAxis(TString name,Int_t nbins,Double_t* xbins);
     void IterateAxis(Int_t iA,TString binName);
     VecString_t GetBinNames(){return fBinNames;}
+    const VecString_t GetFileNames() const {return fFileNames;}
     VecAxis_t GetVarAxis(){return fVarAxis;}
     Int_t GetAxisi(TString aname){for(Int_t ia=0;ia<fNaxis;ia++) if(fVarAxis[ia].GetName()==aname) return ia; return -1;};
     TAxis GetAxis(Int_t ia){return fVarAxis[ia];}
@@ -80,7 +83,8 @@ namespace HS{
     void SetMaxFiles(Long64_t ent){fMAXFILES=ent;}
     void SetOutDir(TString name) {fOutDir=name;}
     void SetDataName(TString name) {fDataName=name;}
-    
+    const TString GetBinnedTreeName(){return fBinnedTreeName;}
+
     ClassDef(Bins, 1);  // Writeable bins class
   };//Bins
 
@@ -105,7 +109,7 @@ namespace HS{
     TTree* fTree=nullptr;
     TFile* fFile=nullptr;
     TString fName;
-
+ 
   };//class BinTree
 
 }//namespace HS

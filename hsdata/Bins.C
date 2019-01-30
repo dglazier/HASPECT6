@@ -24,6 +24,9 @@ HS::Bins::Bins(TString name,TString filename):TNamed(name,name){
   fNbins=filebins->GetN();
   fNaxis=filebins->GetNAxis();
   fVarAxis=filebins->GetVarAxis();
+  // fBinnedTreeName = filebins->GetBinnedTreeName();
+  fFileNames = filebins->GetFileNames();
+  
   //tree is not written to file as data member
   saveDir->cd();
  }
@@ -84,6 +87,7 @@ void HS::Bins::IterateAxis(Int_t iA,TString binName) {
   }
 }
 void HS::Bins::RunBinTree(TTree* tree){
+  fFileNames.clear();
   if(fNbins==0) InitialiseBins();//1 time initialisation
   
   if(fNbins<fMAXFILES){
@@ -134,6 +138,7 @@ void HS::Bins::RunBinTree(TTree* tree,Int_t BMin,Int_t BMax){
   gSystem->MakeDirectory(fOutDir+"/");
   for(Int_t ib=BMin;ib<BMax;ib++){
     gSystem->MakeDirectory(fOutDir+"/"+GetBinName(ib));
+    fFileNames.push_back(fOutDir+"/"+GetBinName(ib)+"/Tree"+fDataName+".root");
     fTrees[ib-BMin]=new BinTree(Nhere,fOutDir+"/"+GetBinName(ib)+"/Tree"+fDataName,tree);	
   }
 
@@ -176,8 +181,9 @@ void HS::Bins::Save(TString filename){
   Info(" Bins::Save()"," Saving %s to %s",GetName(),filename.Data());
   fFile=new TFile(filename,"recreate");
   Write();
-  if(fFile) delete fFile;
-  
+  if(fFile){
+    delete fFile;
+    fFile=nullptr;}
 }
 void HS::Bins::PrintAxis(){
 
