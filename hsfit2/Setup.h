@@ -54,7 +54,7 @@ namespace HS{
       const RooWorkspace& WS(){return fWS;}
 
       RooArgSet& Vars();
-      RooAbsPdf* Model(){return fModel;}
+      RooAbsPdf* Model()  const {return fModel;}
       RooAddPdf ExtendModel() const{return RooAddPdf(*dynamic_cast<RooAddPdf*>(fModel));}
 
 
@@ -68,12 +68,12 @@ namespace HS{
       const TString GetOutDir() const {return fOutDir;}
       void SetOutDir(TString name){fOutDir=name;}
 
-      realvars_t &FitVars(){return fFitVars;}
-      catvars_t &FitCats(){return fFitCats;}
+      const realvars_t &FitVars() const {return fFitVars;}
+      const catvars_t &FitCats()const {return fFitCats;}
       
       RooArgList& Yields()  {return fYields;}
       RooArgList& Parameters() {return fParameters;}
-      RooArgList& PDFs() {return fPDFs;}
+      const RooArgList& PDFs() const  {return fPDFs;}
       RooArgList& Constraints(){return fConstraints;}
 
 

@@ -556,7 +556,7 @@ void  RooHSEventsPDF::CheckIntegralParDep(Int_t Ntests){
   }
   fCheckInt=kFALSE; //only do once
 }
-Bool_t RooHSEventsPDF::AddProtoData(RooDataSet* data){
+Bool_t RooHSEventsPDF::AddProtoData(const RooDataSet* data){
   //merge the current tree with data from another dataset
   //Default it will add any branches in data not in fEvTree
   cout<<"RooHSEventsPDF::AddProtoData "<<data<<" "<<fEvTree<<endl;

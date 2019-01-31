@@ -5,7 +5,7 @@
 namespace HS{
   namespace FIT{
     
-    PlotResults::PlotResults(Setup *setup,RooDataSet& data){
+    PlotResults::PlotResults(const Setup *setup,const RooDataSet* data){
 
       using namespace RooFit;
       cout<<"PlotResults::PlotResults "<<fCanvases.get()<<" "<<setup<<" "<<endl;
@@ -25,7 +25,7 @@ namespace HS{
 	canvas->cd(1);
 
 	RooPlot* frame = var->frame();
-	data.plotOn(frame, DataError(RooAbsData::SumW2) ) ; 
+	data->plotOn(frame, DataError(RooAbsData::SumW2) ) ; 
 	model->plotOn(frame,LineColor(kRed),Precision(4E-2)) ;
 
 	model->paramOn(frame,

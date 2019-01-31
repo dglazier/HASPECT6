@@ -48,6 +48,8 @@ namespace HS{
       virtual void Clear(UInt_t ifit){
 	fData->Clear(ifit);
 	fFiledTrees.clear();
+	fCurrSetup.reset();
+	fCurrDataSet.reset();
       }
       
       void LoadData(TString tname,strings_t fname){
@@ -75,9 +77,13 @@ namespace HS{
       
 
       void FillEventsPDFs(UInt_t idata);
+      void PlotDataModel(){
+	fPlots.push_back(std::move(plotresult_uptr{new PlotResults(fCurrSetup.get(),fCurrDataSet.get())}));
+      }
 
     protected:
       std::unique_ptr<Setup> fCurrSetup;
+      std::unique_ptr<RooDataSet> fCurrDataSet;
  
     private:
       

@@ -119,7 +119,7 @@ namespace HS{
       void  CheckIntegralParDep(Int_t Ntests);
       void ResetTree();
       Double_t GetIntegralWeight(Long64_t iw) const {if(!fUseEvWeights) return 1; return fEvWeights[iw];} ;
-      Bool_t AddProtoData(RooDataSet* data);
+      Bool_t AddProtoData(const RooDataSet* data);
       void SetCut(TString cut){fCut=cut;};
       TString GetCut(){return fCut;}
       Double_t GetMaxValue(){return fMaxValue;}

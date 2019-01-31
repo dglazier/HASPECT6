@@ -29,7 +29,7 @@ namespace HS{
       FitData& operator=(const FitData& other)=default;
       FitData& operator=(FitData&& other) = default;
 
-      virtual RooAbsData& Get() = 0;
+      //virtual RooAbsData& Get() = 0;
     protected:
       
     private:
@@ -38,7 +38,7 @@ namespace HS{
     };//class FitData
     
     //////////////////////////////////////////////////
-    using dset_ptr = std::shared_ptr<RooDataSet>;
+    using dset_uptr = std::unique_ptr<RooDataSet>;
     using roodsets_t = std::vector<RooDataSet*>;
     using filedtrees_t = std::vector<std::unique_ptr<HS::FiledTree>>;
     
@@ -54,15 +54,14 @@ namespace HS{
       DataEvents& operator=(const DataEvents& other)=default;
       DataEvents& operator=(DataEvents&& other) = default;
 
-      UInt_t GetN() const {return fDSets.size();}
-      RooAbsData& Get() final {return *(Get(0));}
-      RooDataSet* Get(UInt_t iset);
+      UInt_t GetN() const {return fFiledTrees.size();}
+      // RooAbsData& Get() final {return *(Get(0));}
+      dset_uptr Get(const UInt_t iset);
       // RooDataSet* Get(UInt_t iset,Setup& setup) const;
       TTree* GetTree(UInt_t ii){return fFiledTrees[ii]->Tree().get();}
       TString FileName(UInt_t ii){return fFileNames[ii];}
       
-      void Clear(){fFiledTrees.clear();fDSets.clear();}
-      void Clear(UInt_t ii) {fFiledTrees[ii].reset();delete fDSets[ii];fDSets[ii]=nullptr;}
+      void Clear(UInt_t ii) {fFiledTrees[ii].reset();}
       
     protected:
       
@@ -73,7 +72,6 @@ namespace HS{
       TString fTreeName;
       
       filedtrees_t fFiledTrees;
-      roodsets_t fDSets;
       
     };
     

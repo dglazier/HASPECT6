@@ -15,28 +15,28 @@ namespace HS{
       fCurrSetup->SetName(fBinner.BinName(ifit));
       FillEventsPDFs(ifit);
       fCurrSetup->TotalPDF();
-
-      //standard FitManager
-      auto &dataset = *(Data()->Get(ifit));
       auto *model=fCurrSetup->Model();
 
+      fCurrDataSet=std::move(Data()->Get(ifit));
+  
       fCurrSetup->AddFitOption(RooFit::ExternalConstraints
 			       (fCurrSetup->Constraints()));
       
       SetAllValLimits(fCurrSetup->Yields(),
-		      dataset.sumEntries()/2,0,dataset.sumEntries()*2);
+		      fCurrDataSet->sumEntries()/2,0,fCurrDataSet->sumEntries()*2);
 
       cout<<"FitManager::Run start fit "<<endl;
       fCurrSetup->FitOptions().Print("v");
-      model->fitTo(dataset,fCurrSetup->FitOptions());
+      model->fitTo(*fCurrDataSet,fCurrSetup->FitOptions());
 
-       fPlots.push_back(std::move(plotresult_uptr{new PlotResults(fCurrSetup.get(),dataset)}));
-
+      PlotDataModel();
+     
     }
     
     void FitManager::RunAll(){
       
       for(UInt_t i=0;i<fData->GetN();i++){
+	cout<<"FitManager::RunAll() "<<i<<endl;
 	Run(i);
 	Clear(i);
       }
@@ -45,7 +45,7 @@ namespace HS{
     
     void FitManager::FillEventsPDFs(UInt_t idata){
       auto pdfs=fCurrSetup->PDFs();
-      auto data=Data()->Get(idata);
+
       cout<<" FitManager::FillEventsPDFs "<<pdfs.getSize()<<endl;
       for(Int_t ip=0;ip<pdfs.getSize();ip++){
 	auto pdf=dynamic_cast<RooHSEventsPDF*>( &pdfs[ip]);
@@ -68,7 +68,7 @@ namespace HS{
 	  }
 	  else{
 	    pdf->SetEvTree(tree.get(),fCurrSetup->Cut());
-	    pdf->AddProtoData(data);
+	    pdf->AddProtoData(fCurrDataSet.get());
 	    RooHSEventsHistPDF* histspdf=0;
 	    if((histspdf=dynamic_cast<RooHSEventsHistPDF*>(pdf))){
 	      histspdf->CreateHistPdf();

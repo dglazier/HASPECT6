@@ -14,13 +14,11 @@ namespace HS{
 	cout<<"ERROR FitManager::Run no data loaded"<<endl;
 	return;
        }
-       //standard FitManager
-       auto &dataset0 = *(Data()->Get(ifit));
        //Note sPlot is much (10X) faster with tree store
        //Normal fit is 2X faster with vector...
        RooAbsData::setDefaultStorageType(RooAbsData::Tree);
-       RooDataSet* dataset =dynamic_cast<RooDataSet*>( dataset0.emptyClone());
-       dataset->append(dataset0);
+       RooDataSet* dataset =dynamic_cast<RooDataSet*>( fCurrDataSet->emptyClone());
+       dataset->append(*fCurrDataSet.get());
        RooAbsData::setDefaultStorageType(RooAbsData::Vector);
        
 
@@ -35,13 +33,32 @@ namespace HS{
 		     *dataset,model,fCurrSetup->Yields()));
        
        fCurrSetup->Parameters().setAttribAll("Constant",kFALSE);
+
+       //CreateWeights();
        
-       Clear(ifit);
        fSPlot.reset(); //delete splot
        delete dataset;
      
    }
+    // void CreateWeights(){
+    //   //Check that the fit was succesfull
+    //   Double_t TotalYield=0;
+    //   auto yields=fCurrSetup->Yields();
+    //   for(Int_t iy=0;iy<yields.getSize();iy++)
+    // 	TotalYield+=((RooRealVar*)&yields[iy])->getVal();
+      
+    //   if(TotalYield>0){ //got some weights
+    // 	fWeights=new HS::Weights("HSsWeights");//initialise weights
+    // 	fWeights->SetIDName(fIDBranchName);
+    // 	fWeights->SetTitle(GetName());
+    // 	fWeights->SetFile(fOutDir+TString("Weights")+GetName()+".root");
+    // 	ExportWeights();
+
+    //   }
     
+    //   else Warning("sPlot::sPlot()"," total weights 0, fit did not converge. Make sure the non-sweight fit to fix parameters was succesful. No weights will be assigned for these events");
+      
+    // }
     
   }//namespace FIT 
 }//namespace HS
