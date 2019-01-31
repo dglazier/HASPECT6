@@ -240,6 +240,10 @@ namespace HS{
 	  
 	}
       }
+      
+      histo1D_t hist=DFrame()->Histo1D(ROOT::RDF::TH1DModel{(vname).Data(),htitle.Data(),Nbins,low,high},vname.Data());
+      fDFHistos1D->insert(std::pair<TString,histo1D_t>(vname,hist));
+
     }
     
     void HistMaker::Histo2D(TString vnameX,TString vnameY,
@@ -276,6 +280,9 @@ namespace HS{
 	  
 	}
       }
+     histo2D_t hist=DFrame()->Histo2D(ROOT::RDF::TH2DModel{histname.Data(),htitle.Data(),NbinsX,lowX,highX,NbinsY,lowY,highY},vnameX.Data(),vnameY.Data());
+      fDFHistos2D->insert(std::pair<TString,histo2D_t>(histname,hist));
+
     }
     
   
@@ -382,15 +389,17 @@ namespace HS{
 	    fOutFile->cd();
 	    TString fullname=hist.first;    
 	    fullname.Remove(0,fullname.First(":")+1);
-	    hist.second->SetDirectory(FindDirectory(fullname));
+	    auto dir=FindDirectory(fullname);
+	    if(dir)hist.second->SetDirectory(dir);
 	  }
 	if(fDFHistos2D.get()){
 	  cout<<"2d "<<fDFHistos2D->size()<<endl;
 	  for(auto& hist : *fDFHistos2D){ //loop over axis
 	    fOutFile->cd();
 	    TString fullname=hist.first;
-	    fullname.Remove(0,fullname.First(":")+1);	    
-	    hist.second->SetDirectory(FindDirectory(fullname));
+	    fullname.Remove(0,fullname.First(":")+1);
+	    auto dir=FindDirectory(fullname);
+	    if(dir)hist.second->SetDirectory(FindDirectory(fullname));
 	  }
 	}
 	fOutFile->Write();
