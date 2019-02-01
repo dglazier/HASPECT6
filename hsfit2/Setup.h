@@ -53,7 +53,7 @@ namespace HS{
       
       const RooWorkspace& WS(){return fWS;}
 
-      RooArgSet& Vars();
+      RooArgSet& DataVars();
       RooAbsPdf* Model()  const {return fModel;}
       RooAddPdf ExtendModel() const{return RooAddPdf(*dynamic_cast<RooAddPdf*>(fModel));}
 

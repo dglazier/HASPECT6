@@ -129,24 +129,17 @@ namespace HS{
       fModel=new RooAddPdf(fName+"TotalPDF","total model",
 			   fPDFs, 
 			   fYields);
-      //Int_t Nm=0;
-      //can't existing pdf delete from workspace!
-      //while(fWS.pdf(TString(fName)+Form("TotalPDF%d",Nm++)));
-      //model.SetName(TString(fName)+Form("TotalPDF%d",Nm-1));
-
-      // fWS.import(model,RooFit::RecycleConflictNodes()); //and replace any existing model, memory leak?
-
-      //fModel=fWS.pdf(model.GetName());
       fModel->Print();
       AddFitOption(RooFit::Extended());
-      //  fWS.Print();
     }
-    RooArgSet& Setup::Vars(){
+    RooArgSet& Setup::DataVars(){
       if(fVars.getSize())
 	return fVars;
       fVars.add(MakeArgSet(fFitVars));
       fVars.add(MakeArgSet(fFitCats));
       fVars.add(MakeArgSet(fAuxVars));
+      fWS.factory(fIDBranchName+"[0,9.99999999999999e14]");
+      fVars.add(*fWS.var(fIDBranchName));
       return fVars;
     }
 

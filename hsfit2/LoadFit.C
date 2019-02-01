@@ -24,7 +24,7 @@ void LoadFit(TString Selection=""){
     gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+dmpath).Data()));
   }
 
- //Now finalsstate classes
+  //Now finalsstate classes
   vector<TString > FITClasses={"FiledTree","Bins","Weights","RooHSEventsPDF","RooHSEventsHistPDF","Setup","Data","Binner","PlotResults","FitManager","sPlot"};
 
   for(auto const& name : FITClasses){

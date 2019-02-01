@@ -52,19 +52,18 @@ namespace HS{
 	fCurrDataSet.reset();
       }
       
-      void LoadData(TString tname,strings_t fname){
-	fData.reset(new DataEvents(fSetup,tname,fname));
-      }
       void LoadData(TString tname,TString fname,TString name="Data"){
 	fBinner.SplitData(tname,fname,name);
-	//	fData.reset(new DataEvents(fSetup,fBinner.TreeName(name),fBinner.FileNames(name)));
 	LoadData(fBinner.TreeName(name),fBinner.FileNames(name));
+	fData->SetParentName(fname);
+ 	fData->SetParentTreeName(tname);
       }
       void ReloadData(TString fname,TString name="Data"){
 	fBinner.ReloadData(fname,name);
-	//fData.reset(new DataEvents(fSetup,fBinner.TreeName(name),fBinner.FileNames(name)));
   	LoadData(fBinner.TreeName(name),fBinner.FileNames(name));
-      }
+ 	fData->SetParentName(fname);
+ 	fData->SetParentTreeName(fBinner.TreeName(name));
+     }
       
       void LoadSimulated(TString tname,TString fname,TString name){
 	fBinner.SplitData(tname,fname,name);
@@ -84,7 +83,11 @@ namespace HS{
     protected:
       std::unique_ptr<Setup> fCurrSetup;
       std::unique_ptr<RooDataSet> fCurrDataSet;
- 
+      
+       void LoadData(TString tname,strings_t fname){
+	fData.reset(new DataEvents(fSetup,tname,fname));
+      }
+
     private:
       
       Setup fSetup;

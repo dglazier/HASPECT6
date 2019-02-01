@@ -440,6 +440,6 @@ filed_uptr  Weights::DFAddToTree(TString wname,TString outfname,TString tname,TS
   //  return DFdef_uptr(new DFdef_t(df.Define(wname.Data(),applyWeights)));
   df.Define(wname.Data(),applyWeights).Snapshot(tname.Data(),outfname.Data());
 
-  return FiledTree::Read(tname.Data(),outfname.Data());
+  return std::move(FiledTree::Read(tname.Data(),outfname.Data()));
  }
  

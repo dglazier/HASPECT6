@@ -24,7 +24,7 @@ HS::Bins::Bins(TString name,TString filename):TNamed(name,name){
   fNbins=filebins->GetN();
   fNaxis=filebins->GetNAxis();
   fVarAxis=filebins->GetVarAxis();
-  // fBinnedTreeName = filebins->GetBinnedTreeName();
+  //fBinnedTreeName = filebins->GetBinnedTreeName();
   fFileNames = filebins->GetFileNames();
   
   //tree is not written to file as data member
@@ -36,7 +36,7 @@ HS::Bins::Bins(const Bins& other, const char* name): TNamed(name,name){
   fNaxis=other.fNaxis;
   fVarAxis=other.fVarAxis;
   fFile=0;
-
+  fBinnedTreeName = other.fBinnedTreeName;
 }
 HS::Bins::~Bins(){
   if(fFile){fFile->Close(); delete fFile;}
@@ -136,6 +136,7 @@ void HS::Bins::RunBinTree(TTree* tree,Int_t BMin,Int_t BMax){
   fTrees.resize(Nhere);
   //make output directory if not existing
   gSystem->MakeDirectory(fOutDir+"/");
+  fBinnedTreeName=tree->GetName();
   for(Int_t ib=BMin;ib<BMax;ib++){
     gSystem->MakeDirectory(fOutDir+"/"+GetBinName(ib));
     fFileNames.push_back(fOutDir+"/"+GetBinName(ib)+"/Tree"+fDataName+".root");
@@ -241,7 +242,7 @@ HS::BinTree::BinTree(Int_t nbins,TString name,TTree* tree0){
   fName=name;
   fFile=TFile::Open(fName+".root","recreate");
   fTree=tree0->CloneTree(0);
-  fTree->SetName("BinnedTree");
+  fTree->SetName(tree0->GetName());
   fTree->SetDirectory(fFile);
   fTree->SetAutoSave(1E12); //We do our won autosave as this one changes basket size greatly increasing memory when large number of bins
    fTree->SetBasketSize("*",32000); //cloned trees have the parent basket size which can be very large and use large amount of memeory when we great many bins

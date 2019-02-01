@@ -34,31 +34,83 @@ namespace HS{
        
        fCurrSetup->Parameters().setAttribAll("Constant",kFALSE);
 
-       //CreateWeights();
+       CreateWeights();
        
-       fSPlot.reset(); //delete splot
        delete dataset;
      
    }
-    // void CreateWeights(){
-    //   //Check that the fit was succesfull
-    //   Double_t TotalYield=0;
-    //   auto yields=fCurrSetup->Yields();
-    //   for(Int_t iy=0;iy<yields.getSize();iy++)
-    // 	TotalYield+=((RooRealVar*)&yields[iy])->getVal();
+    
+    void sPlot::CreateWeights(){
+      //Check that the fit was succesfull
+      Double_t TotalYield=0;
+      auto yields=fCurrSetup->Yields();
+      for(Int_t iy=0;iy<yields.getSize();iy++)
+    	TotalYield+=((RooRealVar*)&yields[iy])->getVal();
       
-    //   if(TotalYield>0){ //got some weights
-    // 	fWeights=new HS::Weights("HSsWeights");//initialise weights
-    // 	fWeights->SetIDName(fIDBranchName);
-    // 	fWeights->SetTitle(GetName());
-    // 	fWeights->SetFile(fOutDir+TString("Weights")+GetName()+".root");
-    // 	ExportWeights();
+      if(TotalYield>0){ //got some weights
+    	fWeights=std::make_shared<HS::Weights>("HSsWeights");//initialise weights
+    	fWeights->SetIDName(fCurrSetup->GetIDBranchName());
+    	fWeights->SetTitle(fCurrSetup->GetName());
+    	fWeights->SetFile(fCurrSetup->GetOutDir()+TString("Weights")+fCurrSetup->GetName()+".root");
+    	ExportWeights();
+ 	fWeights->PrintWeight();
+	fWeights->SortWeights();
 
-    //   }
+      }
     
-    //   else Warning("sPlot::sPlot()"," total weights 0, fit did not converge. Make sure the non-sweight fit to fix parameters was succesful. No weights will be assigned for these events");
+      else Warning("sPlot::sPlot()"," total weights 0, fit did not converge. Make sure the non-sweight fit to fix parameters was succesful. No weights will be assigned for these events");
       
-    // }
+    }
+
+    void sPlot::ExportWeights(){
+      cout<<"HSsPlot:ExportWeights "<<endl;
+      const TString idname=fCurrSetup->GetIDBranchName();
+      // cout<<"sPlot::ExportWeights()  "<<idname<<endl;
+      const RooArgSet* vars=fCurrDataSet->get(0);
+      Bool_t gotID=kFALSE;
+      if(vars->find(idname))
+	gotID=kTRUE;
+      
+      auto yields=fCurrSetup->Yields();
+      
+      Int_t NSpecies=yields.getSize();
+      TVectorD eventW(NSpecies); //initialise weights vector
+      for(Int_t iw=0;iw<NSpecies;iw++)//set name for each species, 
+	fWeights->SetSpecies(TString(yields.at(iw)->GetName()).Remove(0,4));
+      
+      for(Long64_t ev=0;ev<fCurrDataSet->numEntries();ev++){//loop over events
+	for(Int_t iw=0;iw<NSpecies;iw++)//loop over species
+	  eventW[iw]=fSPlot->GetSWeight(ev,yields.at(iw)->GetName());//get weight for this species
+	if(gotID){//use ID from initial tree
+	  const RooArgSet* vars=fCurrDataSet->get(ev);
+	  fWeights->FillWeights((Long64_t)vars->getRealValue(idname),eventW);
+	} //ID not defined just use entry number in dataset
+	else fWeights->FillWeights(ev,eventW);
+      }
+    }
     
+    weights_uptr sPlot::MergeWeights(){
+      //in addition combine the weights into 1 and load them
+      weights_uptr wts(new HS::Weights("HSsWeights"));
+      //Note the output file cannot contain the word Weights (because of Merge), hence Tweights!
+      wts->Merge(SetUp().GetOutDir()+"/Weights",
+		 SetUp().GetOutDir()+"/"+SetUp().GetName()+"Tweights.root",
+		 "HSsWeights");
+      //wts->Save();
+      return std::move(wts);
+    }
+
+    filed_uptr sPlot::WeightedTree(TString wname){
+      weights_uptr wts;
+      if(Bins().GetSize()>1)
+	wts = MergeWeights();
+      else{
+	wts.reset(new HS::Weights());
+	wts->LoadSaved(SetUp().GetOutDir()+TString("Weights")+SetUp().GetName()+".root","HSsWeights");
+      }
+      return std::move(wts->DFAddToTree(wname,SetUp().GetOutDir()+"Tree"+wname+
+					".root",Data()->ParentTreeName(),
+					Data()->ParentName()));
+    }
   }//namespace FIT 
 }//namespace HS

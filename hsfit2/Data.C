@@ -13,10 +13,10 @@ namespace HS{
     }
     dset_uptr DataEvents::Get(const UInt_t iset) {
      cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" "<<fTreeName<<endl;
-     fSetup.Vars().Print();
+     fSetup.DataVars().Print();
      fFiledTrees[iset]=FiledTree::Read(fTreeName,fFileNames[iset]); //will be delted at end of function
      auto ds=dset_uptr(new  RooDataSet("DataEvents","DataEvents",
-		       fFiledTrees[iset]->Tree().get(),fSetup.Vars(),
+		       fFiledTrees[iset]->Tree().get(),fSetup.DataVars(),
 					      fSetup.Cut()));
           
      return std::move(ds); 

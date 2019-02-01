@@ -12,7 +12,7 @@ void Model1(TString filename){
   tree->Branch("M1",&M1,"M1/D");
   tree->Branch("Mmiss_M1",&Mmiss_M1,"Mmiss_M1/D");
   tree->Branch("M2",&M2,"M2/D");
-  tree->Branch("fgID",&fgID,"ID/D");
+  tree->Branch("fgID",&fgID,"fgID/D");
   tree->Branch("Sig",&Sig,"Sig/D");
 
   TTree* tsig=tree->CloneTree(0);

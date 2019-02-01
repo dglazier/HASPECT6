@@ -51,7 +51,8 @@ namespace HS{
       const TString BinName(UInt_t i) const {
 	return fBinNames[i];
       }
-
+      UInt_t GetSize(){return fBinNames.size();}
+      
       Bool_t IsSetup(){return fIsSetup;}
 
   

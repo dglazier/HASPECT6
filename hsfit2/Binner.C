@@ -71,7 +71,7 @@ namespace HS{
       fBins.RunBinTree(tree);
       fBins.Save(fOutDir+name+"BinsConfig.root");
       fNameToFiles[name]=fBins.GetFileNames();
-      fNameToTree[name]=fBins.GetBinnedTreeName();
+      fNameToTree[name]=tree->GetName();
       fBinNames=fBins.GetBinNames();
   }
 

@@ -68,7 +68,7 @@ namespace HS{
 	  }
 	  else{
 	    pdf->SetEvTree(tree.get(),fCurrSetup->Cut());
-	    pdf->AddProtoData(fCurrDataSet.get());
+	    //  pdf->AddProtoData(fCurrDataSet.get());
 	    RooHSEventsHistPDF* histspdf=0;
 	    if((histspdf=dynamic_cast<RooHSEventsHistPDF*>(pdf))){
 	      histspdf->CreateHistPdf();

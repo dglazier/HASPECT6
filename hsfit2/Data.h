@@ -60,6 +60,10 @@ namespace HS{
       // RooDataSet* Get(UInt_t iset,Setup& setup) const;
       TTree* GetTree(UInt_t ii){return fFiledTrees[ii]->Tree().get();}
       TString FileName(UInt_t ii){return fFileNames[ii];}
+      TString ParentName(){return fParentName;}
+      TString ParentTreeName(){return fTreeName;}
+      void SetParentName(TString name){fParentName=name;}
+      void SetParentTreeName(TString name){fParentTreeName=name;}
       
       void Clear(UInt_t ii) {fFiledTrees[ii].reset();}
       
@@ -70,6 +74,8 @@ namespace HS{
       HS::FIT::Setup &fSetup;
       strings_t fFileNames;
       TString fTreeName;
+      TString fParentName;
+      TString fParentTreeName;
       
       filedtrees_t fFiledTrees;
       

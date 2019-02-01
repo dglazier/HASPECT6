@@ -12,8 +12,8 @@
 
 
   //////////////////////////////Make signal PDF
-  RF.SetUp().FactoryPDF("RooHSEventsHistPDF::Sig(Mmiss,alpha[0,0,20],off[0,-2,2],scale[1,0.8,1.2])");
-  RF.SetUp().LoadSpeciesPDF("Sig",1); 
+  RF.SetUp().FactoryPDF("RooHSEventsHistPDF::Signal(Mmiss,alpha[0,0,20],off[0,-2,2],scale[1,0.8,1.2])");
+  RF.SetUp().LoadSpeciesPDF("Signal",1); 
 
   //////////////////////////////Make background PDF
   RF.SetUp().FactoryPDF("RooHSEventsHistPDF::BG(Mmiss,alphaB[0,0,5],offB[0,0,0],scaleB[1.0,0.8,1.2])");
@@ -23,19 +23,24 @@
   RF.Bins().LoadBinVar("Eg",5,3,4);
 
   ///////////////////////////Load Data
-  // RF.LoadData("MyModel","Data.root");
-  // RF.LoadSimulated("MyModel","SigData.root", "Sig");
-  // RF.LoadSimulated("MyModel","BGData.root", "BG");
-  RF.ReloadData("Data.root");
-  RF.ReloadSimulated("SigData.root", "Sig");
-  RF.ReloadSimulated("BGData.root", "BG");
+  RF.LoadData("MyModel","Data.root");
+  RF.LoadSimulated("MyModel","SigData.root", "Signal");
+  RF.LoadSimulated("MyModel","BGData.root", "BG");
+  //RF.ReloadData("Data.root");
+  //RF.ReloadSimulated("SigData.root", "Signal");
+  //RF.ReloadSimulated("BGData.root", "BG");
 
   gBenchmark->Start("timer");
   RF.RunAll();
   gBenchmark->Stop("timer");
   gBenchmark->Print("timer");
 
- 
+  //wts=RF.MergeWeights();
+  // RF.MergeWeights();
+  //auto xxx=wts->DFAddToTree("Signal","xxx.root")
+  auto filetree=RF.WeightedTree("Signal");
+  filetree->Tree()->Draw("Mmiss>>(100,0,10)","Signal");
+
   // RF->DrawTreeVar("Mmiss",100,0,10);
   // RF->DrawTreeVar("M1",100,0,10);
   // RF->DrawTreeVar("M2",100,0,10);

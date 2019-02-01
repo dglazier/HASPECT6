@@ -38,7 +38,7 @@ namespace HS{
     Int_t fMAXFILES=490;
     TString fOutDir="./";
     TString fDataName="Data";
-    const TString fBinnedTreeName="BinnedTree";
+    TString fBinnedTreeName;
 
     vector<BinTree*> fTrees;//!
   
@@ -83,7 +83,7 @@ namespace HS{
     void SetMaxFiles(Long64_t ent){fMAXFILES=ent;}
     void SetOutDir(TString name) {fOutDir=name;}
     void SetDataName(TString name) {fDataName=name;}
-    const TString GetBinnedTreeName(){return fBinnedTreeName;}
+    TString GetBinnedTreeName(){return fBinnedTreeName;}
 
     ClassDef(Bins, 1);  // Writeable bins class
   };//Bins

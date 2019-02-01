@@ -5,13 +5,17 @@
 #include <TNamed.h>
 #include <TList.h>
 #include <TVectorD.h>
+#include <ROOT/RDataFrame.hxx>
 #include <map>
 #include <iostream>
-
+#include "FiledTree.h"
+ 
 
 namespace HS{
   using  StrIntMap_t = map<TString, Int_t >;
-  
+  //using DFdef_t =   ROOT::RDF::RInterface<ROOT::Detail::RDF::RLoopManager, void > ;
+  using DF_uptr=std::unique_ptr<ROOT::RDataFrame>;
+ 
   class Weights : public TNamed{
     
   public:
@@ -66,7 +70,7 @@ namespace HS{
     void WeightBySelection(TTree* tree,TCut cut,Double_t wgt);
     void WeightBySelection(TTree* tree,TCut cut,TString wgt);
     
-    
+    filed_uptr DFAddToTree(TString wname,TString outfname,TString tname,TString infname);
   private:
     TTree *fWTree=nullptr;  //! not saved tree of weights, branchname = species
     TTree *fIDTree=nullptr;  //! not saved tree of ids, branchname = species
