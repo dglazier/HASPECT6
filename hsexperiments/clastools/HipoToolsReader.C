@@ -155,6 +155,7 @@ void CLAS12::HipoToolsReader::FillGenerated(){
 void CLAS12::HipoToolsReader::SetEventInfo(){
 
   fEventInfo->fTrigBit=fEvent->head()->getTrigger();
+  fEventInfo->fVTPTrigBit=fEvent->vtp()->makeVTPTriggers();
   fEventInfo->fCJSTTime=fEvent->head()->getStartTime();
   fEventInfo->fRFTime=fEvent->head()->getRFTime();
   fEventInfo->fBeamHel=fEvent->head()->getHelicity();
