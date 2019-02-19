@@ -82,7 +82,7 @@ Bool_t CLAS12::HipoToolsReader::ReadEvent(Long64_t entry){
   
   
   FillParticles();
-  FillGenerated();
+  if(fRunInfo->fType==1) FillGenerated();
   
   return kTRUE;
 }
