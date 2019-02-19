@@ -50,7 +50,7 @@ void LoadExperiment(){
 	gROOT->LoadMacro(C12TOOL+"/Hipo/"+name+".cpp+");
     }
     
-    std::vector<TString > C12BClasses={"header","particle","mcparticle","particle_detector","scintillator","calorimeter","cherenkov","forwardtagger","tracker","covmatrix","region_particle","region_ft","region_fdet","region_cdet","hallB_event"};
+    std::vector<TString > C12BClasses={"header","particle","mcparticle","particle_detector","scintillator","calorimeter","cherenkov","forwardtagger","tracker","covmatrix","vtp","scaler","region_particle","region_ft","region_fdet","region_cdet","hallB_event"};
     for(auto const& name : C12BClasses){
       std::cout<<"C12C12C12C12C12C12C12C12C12    "<<name<<std::endl;
       if(!gROOT->GetListOfClasses()->Contains(name))
