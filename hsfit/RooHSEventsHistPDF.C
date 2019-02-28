@@ -14,6 +14,7 @@
 #include <math.h> 
 #include "TMath.h" 
 #include "TF1.h" 
+#include "TH1.h" 
 #include "TRandom3.h" 
 
 using namespace HS::FIT;
@@ -28,7 +29,8 @@ using namespace HS::FIT;
    offset("offset","offset",this,_offset),
    scale("scale","scale",this,_scale),
    alpha("alpha","alpha",this,_alpha)
- { 
+ {
+  
    MakeSets();
    x.SetName(_x.GetName());
    offset.SetName(_offset.GetName());
@@ -62,7 +64,8 @@ using namespace HS::FIT;
    else//Note want to centre first alpha bin on 0
      fRHist=new TH2D(TString("hmc_model_")+_x.GetName()+name,TString("MC model for ")+_x.GetName(),NbinX,rMin,rMax,NAlphBins+1,ra->getMin()-AlphAxis.GetBinCenter(1),ra->getMax()+AlphAxis.GetBinCenter(1));
 
-
+   fRHist->SetDirectory(0);
+   
    fx_off=new RooRealVar(TString("off")+_x.GetName(),"Vx_off",mid,rMin,rMax);
    falpha=new RooRealVar("Valpha","Valpha",0,alpha.min(),alpha.max());
 
@@ -75,9 +78,9 @@ using namespace HS::FIT;
   else ro->setConstant();
   if(rs->getMax()-rs->getMin())fScaleConstr=new RooGaussian(TString("ScConstr")+GetName(),"ScConstr",_scale,RooFit::RooConst(rs->getVal()),RooFit::RooConst((rs->getMax()-rs->getMin())/5/2));
   else rs->setConstant();
-  if(fAlphaConstr)fAlphaConstr->Print();
-  if(fOffConstr)fOffConstr->Print();
-  if(fScaleConstr)fScaleConstr->Print();
+  // if(fAlphaConstr)fAlphaConstr->Print();
+  // if(fOffConstr)fOffConstr->Print();
+  // if(fScaleConstr)fScaleConstr->Print();
 
 } 
 
@@ -89,7 +92,7 @@ using namespace HS::FIT;
    scale("scale",this,other.scale),
    alpha("alpha",this,other.alpha)
  {
-   cout<<"COPYNG "<<other.fRHist<<" "<<other.fEvTree<<endl;
+   // cout<<"COPYNG "<<other.fRHist<<" "<<other.fEvTree<<endl;
    MakeSets();
    x.SetName(other.x.GetName());
    offset.SetName(other.offset.GetName());
@@ -105,14 +108,17 @@ using namespace HS::FIT;
    if(other.fScaleConstr)fScaleConstr=(RooGaussian*)other.fScaleConstr->Clone();
    fVarMax=other.fVarMax;
    if(fEvTree) SetEvTree(fEvTree,fCut);//Needs fProxSet filled first
- 
+
+   fRHist->SetDirectory(0);
    MakeSets();
     
  }
 
 RooHSEventsHistPDF::~RooHSEventsHistPDF(){
-  if(fHist)delete fHist; 
-  if(fRHist)delete fRHist; 
+  cout<<"RooHSEventsPDF::~RooHSEventsHistPDF() 1"<<endl;
+
+  if(fHist)delete fHist;
+  if(fRHist)delete fRHist; fRHist=nullptr;
   if(fx_off) delete fx_off;
   if(falpha)delete falpha;
   if(fAlphaConstr) delete fAlphaConstr;
@@ -186,7 +192,8 @@ void RooHSEventsHistPDF::CreateHistPdf(){
   //For each bin make PDF of var convoluted with gaussian
   Long64_t NFT=fNTreeEntries;
   TH1D* his1=new TH1D("his1D","his1D",fRHist->GetXaxis()->GetNbins(),fRHist->GetXaxis()->GetXmin(),fRHist->GetXaxis()->GetXmax());
-
+  his1->SetDirectory(0);
+  
   //create 1D template of x variable
   for(Int_t itr=0;itr<NFT;itr++){//loop over events tree
     // fEvTree->GetEntry(itr);

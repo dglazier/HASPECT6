@@ -1,0 +1,69 @@
+09:58:55 18157 Wrk-0.11 | Error in <TFile::Open>: no url specified
+09:58:55 18157 Wrk-0.11 | *** Break ***: segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+#0  0x00007ffa4cfaa687 in __GI___waitpid (pid=18526, stat_loc=stat_loc
+entry=0x7ffecb46b928, options=options
+entry=0) at ../sysdeps/unix/sysv/linux/waitpid.c:30
+#1  0x00007ffa4cf15067 in do_system (line=<optimised out>) at ../sysdeps/posix/system.c:149
+#2  0x00007ffa4ddc105b in TUnixSystem::Exec (shellcmd=<optimised out>, this=0x557f618567c0) at /work/root/v6.14.04/core/unix/src/TUnixSystem.cxx:2119
+#3  TUnixSystem::StackTrace (this=0x557f618567c0) at /work/root/v6.14.04/core/unix/src/TUnixSystem.cxx:2413
+#4  0x00007ffa4ddc3a44 in TUnixSystem::DispatchSignals (this=0x557f618567c0, sig=kSigSegmentationViolation) at /work/root/v6.14.04/core/unix/src/TUnixSystem.cxx:3644
+#5  <signal handler called>
+#6  0x00007ffa3ed345cd in HS::FiledTree::Read(TString, TString) () from /home/dglazier/.proof/cache/FiledTree_C.so
+#7  0x00007ffa3a42b6af in HS::FIT::FitManager::FillEventsPDFs(unsigned int) () from /home/dglazier/.proof/cache/FitManager_C.so
+#8  0x00007ffa3a42ca3a in HS::FIT::FitManager::Run(unsigned int) () from /home/dglazier/.proof/cache/FitManager_C.so
+#9  0x00007ffa39e6f3da in HS::FIT::sPlot::Run(unsigned int) () from /home/dglazier/.proof/cache/sPlot_C.so
+#10 0x00007ffa3a42c4b1 in HS::FIT::FitManager::RunOne(int) () from /home/dglazier/.proof/cache/FitManager_C.so
+#11 0x00007ffa39c5ed77 in HS::FIT::FitSelector::Process(long long) () from /home/dglazier/.proof/cache/FitSelector_C.so
+#12 0x00007ffa3980f567 in TProofPlayer::Process (this=0x557f67a17f60, dset=0x557f6826f410, selector_file=0x0, option=0x7ffecb46f119 "", nentries=-1, first=-1) at /work/root/v6.14.04/proof/proofplayer/src/TProofPlayer.cxx:1314
+#13 0x00007ffa405e1979 in TProofServ::HandleProcess (this=0x557f624ee820, mess=<optimised out>, slb=0x0) at /work/root/v6.14.04/proof/proof/src/TProofServ.cxx:4047
+#14 0x00007ffa405dcef7 in TProofServ::HandleSocketInput (this=0x557f624ee820, mess=0x557f67eec080, all=<optimised out>) at /work/root/v6.14.04/proof/proof/src/TProofServ.cxx:1653
+#15 0x00007ffa405d0142 in TProofServ::HandleSocketInput (this=0x557f624ee820) at /work/root/v6.14.04/proof/proof/src/TProofServ.cxx:1364
+#16 0x00007ffa405e6fd7 in TProofServLiteInputHandler::Notify (this=<optimised out>) at /work/root/v6.14.04/proof/proof/src/TProofServLite.cxx:177
+#17 TProofServLiteInputHandler::ReadNotify (this=<optimised out>) at /work/root/v6.14.04/proof/proof/src/TProofServLite.cxx:169
+#18 0x00007ffa4ddc2e30 in TUnixSystem::CheckDescriptors (this=this
+entry=0x557f618567c0) at /work/root/v6.14.04/core/unix/src/TUnixSystem.cxx:1322
+#19 0x00007ffa4ddc47c8 in TUnixSystem::DispatchOneEvent (this=0x557f618567c0, pendingOnly=<optimised out>) at /work/root/v6.14.04/core/unix/src/TUnixSystem.cxx:1077
+#20 0x00007ffa4dcda271 in TSystem::InnerLoop (this=0x557f618567c0) at /work/root/v6.14.04/core/base/src/TSystem.cxx:411
+#21 TSystem::Run (this=0x557f618567c0) at /work/root/v6.14.04/core/base/src/TSystem.cxx:361
+#22 0x00007ffa4dc6cdef in TApplication::Run (this=0x557f624ee820, retrn=<optimised out>) at /work/root/v6.14.04/core/base/src/TApplication.cxx:1173
+#23 0x0000557f605ce660 in main (argc=<optimised out>, argv=0x7ffecb470518) at /work/root/v6.14.04/main/src/pmain.cxx:325
+===========================================================
+
+
+The lines below might hint at the cause of the crash.
+You may get help by asking at the ROOT forum http://root.cern.ch/forum
+Only if you are really convinced it is a bug in ROOT then please submit a
+report at http://root.cern.ch/bugs Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#6  0x00007ffa3ed345cd in HS::FiledTree::Read(TString, TString) () from /home/dglazier/.proof/cache/FiledTree_C.so
+#7  0x00007ffa3a42b6af in HS::FIT::FitManager::FillEventsPDFs(unsigned int) () from /home/dglazier/.proof/cache/FitManager_C.so
+#8  0x00007ffa3a42ca3a in HS::FIT::FitManager::Run(unsigned int) () from /home/dglazier/.proof/cache/FitManager_C.so
+#9  0x00007ffa39e6f3da in HS::FIT::sPlot::Run(unsigned int) () from /home/dglazier/.proof/cache/sPlot_C.so
+#10 0x00007ffa3a42c4b1 in HS::FIT::FitManager::RunOne(int) () from /home/dglazier/.proof/cache/FitManager_C.so
+#11 0x00007ffa39c5ed77 in HS::FIT::FitSelector::Process(long long) () from /home/dglazier/.proof/cache/FitSelector_C.so
+#12 0x00007ffa3980f567 in TProofPlayer::Process (this=0x557f67a17f60, dset=0x557f6826f410, selector_file=0x0, option=0x7ffecb46f119 "", nentries=-1, first=-1) at /work/root/v6.14.04/proof/proofplayer/src/TProofPlayer.cxx:1314
+#13 0x00007ffa405e1979 in TProofServ::HandleProcess (this=0x557f624ee820, mess=<optimised out>, slb=0x0) at /work/root/v6.14.04/proof/proof/src/TProofServ.cxx:4047
+#14 0x00007ffa405dcef7 in TProofServ::HandleSocketInput (this=0x557f624ee820, mess=0x557f67eec080, all=<optimised out>) at /work/root/v6.14.04/proof/proof/src/TProofServ.cxx:1653
+#15 0x00007ffa405d0142 in TProofServ::HandleSocketInput (this=0x557f624ee820) at /work/root/v6.14.04/proof/proof/src/TProofServ.cxx:1364
+#16 0x00007ffa405e6fd7 in TProofServLiteInputHandler::Notify (this=<optimised out>) at /work/root/v6.14.04/proof/proof/src/TProofServLite.cxx:177
+#17 TProofServLiteInputHandler::ReadNotify (this=<optimised out>) at /work/root/v6.14.04/proof/proof/src/TProofServLite.cxx:169
+#18 0x00007ffa4ddc2e30 in TUnixSystem::CheckDescriptors (this=this
+entry=0x557f618567c0) at /work/root/v6.14.04/core/unix/src/TUnixSystem.cxx:1322
+#19 0x00007ffa4ddc47c8 in TUnixSystem::DispatchOneEvent (this=0x557f618567c0, pendingOnly=<optimised out>) at /work/root/v6.14.04/core/unix/src/TUnixSystem.cxx:1077
+#20 0x00007ffa4dcda271 in TSystem::InnerLoop (this=0x557f618567c0) at /work/root/v6.14.04/core/base/src/TSystem.cxx:411
+#21 TSystem::Run (this=0x557f618567c0) at /work/root/v6.14.04/core/base/src/TSystem.cxx:361
+#22 0x00007ffa4dc6cdef in TApplication::Run (this=0x557f624ee820, retrn=<optimised out>) at /work/root/v6.14.04/core/base/src/TApplication.cxx:1173
+#23 0x0000557f605ce660 in main (argc=<optimised out>, argv=0x7ffecb470518) at /work/root/v6.14.04/main/src/pmain.cxx:325
+===========================================================
+
+
+09:59:02 18157 Wrk-0.11 | Error in <TProofServLite::HandleException>: caugth exception triggered by signal '1' check logs for possible stacktrace - last cycle: 7

@@ -1,0 +1,220 @@
+Info in <HS::FIT::RooHSEventsHistPDF::RooHSEventsPDF::SetEvTree>:  with name MyModel and cut Eg>=0.000000&&Eg<=10.000000
+Info in <HS::FIT::RooHSEventsHistPDF::RooHSEventsPDF::SetEvTree>:  with name MyModel and cut Eg>=0.000000&&Eg<=10.000000
+Warning in <TTreeFormula::DefinedVariable>: Casting to primary types like "Long64_t" is not supported yet
+in boundaries: [-3.1875,12.6875] --> [-3.1875,12.6875]
+[#1] INFO:DataHandling -- RooDataHist::adjustBinning(hmc_model_MmissSignal): fit range of variable Valpha expanded to nearest bin boundaries: [0,20] --> [-0.02,20.02]
+1 0x5572c0143c10 
+FitManager::FillEventsPDFsBG BGData.root
+Mmiss
+0
+      RooHSEventsHistPDF::CreateHistPdf()  
+[#1] INFO:DataHandling -- RooDataHist::adjustBinning(hmc_model_MmissBG): fit range of variable offMmiss expanded to nearest bin boundaries: [-1.1875,10.6875] --> [-1.1875,10.6875]
+[#1] INFO:DataHandling -- RooDataHist::adjustBinning(hmc_model_MmissBG): fit range of variable Valpha expanded to nearest bin boundaries: [0,5] --> [-0.005,5.005]
+RooAddPdf::TotalPDF[ Yld_Signal * Signal + Yld_BG * BG ] = 11038.4
+ RooAbsData& DataEvents::Get  Data.root MyModel
+RooArgSet:: = (Mmiss,Eg,fgID)
+[#1] INFO:Eval -- RooTreeDataStore::loadValues(DataEvents) Ignored 3486 out of range events
+FitManager::Run start fit 
+0x5572c00db9c0 : OBJ: RooCmdArg	NumCPU	NumCPU
+0x5572c0019ab0 : OBJ: RooCmdArg	Save	Save
+0x5572bc02a4e0 : OBJ: RooCmdArg	Warnings	Warnings
+0x5572bfb477e0 : OBJ: RooCmdArg	Minos	Minos
+0x5572c0308a40 : OBJ: RooCmdArg	Extended	Extended
+0x5572bff50b10 : OBJ: RooCmdArg	ExternalConstraints	ExternalConstraints
+[#1] INFO:Minization --  Including the following contraint terms in minimization: (AlphaConstrSignal,OffConstrSignal,ScConstrSignal,AlphaConstrBG,ScConstrBG)
+[#1] INFO:Fitting -- RooAddition::defaultErrorLevel(nll_TotalPDF_DataEvents_with_constr) Summation contains a RooNLLVar, using its error level
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (Signal,BG)
+ **********
+ **    1 **SET PRINT           1
+ **********
+ **********
+ **    2 **SET NOGRAD
+ **********
+ PARAMETER DEFINITIONS:
+    NO.   NAME         VALUE      STEP SIZE      LIMITS
+     1 Yld_BG       4.82570e+04  1.93028e+04    0.00000e+00  1.93028e+05
+     2 Yld_Signal   4.82570e+04  1.93028e+04    0.00000e+00  1.93028e+05
+     3 alpha        0.00000e+00  2.00000e+00    0.00000e+00  2.00000e+01
+ MINUIT WARNING IN PARAM DEF
+ ============== STARTING VALUE IS AT LIMIT.
+ MINUIT WARNING IN PARAMETR
+ ============== VARIABLE3 IS AT ITS LOWER ALLOWED LIMIT.
+ MINUIT WARNING IN PARAMETR
+ ============== VARIABLE3 BROUGHT BACK INSIDE LIMITS.
+     4 alphaB       0.00000e+00  5.00000e-01    0.00000e+00  5.00000e+00
+ MINUIT WARNING IN PARAM DEF
+ ============== STARTING VALUE IS AT LIMIT.
+ MINUIT WARNING IN PARAMETR
+ ============== VARIABLE4 IS AT ITS LOWER ALLOWED LIMIT.
+ MINUIT WARNING IN PARAMETR
+ ============== VARIABLE4 BROUGHT BACK INSIDE LIMITS.
+     5 off          0.00000e+00  4.00000e-01   -2.00000e+00  2.00000e+00
+     6 scale        1.00000e+00  4.00000e-02    8.00000e-01  1.20000e+00
+     7 scaleB       1.00000e+00  4.00000e-02    8.00000e-01  1.20000e+00
+ **********
+ **    3 **SET ERR         0.5
+ **********
+ **********
+ **    4 **SET PRINT           1
+ **********
+ **********
+ **    5 **SET STR           1
+ **********
+ NOW USING STRATEGY  1: TRY TO BALANCE SPEED AGAINST RELIABILITY
+ **********
+ **    6 **MIGRAD        3500           1
+ **********
+ FIRST CALL TO USER FUNCTION AT NEW START POINT, WITH IFLAG=4.
+ MINUIT WARNING IN MIGrad    
+ ============== VARIABLE3 IS AT ITS LOWER ALLOWED LIMIT.
+ MINUIT WARNING IN MIGrad    
+ ============== VARIABLE4 IS AT ITS LOWER ALLOWED LIMIT.
+ START MIGRAD MINIMIZATION.  STRATEGY  1.  CONVERGENCE WHEN EDM .LT. 1.00e-03
+ FCN=-824836 FROM MIGRAD    STATUS=INITIATE       36 CALLS          37 TOTAL
+                     EDM= unknown      STRATEGY= 1      NO ERROR MATRIX       
+  EXT PARAMETER               CURRENT GUESS       STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  Yld_BG       4.82570e+04   1.93028e+04   2.35352e-01   1.94349e+03
+   2  Yld_Signal   4.82570e+04   1.93028e+04   2.35352e-01  -1.94364e+03
+   3  alpha        1.90735e-05   2.00000e+00   3.20776e-01   6.62290e+00
+   4  alphaB       4.76837e-06   5.00000e-01   3.20776e-01   1.11184e+00
+   5  off          0.00000e+00   4.00000e-01   2.01358e-01  -1.63741e+02
+   6  scale        1.00000e+00   4.00000e-02   2.01358e-01  -2.92625e+02
+   7  scaleB       1.00000e+00   4.00000e-02   2.01358e-01   9.25967e+02
+                               ERR DEF= 0.5
+ MIGRAD MINIMIZATION HAS CONVERGED.
+ FCN=-824917 FROM MIGRAD    STATUS=CONVERGED     156 CALLS         157 TOTAL
+                     EDM=9.14759e-06    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   2.3 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  Yld_BG       4.62545e+04   2.76856e+02   3.14406e-05  -1.74013e-01
+   2  Yld_Signal   5.02594e+04   2.90011e+02  -1.18846e-04  -1.32102e-01
+   3  alpha        3.06262e-09   1.45225e-03   7.29399e-06** at limit **
+   4  alphaB       2.49696e-08   2.01532e-03  -5.41397e-05** at limit **
+   5  off          2.39601e-03   4.22483e-03   5.72653e-06  -1.46265e+00
+   6  scale        1.01710e+00   5.49110e-03   9.97646e-04   7.07032e-02
+   7  scaleB       9.86088e-01   3.05288e-03  -3.49667e-04  -7.05433e-02
+                               ERR DEF= 0.5
+ EXTERNAL ERROR MATRIX.    NDIM=  25    NPAR=  7    ERR DEF=0.5
+  7.665e+04 -3.368e+04  1.060e-06 -4.925e-06 -4.632e-02  5.195e-01  1.794e-02 
+ -3.368e+04  8.411e+04 -2.977e-06  6.306e-05  2.812e-02 -5.849e-01 -4.733e-02 
+  1.060e-06 -2.977e-06  1.779e-11 -1.528e-14  2.090e-11  8.187e-11  8.544e-12 
+ -4.925e-06  6.306e-05 -1.528e-14  2.013e-10  6.756e-11 -8.928e-10 -1.241e-10 
+ -4.632e-02  2.812e-02  2.090e-11  6.756e-11  1.785e-05 -9.976e-07 -4.197e-07 
+  5.195e-01 -5.849e-01  8.187e-11 -8.928e-10 -9.976e-07  3.016e-05  4.977e-07 
+  1.794e-02 -4.733e-02  8.544e-12 -1.241e-10 -4.197e-07  4.977e-07  9.321e-06 
+ PARAMETER  CORRELATION COEFFICIENTS  
+       NO.  GLOBAL      1      2      3      4      5      6      7
+        1  0.46604   1.000 -0.419  0.001 -0.001 -0.040  0.342  0.021
+        2  0.48411  -0.419  1.000 -0.002  0.015  0.023 -0.367 -0.053
+        3  0.00408   0.001 -0.002  1.000 -0.000  0.001  0.004  0.001
+        4  0.01820  -0.001  0.015 -0.000  1.000  0.001 -0.011 -0.003
+        5  0.05933  -0.040  0.023  0.001  0.001  1.000 -0.043 -0.033
+        6  0.42247   0.342 -0.367  0.004 -0.011 -0.043  1.000  0.030
+        7  0.06291   0.021 -0.053  0.001 -0.003 -0.033  0.030  1.000
+ **********
+ **    7 **SET ERR         0.5
+ **********
+ **********
+ **    8 **SET PRINT           1
+ **********
+ **********
+ **    9 **HESSE        3500
+ **********
+ COVARIANCE MATRIX CALCULATED SUCCESSFULLY
+ FCN=-824917 FROM HESSE     STATUS=OK             64 CALLS         221 TOTAL
+                     EDM=0.00582782    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                INTERNAL      INTERNAL  
+  NO.   NAME      VALUE            ERROR       STEP SIZE       VALUE   
+   1  Yld_BG       4.62545e+04   2.83484e+02   1.89582e-03  -5.47727e-01
+   2  Yld_Signal   5.02594e+04   2.90499e+02   1.89668e-03  -4.99803e-01
+   3  alpha        3.06262e-09   4.71590e-02   4.51167e-02  -1.57082e+00
+                                 WARNING -   - ABOVE PARAMETER IS AT LIMIT.
+   4  alphaB       2.49696e-08   5.67127e-03   4.18149e-02  -1.57065e+00
+                                 WARNING -   - ABOVE PARAMETER IS AT LIMIT.
+   5  off          2.39601e-03   4.25173e-03   1.33204e-03   1.19801e-03
+   6  scale        1.01710e+00   7.01638e-03   1.58274e-02   8.55971e-02
+   7  scaleB       9.86088e-01   2.87446e-03   8.95122e-03  -6.96143e-02
+                               ERR DEF= 0.5
+ EXTERNAL ERROR MATRIX.    NDIM=  25    NPAR=  7    ERR DEF=0.5
+  8.036e+04 -3.409e+04 -7.151e-05  5.596e-05 -4.857e-02  5.706e-01  4.056e-02 
+ -3.409e+04  8.439e+04  7.155e-05 -5.594e-05  4.862e-02 -5.712e-01 -4.055e-02 
+ -7.151e-05  7.155e-05  5.782e-10 -1.085e-12  2.391e-09  1.028e-07  5.035e-10 
+  5.596e-05 -5.594e-05 -1.085e-12  5.667e-10 -6.591e-11  8.639e-10 -7.852e-09 
+ -4.857e-02  4.862e-02  2.391e-09 -6.591e-11  1.808e-05 -7.272e-07 -2.868e-07 
+  5.706e-01 -5.712e-01  1.028e-07  8.639e-10 -7.272e-07  4.925e-05  6.207e-07 
+  4.056e-02 -4.055e-02  5.035e-10 -7.852e-09 -2.868e-07  6.207e-07  8.263e-06 
+ PARAMETER  CORRELATION COEFFICIENTS  
+       NO.  GLOBAL      1      2      3      4      5      6      7
+        1  0.47765   1.000 -0.414 -0.010  0.008 -0.040  0.287  0.050
+        2  0.47166  -0.414  1.000  0.010 -0.008  0.039 -0.280 -0.049
+        3  0.65244  -0.010  0.010  1.000 -0.002  0.023  0.609  0.007
+        4  0.11608   0.008 -0.008 -0.002  1.000 -0.001  0.005 -0.115
+        5  0.06466  -0.040  0.039  0.023 -0.001  1.000 -0.024 -0.023
+        6  0.70051   0.287 -0.280  0.609  0.005 -0.024  1.000  0.031
+        7  0.13150   0.050 -0.049  0.007 -0.115 -0.023  0.031  1.000
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: deactivating const optimization
+PlotResults::PlotResults 0x5572c2023d50 0x5572bff59d30 
+model 0x5572c03832e0
+[#1] INFO:Plotting -- RooAbsPdf::plotOn(TotalPDF) directly selected PDF components: (Signal)
+[#1] INFO:Plotting -- RooAbsPdf::plotOn(TotalPDF) indirectly selected PDF components: ()
+[#1] INFO:Plotting -- RooAbsPdf::plotOn(TotalPDF) directly selected PDF components: (BG)
+[#1] INFO:Plotting -- RooAbsPdf::plotOn(TotalPDF) indirectly selected PDF components: ()
+HS::FIT::sPlot::Run create sWeights 
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#0] WARNING:Optimization -- RooAbsOptTestStatistic::optimizeConstantTerms(nll_TotalPDF_DataEvents) WARNING Cache-and-track optimization (Optimize level 2) is only available for datasets implement in terms of RooVectorDataStore - ignoring this option for current dataset
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (Signal,BG)
+[#1] INFO:Fitting -- RooAbsPdf::fitTo(TotalPDF) Calculating sum-of-weights-squared correction matrix for covariance matrix
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: deactivating const optimization
+[#1] INFO:InputArguments -- Printing Yields
+RooArgList:: = (Yld_Signal,Yld_BG)
+[#1] INFO:InputArguments -- yield in pdf: Yld_Signal 50259.5
+[#1] INFO:InputArguments -- yield in pdf: Yld_BG 46254.5
+[#1] INFO:Eval -- Checking Likelihood normalization:  
+[#1] INFO:Eval -- Yield of specie  Sum of Row in Matrix   Norm
+[#1] INFO:Eval -- 50259.5 50259.5 1
+[#1] INFO:Eval -- 46254.5 46254.5 1
+[#1] INFO:Eval -- Calculating sWeight
+Weights::SetFile out/Weights.root
+HSsPlot:ExportWeights 
+Insert species Signal 0 0
+Insert species BG 1 0
+Weights HSsWeights contains 96514 events associated file is out/Weights.root 
+ID branch name : fgID
+Species are : 
+BG
+Signal
+The first ten entries are :
+0 1.11026 -0.110261 
+1 -0.496042 1.49604 
+2 1.17269 -0.172694 
+3 -0.186198 1.1862 
+4 -0.165322 1.16532 
+5 1.06529 -0.0652861 
+6 -0.495439 1.49544 
+7 0.946867 0.0531329 
+8 -0.497032 1.49703 
+9 -0.497032 1.49703 
+Weights::BuildIndex 96514
+Done
+Weights::SortWeights() reordering trees 0x5572c1ffab20
+Weights::SortWeights() reordering trees
+Weights::SortWeights() entries 96514 96514
+Weights::SortWeights Print new ordering
+Weights HSsWeights contains 96514 events associated file is out/Weights.root 
+ID branch name : fgID
+Species are : 
+BG
+Signal
+The first ten entries are :
+0 1.11026 -0.110261 
+1 -0.496042 1.49604 
+2 1.17269 -0.172694 
+3 -0.186198 1.1862 
+4 -0.165322 1.16532 
+5 1.06529 -0.0652861 
+6 -0.495439 1.49544 
+7 0.946867 0.0531329 
+8 -0.497032 1.49703 
+9 -0.497032 1.49703 

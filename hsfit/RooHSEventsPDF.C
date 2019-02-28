@@ -23,15 +23,16 @@ using namespace HS::FIT;
 
 RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) :  RooAbsPdf(other,name)
   {
-   
+   					    
     fIsClone=kTRUE;
     fParent=const_cast<RooHSEventsPDF*>(&other);
-
+  
     fvecReal=other.fvecReal;
     fvecCat=other.fvecCat;
     fvecRealGen=other.fvecRealGen;
     fvecCatGen=other.fvecCatGen;
     fNTreeEntries=other.fNTreeEntries;
+					      //			      cout<< "RooHSEventsPDF::RooHSEventsPD 2"<<other.fEvTree->GetName()<<endl;
     
     if(other.fEvTree)fEvTree=other.fEvTree->CopyTree("");
     if(other.fInWeights) fInWeights=other.fInWeights; //probably need to clone this
@@ -51,27 +52,27 @@ RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) : 
     fMaxValue=other.fMaxValue;
     fIntRangeLow=other.fIntRangeLow;
     fIntRangeHigh=other.fIntRangeHigh;
- }
+    }
 RooHSEventsPDF::~RooHSEventsPDF(){
   //RooFit clones everything so I need to give the original
     //object the entrylist if I want to use it!
-    if(fIsClone&&fParent&&fEntryList){
+     if(fIsClone&&fParent&&fEntryList){
       if(fMaxValue){//has this clone used generator?
 	fParent->SetEntryList(fEntryList);
  	fParent->SetGeni(fGeni);
      }
     }
-    if(fEntryList) delete fEntryList;
-    if(fLast) delete fLast;
+   if(fEntryList) delete fEntryList;
+   if(fLast) delete fLast;
     if(fEvTree) delete fEvTree;
-    
+   
     if(fWeights){
       fWeights->Save();
       delete fWeights;
     }
-    for(UInt_t i=0;i<fVarSet.size();i++)
+     for(UInt_t i=0;i<fVarSet.size();i++)
       delete fVarSet[i];
-    
+ 
     fVarSet.clear();
   }
 
@@ -79,6 +80,7 @@ void RooHSEventsPDF::InitSets(){
   fNpars=fParSet.size();
   fNvars=fProxSet.size();
   fNcats=fCatSet.size();
+  fLastLength=fNpars+1;
   fLast=new Float_t[fNpars+1]; //Number of fit parameters
   for(Int_t i=0;i<fNpars+1;i++)
     fLast[i]=100;
@@ -414,7 +416,7 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   Long64_t entryNumber=0;
   Long64_t localEntry=0;
   fNTreeEntries=elist->GetN();
-  cout<<"tree entries "<<fNTreeEntries<<" "<<ProxSize<<endl;
+
   for(Long64_t iEvent=0;iEvent<fNTreeEntries;iEvent++){
     entryNumber = fEvTree->GetEntryNumber(iEvent);
     if (entryNumber < 0) break;
@@ -460,8 +462,6 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
     fEvTree=coptree;
   }
   fEvTree->Reset();  //empty tree to save memory
-  // exit(0);
-  //if(fCheckInt) CheckIntegralParDep(fCheckInt);
   return fBranchStatus;
 }
 void  RooHSEventsPDF::LoadWeights(TString species,TString wfile,TString wname){
@@ -557,7 +557,7 @@ void  RooHSEventsPDF::CheckIntegralParDep(Int_t Ntests){
   }
   fCheckInt=kFALSE; //only do once
 }
-Bool_t RooHSEventsPDF::AddProtoData(RooDataSet* data){
+Bool_t RooHSEventsPDF::AddProtoData(const RooDataSet* data){
   //merge the current tree with data from another dataset
   //Default it will add any branches in data not in fEvTree
   cout<<"RooHSEventsPDF::AddProtoData "<<data<<" "<<fEvTree<<endl;
@@ -567,14 +567,12 @@ Bool_t RooHSEventsPDF::AddProtoData(RooDataSet* data){
   //Loop over data branches and check if any missing
   const RooArgSet *dataVars=data->get();
   RooArgSet thisVars =VarSet(0);
-  thisVars.Print();
-  dataVars->Print();
   
   //Each entry in fEvTree should be given a random value of new variables
-  vector<Long64_t> vrandom(data->numEntries());
-  for(Long64_t ir=0;ir<data->numEntries();ir++)
+  Long64_t Nentries=data->numEntries();
+  vector<Long64_t> vrandom(Nentries);
+  for(Long64_t ir=0;ir<Nentries;ir++)
     vrandom[ir]=ir;
-  cout<<vrandom.size()<<endl;
   std::random_shuffle(vrandom.begin(),vrandom.end());
 
   TIter iter=dataVars->createIterator();
@@ -586,7 +584,6 @@ Bool_t RooHSEventsPDF::AddProtoData(RooDataSet* data){
   vector<Int_t> index;
   TObjArray branches;
   //Add new branches to EvTree
-  cout<<"Add branches "<<fEvTree<<endl;
   TDirectory* saveDir=gDirectory;
   fEvTree->GetDirectory()->cd();
 

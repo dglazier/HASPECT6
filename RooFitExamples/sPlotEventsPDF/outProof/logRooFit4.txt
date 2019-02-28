@@ -1,0 +1,149 @@
+14:03:13 20586 Wrk-0.0 | Warning in <TROOT::Append>: Replacing existing TH1: h FitManager::FillEventsPDFs 2
+0 0x556d12fd30a0 
+FitManager::FillEventsPDFsSignal /work/Dropbox/HaSpect/dev/HASPECT6/RooFitExamples2/sPlotEventsPDF/outProof//Eg3.90_/T14:03:13 20586 Mmiss
+0
+      RooHSEventsHistPDF::CreateHistPdf()  
+[#1] INFO:DataHandling -- RooDataHist::adjustBinning(hmc_model_MmissSignal): fi14:03:13 20586 Wrk-0.0 | Info in <HS::FIT::RooHSEventsHistPDF::RooHSEventsPDF::SetEvTree>:  with name MyModel and cut Eg>=0.000000&&Eg<=10.000000
+14:03:23 20586 Wrk-0.0 | Info in <Minuit2>: VariableMetricBuilder: Stop the minimization - reached machine accuracy limit
+14:03:23 20586 Wrk-0.0 | Info in <Minuit2>: Edm is smaller than machine accuracy : machineLimit = 0.00800467
+14:03:23 20586 Wrk-0.0 | Info in <Minuit2>: Current  Edm is : edm = 0.0043791
+14:03:23 20586 Wrk-0.0 | Info in <Minuit2>: Required Edm is : edmval = 0.001
+14:03:26 20586 Wrk-0.0 | Info in <Minuit2>: Minuit2Minimizer::Hesse : Hesse is valid - matrix is accurate
+14:03:28 20586 Wrk-0.0 | Info in <Minuit2>: matrix forced pos-def by adding to diagonal : padd = 0.613652
+14:03:28 20586 Wrk-0.0 | Info in <Minuit2>: MnHesse: matrix was forced pos. def. 
+14:03:28 20586 Wrk-0.0 | Info in <Minuit2>: Minuit2Minimizer::Hesse : Hesse is valid - matrix is full but made positive defined
+14:03:29 20586 Wrk-0.0 | Warning in <TTreeFormula::DefinedVariable>: Casting to primary types like "Long64_t" is not supported yet
+oTreeDataStore::loadValues(DataEvents) Ignored 684 out of range events
+FitManager::Run start fit 
+0x556d0f1604d0 : OBJ: RooCmdArg	SumW2Error	SumW2Error
+0x556d100fdec0 : OBJ: RooCmdArg	NumCPU	NumCPU
+0x556d0df6fc90 : OBJ: RooCmdArg	Save	Save
+0x556d0b66ceb0 : OBJ: RooCmdArg	Warnings	Warnings
+0x556d1071d9b0 : OBJ: RooCmdArg	Minos	Minos
+0x556d1098c530 : OBJ: RooCmdArg	Minimizer	Minimizer
+0x556d10e0a080 : OBJ: RooCmdArg	SumW2Error	SumW2Error
+0x556d10e0d5b0 : OBJ: RooCmdArg	NumCPU	NumCPU
+0x556d10e0d6f0 : OBJ: RooCmdArg	Save	Save
+0x556d10e0d830 : OBJ: RooCmdArg	Warnings	Warnings
+0x556d10e0d970 : OBJ: RooCmdArg	Minos	Minos
+0x556d10e0dab0 : OBJ: RooCmdArg	Minimizer	Minimizer
+0x556d146654e0 : OBJ: RooCmdArg	Extended	Extended
+0x556d13d24d60 : OBJ: RooCmdArg	ExternalConstraints	ExternalConstraints
+FitManager::Run start fit 
+[#1] INFO:Minization --  Including the following contraint terms in minimization: (AlphaConstrSignal,OffConstrSignal,ScConstrSignal,AlphaConstrBG,ScConstrBG)
+[#1] INFO:Fitting -- RooAddition::defaultErrorLevel(nll_Eg3.90_TotalPDF_DataEvents_with_constr) Summation contains a RooNLLVar, using its error level
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (Signal,BG)
+Minuit2Minimizer: Minimize with max-calls 3500 convergence for edm < 1 strategy 1
+MnSeedGenerator: for initial parameters FCN = -134266.6190649
+MnSeedGenerator: Initial state:   - FCN =  -134266.6190649 Edm =      33.8365 NCalls =     37
+VariableMetric: start iterating until Edm is < 0.001
+VariableMetric: Initial state   - FCN =  -134266.6190649 Edm =      33.8365 NCalls =     37
+VariableMetric: Iteration #   0 - FCN =  -134266.6190649 Edm =      33.8365 NCalls =     37
+VariableMetric: Iteration #   1 - FCN =  -134293.2188534 Edm =     0.266925 NCalls =     55
+VariableMetric: Iteration #   2 - FCN =  -134293.6881711 Edm =    0.0523593 NCalls =     72
+VariableMetric: Iteration #   3 - FCN =  -134293.7887667 Edm =     0.044288 NCalls =     88
+VariableMetric: Iteration #   4 - FCN =  -134293.9196743 Edm =    0.0669271 NCalls =    105
+VariableMetric: Iteration #   5 - FCN =  -134294.7538854 Edm =     0.248514 NCalls =    129
+VariableMetric: Iteration #   6 - FCN =  -134295.1082017 Edm =     0.129565 NCalls =    145
+VariableMetric: Iteration #   7 - FCN =  -134295.3907316 Edm =     0.231892 NCalls =    166
+VariableMetric: Iteration #   8 - FCN =  -134295.6271999 Edm =     0.121208 NCalls =    186
+VariableMetric: Iteration #   9 - FCN =  -134295.9616764 Edm =      0.04185 NCalls =    208
+VariableMetric: Iteration #  10 - FCN =   -134296.005469 Edm =    0.0168269 NCalls =    227
+VariableMetric: Iteration #  11 - FCN =  -134296.0184389 Edm =   0.00381733 NCalls =    243
+VariableMetric: Iteration #  12 - FCN =  -134296.0208767 Edm =   0.00010099 NCalls =    258
+VariableMetric: After Hessian   - FCN =  -134296.0208767 Edm =    0.0043791 NCalls =    320
+VariableMetric: Iteration #  13 - FCN =  -134296.0208767 Edm =    0.0043791 NCalls =    320
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -134296.020876734488
+Edm   = 0.0043791038181616327
+Nfcn  = 320
+Yld_BG	  = 9339.29	 +/-  125.092	(limited)
+Yld_Signal	  = 10019.2	 +/-  127.789	(limited)
+alpha	  = 3.1627e-07	 +/-  0.0322062	(limited)
+alphaB	  = 2.82869e-07	 +/-  0.0242457	(limited)
+off	  = -0.00184368	 +/-  0.0096659	(limited)
+scale	  = 1.01326	 +/-  0.0105933	(limited)
+scaleB	  = 0.992323	 +/-  0.00451614	(limited)
+[#1] INFO:Fitting -- RooAbsPdf::fitTo(Eg3.90_TotalPDF) Calculating sum-of-weights-squared correction matrix for covariance matrix
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: deactivating const optimization
+PlotResults::PlotResults 0x556d13da7470 0x556d1098c670 
+model 0x556d12ac35d0
+[#1] INFO:Plotting -- RooAbsPdf::plotOn(Eg3.90_TotalPDF) directly selected PDF components: (Signal)
+[#1] INFO:Plotting -- RooAbsPdf::plotOn(Eg3.90_TotalPDF) indirectly selected PDF components: ()
+[#1] INFO:Plotting -- RooAbsPdf::plotOn(Eg3.90_TotalPDF) directly selected PDF components: (BG)
+[#1] INFO:Plotting -- RooAbsPdf::plotOn(Eg3.90_TotalPDF) indirectly selected PDF components: ()
+
+  RooFitResult: minimized FCN value: -134296, estimated distance to minimum: 0.0564598
+                covariance matrix quality: Unknown, matrix was externally provided
+                Status : MINIMIZE=0 HESSE=0 HESSE=0 
+
+    Floating Parameter    FinalValue +/-  Error   
+  --------------------  --------------------------
+                Yld_BG    9.3393e+03 +/-  1.88e+02
+            Yld_Signal    1.0019e+04 +/-  1.91e+02
+                 alpha    3.1627e-07 +/-  2.85e-03
+                alphaB    2.8287e-07 +/-  5.89e-05
+                   off   -1.8437e-03 +/-  1.41e-02
+                 scale    1.0133e+00 +/-  5.78e-02
+                scaleB    9.9232e-01 +/-  3.91e-03
+
+ splot model y0x556d12ac35d0
+HS::FIT::sPlot::Run create sWeights 
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#0] WARNING:Optimization -- RooAbsOptTestStatistic::optimizeConstantTerms(nll_Eg3.90_TotalPDF_DataEvents) WARNING Cache-and-track optimization (Optimize level 2) is only available for datasets implement in terms of RooVectorDataStore - ignoring this option for current dataset
+[#1] INFO:Minization --  The following expressions have been identified as constant and will be precalculated and cached: (Signal,BG)
+[#1] INFO:Fitting -- RooAbsPdf::fitTo(Eg3.90_TotalPDF) Calculating sum-of-weights-squared correction matrix for covariance matrix
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: deactivating const optimization
+[#1] INFO:InputArguments -- Printing Yields
+RooArgList:: = (Yld_Signal,Yld_BG)
+[#1] INFO:InputArguments -- yield in pdf: Yld_Signal 10019.8
+[#1] INFO:InputArguments -- yield in pdf: Yld_BG 9339.35
+[#1] INFO:Eval -- Checking Likelihood normalization:  
+[#1] INFO:Eval -- Yield of specie  Sum of Row in Matrix   Norm
+[#1] INFO:Eval -- 10019.8 10019.7 1
+[#1] INFO:Eval -- 9339.35 9339.56 0.999986
+[#1] INFO:Eval -- Calculating sWeight
+Weights::SetFile /work/Dropbox/HaSpect/dev/HASPECT6/RooFitExamples2/sPlotEventsPDF/outProof/WeightsEg3.90_.root
+HSsPlot:ExportWeights 
+Insert species Signal 0 0
+Insert species BG 1 0
+Weights HSsWeights contains 19359 events associated file is /work/Dropbox/HaSpect/dev/HASPECT6/RooFitExamples2/sPlotEventsPDF/outProof/WeightsEg3.90_.root 
+ID branch name : fgID
+Species are : 
+BG
+Signal
+The first ten entries are :
+1 -0.504065 1.50409 
+36 1.16205 -0.162054 
+38 0.919904 0.0800946 
+39 1.16235 -0.162356 
+49 1.14365 -0.143652 
+58 -0.268977 1.269 
+61 1.04639 -0.0463938 
+62 1.16158 -0.161589 
+66 -0.504065 1.50409 
+70 1.16162 -0.161625 
+Weights::BuildIndex 19359
+Done
+Weights::SortWeights() reordering trees 0x556d13386df0
+Weights::SortWeights() reordering trees
+Weights::SortWeights() entries 19359 19359
+Weights::SortWeights Print new ordering
+Weights HSsWeights contains 19359 events associated file is /work/Dropbox/HaSpect/dev/HASPECT6/RooFitExamples2/sPlotEventsPDF/outProof/WeightsEg3.90_.root 
+ID branch name : fgID
+Species are : 
+BG
+Signal
+The first ten entries are :
+1 -0.504065 1.50409 
+36 1.16205 -0.162054 
+38 0.919904 0.0800946 
+39 1.16235 -0.162356 
+49 1.14365 -0.143652 
+58 -0.268977 1.269 
+61 1.04639 -0.0463938 
+62 1.16158 -0.161589 
+66 -0.504065 1.50409 
+70 1.16162 -0.161625 
+FitManager::RunOne() done 0x556d12fd64c0

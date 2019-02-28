@@ -1,0 +1,39 @@
+14:11:03 22454 Wrk-0.0 | Warning in <TROOT::Append>: Replacing existing TH1: h FitManager::FillEventsPDFs 2
+0 0x555a8c154f00 
+FitManager::FillEventsPDFsSignal /work/Dropbox/HaSpect/dev/HASPECT6/RooFitExamples2/sPlotEventsPDF/outProof//Eg3.70_/T14:11:03 22454 Mmiss
+0
+      RooHSEventsHistPDF::CreateHistPdf()  
+[#1] INFO:DataHandling -- RooDataHist::adjustBinning(hmc_model_MmissSignal): fi14:11:03 22454 Wrk-0.0 | Info in <HS::FIT::RooHSEventsHistPDF::RooHSEventsPDF::SetEvTree>:  with name MyModel and cut Eg>=0.000000&&Eg<=10.000000
+14:11:04 22454 Wrk-0.0 | Info in <TProofPlayerSlave::Process>: received abort-process signal
+14:11:04 22454 Wrk-0.0 | SvcMsg in <TProofPlayerSlave::CheckMemUsage>: Memory 2131868 virtual 389468 resident event 3
+14:12:46 22454 Wrk-0.0 | Error in <TProofServLite::HandleSocketInput>: retrieving message from input socket
+14:12:46 22454 Wrk-0.0 | Info in <TProofServLite::Terminate>: starting session termination operations ...
+14:12:46 22454 Wrk-0.0 | Info in <TProofServLite::Terminate>: data directory '/home/dglazier/.proof/data/0.0/0.0-npcglazier2-1550758150-22454' has been removed
+f variable Valpha expanded to nearest bin boundaries: [0,5] --> [-0.005,5.005]
+RooAddPdf::Eg3.70_TotalPDF[ Yld_Signal * Signal + Yld_BG * BG ] = 2273.52
+ RooAbsData& DataEvents::Get  /work/Dropbox/HaSpect/dev/HASPECT6/RooFitExamples2/sPlotEventsPDF/outProof//Eg3.70_/TreeData.root MyModel 0x555a89b53830
+RooArgSet:: = (Mmiss,Eg,fgID)
+[#1] INFO:Eval -- RooTreeDataStore::loadValues(DataEvents) Ignored 700 out of range events
+FitManager::Run start fit 
+0x555a89806160 : OBJ: RooCmdArg	SumW2Error	SumW2Error
+0x555a8928d880 : OBJ: RooCmdArg	NumCPU	NumCPU
+0x555a86e28890 : OBJ: RooCmdArg	Save	Save
+0x555a871a60a0 : OBJ: RooCmdArg	Warnings	Warnings
+0x555a89b54530 : OBJ: RooCmdArg	Minos	Minos
+0x555a89b54670 : OBJ: RooCmdArg	Minimizer	Minimizer
+0x555a89fd2220 : OBJ: RooCmdArg	SumW2Error	SumW2Error
+0x555a89fd5750 : OBJ: RooCmdArg	NumCPU	NumCPU
+0x555a89fd5890 : OBJ: RooCmdArg	Save	Save
+0x555a89fd59d0 : OBJ: RooCmdArg	Warnings	Warnings
+0x555a89fd5b10 : OBJ: RooCmdArg	Minos	Minos
+0x555a89fd5c50 : OBJ: RooCmdArg	Minimizer	Minimizer
+0x555a8d82f3b0 : OBJ: RooCmdArg	Extended	Extended
+0x555a8c150e60 : OBJ: RooCmdArg	ExternalConstraints	ExternalConstraints
+FitManager::Run start fit 
+[#1] INFO:Minization --  Including the following contraint terms in minimization: (AlphaConstrSignal,OffConstrSignal,ScConstrSignal,AlphaConstrBG,ScConstrBG)
+[#1] INFO:Fitting -- RooAddition::defaultErrorLevel(nll_Eg3.70_TotalPDF_DataEvents_with_constr) Summation contains a RooNLLVar, using its error level
+[#1] INFO:Minization -- RooMinimizer::optimizeConst: activating const optimization
+[#1] INFO:Minization --  The following expressions will be evaluated in cache-and-track mode: (Signal,BG)
+Minuit2Minimizer: Minimize with max-calls 3500 convergence for edm < 1 strategy 1
+MnSeedGenerator: for initial parameters FCN = -134017.498365
+Terminate: termination operations ended: quitting!

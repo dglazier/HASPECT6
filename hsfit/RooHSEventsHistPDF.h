@@ -26,7 +26,7 @@ namespace HS{
     class RooHSEventsHistPDF : public RooHSEventsPDF {
     public:
       
-      RooHSEventsHistPDF() {cout<<"IN DEFAULT "<<endl;} ; 
+      RooHSEventsHistPDF() =default ; 
       RooHSEventsHistPDF(const char *name, const char *title,
 			 RooAbsReal& _x,
 			 RooAbsReal& _offset,
@@ -49,17 +49,17 @@ namespace HS{
       Double_t evaluateMC(Double_t mcx) const ;
       void MakeSets();
   
-      RooDataHist* fHist=0;
-      TH2D* fRHist=0;
+      RooDataHist* fHist=nullptr;
+      TH2D* fRHist=nullptr;
       Double_t fVarMax=0;
   
-      RooRealVar* fx_off=0; //variables for hist
-      RooRealVar* falpha=0;
+      RooRealVar* fx_off=nullptr; //variables for hist
+      RooRealVar* falpha=nullptr;
 
     private:
-      RooGaussian *fAlphaConstr=0;
-      RooGaussian *fOffConstr=0;
-      RooGaussian *fScaleConstr=0;
+      RooGaussian *fAlphaConstr=nullptr;
+      RooGaussian *fOffConstr=nullptr;
+      RooGaussian *fScaleConstr=nullptr;
   
     public:
 

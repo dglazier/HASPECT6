@@ -29,13 +29,14 @@ namespace HS{
       virtual ~RooHSEventsPDF();
   
     protected:
-      RooHSEventsPDF* fParent=nullptr;
-      TTree* fEvTree=nullptr;
-      TEntryList* fEntryList=nullptr;
-      HS::Weights* fWeights=nullptr;  //weights for event generator
+      RooHSEventsPDF* fParent=nullptr;//!
+      TTree* fEvTree=nullptr;//!
+      TEntryList* fEntryList=nullptr;//!
+      HS::Weights* fWeights=nullptr;//!  //weights for event generator
       HS::Weights* fInWeights=nullptr; //weights for shaping the events tree
       Double_t fConstInt=1;
-      Float_t *fLast=nullptr;
+      Int_t fLastLength;
+      Float_t *fLast=nullptr; //[fLastLength]
       vector<Float_t> fEvWeights; //read in weights saved in vector
       vector<Float_t> fvecReal;
       vector<Float_t> fvecRealGen;
@@ -119,7 +120,7 @@ namespace HS{
       void  CheckIntegralParDep(Int_t Ntests);
       void ResetTree();
       Double_t GetIntegralWeight(Long64_t iw) const {if(!fUseEvWeights) return 1; return fEvWeights[iw];} ;
-      Bool_t AddProtoData(RooDataSet* data);
+      Bool_t AddProtoData(const RooDataSet* data);
       void SetCut(TString cut){fCut=cut;};
       TString GetCut(){return fCut;}
       Double_t GetMaxValue(){return fMaxValue;}

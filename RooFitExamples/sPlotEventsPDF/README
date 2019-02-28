@@ -1,0 +1,133 @@
+This example implements a PDF based on simulated or sideband data in a custom
+class THSEventsPDF. Signal and background events are genreated and used in
+constructing the models which are then fit to the "data" and sWeights calculated.
+The second part of this example shows how fits can be split up and run in batch
+mode, in particular on a CPU farm (see end of README)
+/////////////////////////////////////////////////////////////////////
+MODEL
+To produce test data, and signal/background events run the macro :
+root 'Model1.C( "Data.root" )'
+
+This should produce 3 root files. One the quasi-data, Data.root and the other
+2 are equivalent to simulated models for Signal and Background: SigData.root
+and BGData.root.
+The data consists of the follwing kinematic branches :
+  tree->Branch("Eg",&Eg,"Eg/D");
+  tree->Branch("Mmiss",&Mmiss,"Mmiss/D");
+  tree->Branch("M1",&M1,"M1/D");
+  tree->Branch("Mmiss_M1",&Mmiss_M1,"Mmiss_M1/D");
+  tree->Branch("M2",&M2,"M2/D");
+The next branch is required in all HSRooFit applications and allows
+synchroisation of events and weights
+  tree->Branch("fgID",&fgID,"ID/D");
+The last branch is a cheat which would not normally exist in real data and just
+identifies whether the event is actually signal or background. This can be useful for drawing pure signal histograms to comapre with weighted distrubutions after.
+  tree->Branch("Sig",&Sig,"Sig/D");
+//////////////////////////////////////////////////////////////////////
+FitHSMCModel.C
+To run the macro you just need to type $> root --hsfit  FitHSMCModel.C
+This assumes you have set the enviroment variable HSANA to where the HS source
+code is and copied the $HSANA/rootrc to ~/.rootrc
+The first lines in the macro just load the necessary classes from the HS code.
+In the macro it 
+First  creates the THSsPlot object. This class inherits from THSRooFit so includes
+all of its functionality, including handling PDFs derived from RooHSAbsEventsPDF
+Give an output directory for storing root files with binning information,
+plots, weights etc.
+  RF->SetOutDir("outBins/");
+Declare the variable to be fitted. Here it is the missing mass of the model data which was constructed as a Gaussian for the signal and linear polynomial for the background. [2,8] declares the full range i.e. events outwith this range will not be include in the fit dataset even if they exist in the tree
+  RF->LoadVariable("Mmiss[2,8]");//should be same name as variable in tree
+
+Declare the Signal and background PDFs via the Factory
+  RF->Factory("RooHSEventsHistPDF::Sig(Mmiss,alpha[0,0,20],off[0,-2,2],scale[1,0.8,1.2])");
+RooHSEventsHistPDF= PDF class; Sig = pdfName;Mmiss - variable from data file to be fit
+alpha=convoluted gaussian width, if constraint to this parameter applied, then
+intial value= constraint mean (0), range =10*sigma (0->20)
+off=offset along x-axis between real data and MC model
+scale =scale factor applied to x-axis (difference in calibration gain)
+It is recommened to apply Gaussian constraints to the tuning
+paramters alpha, off, scale. If they reach their limits then it is not
+garunteed to produce a reliable error matrix. The range given to these
+paramters when declared is therore important as it relates to the width
+of the Gaussian constraint, while the initial value is taken as the mean.
+Give the PDF the data it will be used to model
+  TChain *chainmc=new TChain("MyModel","mcsignal");
+  chainmc->Add("SigData.root");
+  pdf->SetEvTree(chainmc);
+Load the PDF called Sig to the fit
+  RF->LoadSpeciesPDF("Sig",1);
+
+And similar with the background PDF, note the fudge parameters can be different from the signal PDF
+or you could give them the same name so both PDFs are fudged by the same factors.
+Add the data to the fit
+  //Add data to chain
+  TChain chain("MyModel");
+  chain.Add("Data.root");
+Declare the ID branch for synchronisation
+ RF->SetIDBranchName("fgID");
+ RF->LoadDataSet(&chain);
+Here you must explcicity set the constraints for the PDFs :
+  RF->AddGausConstraint(pdf->AlphaConstraint());
+  RF->AddGausConstraint(pdf->OffConstraint());
+  RF->AddGausConstraint(pdf->ScaleConstraint());
+  RF->AddGausConstraint(pdfb->AlphaConstraint());
+  RF->AddGausConstraint(pdfb->OffConstraint());
+  RF->AddGausConstraint(pdfb->ScaleConstraint());
+Now you can perform the fit:
+  RF->FitAndStudy(1); //argument = number of test fits with random initial pars
+Additionally you can draw other variables from the tree once the fit is done and weights calcualted
+  RF->DrawTreeVar("Mmiss",100,0,10);
+  RF->DrawTreeVar("M1",100,0,10);
+  RF->DrawTreeVar("M2",100,0,10);
+
+The Fit plots and parameter values are saved to out/ResultsSF.root
+The weights are saved to out/WeightsSF.root and can be used independently via the THSWeights class
+////////////////////////////////////////////////////////
+FitHSMCModelBins.C
+This splits the data into different sets or bins and performs an sPlot for each
+It run by $>root --hsfit FitHSMCModelBins.C
+IT is similar to FitHSMCModel but the data is split at the start using the THSRooFit function
+MakeBinnedTrees(chain,"Name") where chain is a standard ROOT chain including the data for species
+Name e.g. "Sig"; Name must then be the same as the name of the PDF declared in the Factory that
+will use these events to create its model. i.e if name is "Sig"
+  RF->Factory("RooHSEventsHistPDF::Sig(Mmiss,alpha[0,0,2],off[0,-2,2],scale[1,0.8,1.2])");
+All the split trees are saved in the directory specified in RF->SetOutDir
+
+Th macro DrawWithWeights.C shows how to merge the different bins to produce histograms integrating over
+all data. It first merges the different weights files into 1 (which is saved for further use)
+Then loops over events in the original tree and plots when there is a valid weight
+
+////////////////////////////////////////////////////////
+FitHSMCModelSavedBins.C
+This is similar in that it uses split data but now the data is split beforehand so it only
+needs done once to save time.
+To split data you must call the MakeBinnedTree function as before. An eample is given in ConfigureBins.C
+which can be run via $>root  --hsfit ConfigureBins.C
+This must be done before running FitHSMCModelSavedBins.C
+Once this done you can run the fits/weights :
+$>root --hsfit  FitHSMCModelSavedBins.C
+
+The content of FitHSMCModelSavedBins.C is actually simpler than the other two.
+############################################################
+Batch Farm 
+Having split data up into bin it is possible to run each on a batch farm.
+As before to split data into bins :
+   root  --hsfit ConfigureBins.C
+Now each fit will be run as defined in FitHSMCModelFarm.C. This should follow the method in the prvious fit macros. But it now uses the FitBatchBin function.
+    RF->FitBatchBin(1);
+To tell the fitter where the binned files are you must set the variable FILEDIR
+   setenv FILEDIR path
+Where path is now the outdir given in ConfigureBins.C :
+      RF->SetOutDir("outBins/");
+so
+   setenv FILEDIR $PWD/outBins
+Note it needs the full path to copy the output files back to the correct place
+You need to edit the pbs_run script to match your own pbs system. This script is run on the farm node. 
+The fit is called via root :
+    root -l -b -q --farm --hsfit '$RUNMAC'  >& $LOG
+--farm tells root to copy all the haspect classes and compile them on the farm node
+--hsfit tells it just to compile the fit classes
+$RUNMAC is defined in the HSSubmitBatch.C macro to be the FitHSMCModelFarm.C macro. Obviously you can change this to any macro you want.
+To run :
+root --THSBins HSSubmitBatch.C
+It only needs the THSBins class to configure the different jobs and send them.
