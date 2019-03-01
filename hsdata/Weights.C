@@ -241,8 +241,10 @@ void Weights::SortWeights(){
   TTree* idtree=fIDTree->CloneTree(0); //create empty tree with branch adresses set //Clone before create index so do not have to save index
   idtree->SetDirectory(fFile); //set file to save memory
   BuildIndex();
+  cout<<"Weights::SortWeights() Clone emptry tree to save "<<endl;
   TTree* Mwtree=fWTree->CloneTree(); //create clone tree in memory or very slow!
   Mwtree->SetDirectory(0);
+  cout<<"Weights::SortWeights() Clone tree to save "<<endl;
   TTree* wtree=fWTree->CloneTree(0); //create empty tree with branch adresses set
   wtree->SetDirectory(fFile);//set file to save memory
    
@@ -290,22 +292,22 @@ void Weights::SetFile(TString filename){
 ////////////////////////////////////////////////////////////////
 ///Finally save weights to disk
 void Weights::Save(){
-  cout<<"void Weights::Save() "<<fFile<<endl;
-  cout<<fIDTree<<" "<<fWTree<<endl;
+  // cout<<"void Weights::Save() "<<fFile<<endl;
+  //cout<<fIDTree<<" "<<fWTree<<endl;
   if(!fFile) {cout<<"Weights::Save() no file associated with "<<GetName()<<" so not saved"<<endl;return;}
   if(!fFile->IsWritable()) return;
   if(!fIDTree)return ;
   if(!fWTree)return ;
   
-  cout<<" Weights::Save() "<<fFile->GetName()<<" "<<fFile->GetTitle()<<endl;
-  fWTree->Print();
-  fIDTree->Print();
+  // cout<<" Weights::Save() "<<fFile->GetName()<<" "<<fFile->GetTitle()<<endl;
+  //fWTree->Print();
+  //fIDTree->Print();
   //  fWTree->SetDirectory(fFile);
   fFile->cd();
   fWTree->Write();//Note can't just save whole object
   fIDTree->Write(); //As 1GB limit on object buffers in TFile
   Write();//save the rest (not trees) of the weights class
-  fFile->Close();
+  // fFile->Close();
   delete fFile;fFile=0;fWTree=0;fIDTree=0;
   cout<<"Weights::Save() Saved weights to file"<<endl;
 
@@ -440,6 +442,6 @@ filed_uptr  Weights::DFAddToTree(TString wname,TString outfname,TString tname,TS
   //  return DFdef_uptr(new DFdef_t(df.Define(wname.Data(),applyWeights)));
   df.Define(wname.Data(),applyWeights).Snapshot(tname.Data(),outfname.Data());
 
-  return FiledTree::Read(tname.Data(),outfname.Data());
+  return std::move(FiledTree::Read(tname.Data(),outfname.Data()));
  }
  

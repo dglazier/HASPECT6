@@ -71,8 +71,9 @@ namespace HS{
       tt->Draw();
       fCanvases.push_back(std::move(titleCan)); //keep it alive!
  
-   //fCanvases.push_back(can_uptr());
-      can_uptr canvas(new TCanvas(dname,dname));
+      //fCanvases.push_back(can_uptr());
+      TString cname=dname+Form("%d",ica);
+      can_uptr canvas(new TCanvas(cname,cname));
       Int_t NX=fNX;
       Int_t NY=1;
       //change NY for the last canvas
@@ -85,7 +86,6 @@ namespace HS{
 	  break;
 	DrawHist(std::move(dirHists[ihist++]),dynamic_cast<TPad*>(canvas->GetPad(ipad+1)),"col1z");
       }
-      
       canvas->Draw();
       fCanvases.push_back(std::move(canvas)); //keep it alive!
     }

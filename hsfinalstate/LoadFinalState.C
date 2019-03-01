@@ -26,7 +26,7 @@ void LoadFinalState(TString Selection=""){
     gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+fspath).Data()));
   }
   //Add HSDataManager include path
-  if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+fspath)){
+  if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+dmpath)){
     gInterpreter->AddIncludePath(HSCODE+dmpath);
     gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+dmpath).Data()));
   }

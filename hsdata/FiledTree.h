@@ -60,10 +60,12 @@ namespace HS{
     static filed_uptr Create(TString tname,TString fname);
     static filed_uptr Read(TString tname,TString fname);
     static filed_uptr Update(TString tname,TString fname);
-    static filed_uptr CopyEmpty(TTree* tree,TString fname);
-    static filed_uptr CopyFull(TTree* tree,TString fname);
-    static filed_uptr CopyEmpty(ttree_ptr tree,TString fname);
-    static filed_uptr CopyFull(ttree_ptr tree,TString fname);
+    static filed_uptr CloneEmpty(TTree* tree,TString fname);
+    static filed_uptr CloneFull(TTree* tree,TString fname);
+    static filed_uptr CloneEmpty(ttree_ptr tree,TString fname);
+    static filed_uptr CloneFull(ttree_ptr tree,TString fname);
+    static filed_uptr RecreateCopyFull(TTree* tree,TString fname);
+    static filed_uptr RecreateCopyFull(ttree_ptr tree,TString fname);
 
     void SetMode(Mode_t m){fMode=m;}
     Mode_t Mode(){return fMode;}

@@ -11,14 +11,14 @@
 
 auto cutsman=make_shared<ParticleCutsManager>();
 auto eCut=make_shared<CLAS12DeltaTime>(4,4,0,0); //4ns FT,FD
-auto protCut=make_shared<CLAS12DeltaTime>(0,5,5,0); //5ns FD,CD
-auto otherCut=make_shared<CLAS12DeltaTime>(0,5,0,0); //5ns FD
+auto protCut=make_shared<CLAS12DeltaTime>(0,3,3,0); //5ns FD,CD
+auto otherCut=make_shared<CLAS12DeltaTime>(0,3,0,0); //5ns FD
 cutsman->AddParticleCut("e-",eCut); //assign to manager
 cutsman->AddParticleCut("proton",protCut); //assign to manager
 cutsman->SetDefaultCut(otherCut); //assign to manager
 cutsman->ConfigureCuts(&fs);   
 
-//fs.RegisterPostTopoAction(cutsman);
+fs.RegisterPostTopoAction(cutsman);
 
 auto treeman=make_shared<ParticleDataManager>("particleTrees");
 treeman->ConfigureTreeParticles(&fs); //propogate through topologies
@@ -29,13 +29,16 @@ fs.RegisterPostWorkAction(treeman); //register post-work i.e. after
 
   //And make a chain of data files
   TChain chain("HSParticles");
-  chain.Add("/home/dglazier/fastdata/skim3_3933.hipo");
+  chain.Add("/home/dglazier/fastdata/hipo3test/out_clas_004013.evio.990.hipo");
   dm->InitChain(&chain);
 
   //connect FinalState to Data by moving the pointer
   fs.SetDataManager(dm);
 
-fs.ProcessData(1E5); //No number given, analyse all events in chain
+  gBenchmark->Start("timer");
+  fs.ProcessData(); //No number given, analyse all events in chain
+  gBenchmark->Stop("timer");
+  gBenchmark->Print("timer");
 
 
 TCanvas c1;

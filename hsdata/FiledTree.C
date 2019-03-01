@@ -67,7 +67,7 @@ filed_uptr FiledTree::Create(TString tname,TString fname){
   saveDir->cd();
   return f;
 }
-filed_uptr FiledTree::CopyEmpty(TTree* tree,TString fname){
+filed_uptr FiledTree::CloneEmpty(TTree* tree,TString fname){
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"create");
@@ -77,7 +77,7 @@ filed_uptr FiledTree::CopyEmpty(TTree* tree,TString fname){
   saveDir->cd();
   return f;
 }
-filed_uptr FiledTree::CopyFull(TTree* tree,TString fname){
+filed_uptr FiledTree::CloneFull(TTree* tree,TString fname){
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"create");
@@ -87,7 +87,7 @@ filed_uptr FiledTree::CopyFull(TTree* tree,TString fname){
   saveDir->cd();
   return f;
 }
-filed_uptr FiledTree::CopyEmpty(ttree_ptr tree,TString fname){
+filed_uptr FiledTree::CloneEmpty(ttree_ptr tree,TString fname){
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"create");
@@ -97,11 +97,32 @@ filed_uptr FiledTree::CopyEmpty(ttree_ptr tree,TString fname){
   saveDir->cd();
   return f;
 }
-filed_uptr FiledTree::CopyFull(ttree_ptr tree,TString fname){
+filed_uptr FiledTree::CloneFull(ttree_ptr tree,TString fname){
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"create");
   f->SetTree(tree->CloneTree(-1,"fast"));
+  f->SetMode(Mode_t::copyfull);
+  f->SetTreeDirectory();
+  saveDir->cd();
+  return f;
+}
+filed_uptr FiledTree::RecreateCopyFull(ttree_ptr tree,TString fname){
+  //using copy tree allows use of tentrylists to filter
+  auto saveDir=gDirectory;
+  filed_uptr f{new FiledTree()};
+  f->CreateFile(fname,"recreate");
+  f->SetTree(tree->CopyTree(""));
+  f->SetMode(Mode_t::copyfull);
+  f->SetTreeDirectory();
+  saveDir->cd();
+  return f;
+}
+filed_uptr FiledTree::RecreateCopyFull(TTree* tree,TString fname){
+  auto saveDir=gDirectory;
+  filed_uptr f{new FiledTree()};
+  f->CreateFile(fname,"recreate");
+  f->SetTree(tree->CopyTree(""));
   f->SetMode(Mode_t::copyfull);
   f->SetTreeDirectory();
   saveDir->cd();

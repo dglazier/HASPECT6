@@ -330,10 +330,12 @@ namespace HS{
 	    for(UInt_t i=0;i<fSingleSplitNames.size();i++)
 	      for(UInt_t j=0;j<fSingleSplitNames[i].size();j++){
 		//  for(auto& sname:snames){
-		fOutFile->cd(cut.first);
+		if(fOutFile->Get(cut.first))
+		  fOutFile->cd(cut.first);
 		TString tsname(fSingleSplitNames[i][j]);
 		tsname.ReplaceAll(":","");
-		gDirectory->mkdir(tsname,fSingleSplitRanges[i][j]);
+		if(!gDirectory->Get(tsname))
+		  gDirectory->mkdir(tsname,fSingleSplitRanges[i][j]);
 	      }
 	  }
       
@@ -343,7 +345,8 @@ namespace HS{
 	      for(UInt_t j=0;j<fSingleSplitNames[i].size();j++){
 		TString tsname(fSingleSplitNames[i][j]);
 		tsname.ReplaceAll(":","");
-		gDirectory->mkdir(tsname,fSingleSplitRanges[i][j]);
+		if(!gDirectory->Get(tsname))
+		  gDirectory->mkdir(tsname,fSingleSplitRanges[i][j]);
 	      }
 	    
 	}
@@ -361,7 +364,8 @@ namespace HS{
 	//Make directory, move into it and move to next axis
 	TString tsname(fSingleSplitNames[iA][i]);
 	tsname.ReplaceAll(":","");
-	curDir->mkdir(tsname,fSingleSplitRanges[iA][i]);
+	if(!gDirectory->Get(tsname))
+	  curDir->mkdir(tsname,fSingleSplitRanges[iA][i]);
 	curDir->cd(tsname);
 	MakeSplitDirs(iA,gDirectory);
       }
@@ -370,7 +374,8 @@ namespace HS{
     TDirectory* HistMaker::FindDirectory(TString name){
       auto dirnames=name.Tokenize(":");
       for(Int_t i=0;i<dirnames->GetEntries();i++){
-	gDirectory->cd(dirnames->At(i)->GetName());
+	if(gDirectory->Get(dirnames->At(i)->GetName()))
+	  gDirectory->cd(dirnames->At(i)->GetName());
       }
       return gDirectory;		       
     }

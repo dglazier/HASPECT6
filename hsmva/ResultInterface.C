@@ -126,7 +126,7 @@ ResultByTree::ResultByTree(TString trainpath,TString methodname,TTree *tree,Bool
     Reader()->AddVariable(DataSetInfo()->GetVariableInfo(i).GetInternalName(),&(vars->at(i)));
   if(copyTree){
     //Make a copy of the tree
-    SetTreePtr(HS::FiledTree::CopyFull(tree,methodname+".root"));
+    SetTreePtr(HS::FiledTree::CloneFull(tree,methodname+".root"));
     fNEntries=Tree()->GetEntries();
     SetBranchAddresses(Tree().get());
   }
