@@ -2,8 +2,8 @@
 
 ## Prerequisits
 
-Assume HSCODE is set and rootrc is correct.
-Assume CLAS12TOOL is set and Lz4 is compiled.
+Assume HSCODE is setand rootrc is correct.
+Assume CLAS12TOOL is set and Lz4 is compiled. For Hipo3 see https://github.com/dglazier/Clas12Tool/tree/mesonex
 
 setenv HSEXP $HSCODE/hsexperiments/clas12tool
 
@@ -11,7 +11,9 @@ mkdir my/Pi2/dir
 cd my/Pi2/dir
 
 cp $HSCODE/hsskeleton/jupyter/CreateMyFinalState.ipynb .
+
 cp $HSCODE/hsskeleton/jupyter/DevelopMyFinalState.ipynb  .
+
 cp $HSCODE/hsskeleton/jupyter/Run_CLAS12_HIPO.ipynb  .
 
 root --notebook &
