@@ -8,10 +8,11 @@ See README https://github.com/dglazier/HASPECT6/tree/hsfit
 Assume CLAS12TOOL is set and Lz4 is compiled.
 
 For Hipo3 see https://github.com/dglazier/Clas12Tool/tree/mesonex
+    setenv HSEXP $HSCODE/hsexperiments/clas12tool
 
 For Hipo4 see https://github.com/dglazier/Clas12Tool/tree/proof
+    setenv HSEXP $HSCODE/hsexperiments/clas12tool4
 
-setenv HSEXP $HSCODE/hsexperiments/clas12tool
 
 mkdir my/Pi2/dir
 
