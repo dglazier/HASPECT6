@@ -1,13 +1,20 @@
 #Analysis of the CLAS12 2 pion final state
 
-## Prerequisits
+## Prerequisites
 
 Assume HSCODE is setand rootrc is correct.
-Assume CLAS12TOOL is set and Lz4 is compiled. For Hipo3 see https://github.com/dglazier/Clas12Tool/tree/mesonex
+See README https://github.com/dglazier/HASPECT6/tree/hsfit
+
+Assume CLAS12TOOL is set and Lz4 is compiled.
+
+For Hipo3 see https://github.com/dglazier/Clas12Tool/tree/mesonex
+
+For Hipo4 see https://github.com/dglazier/Clas12Tool/tree/proof
 
 setenv HSEXP $HSCODE/hsexperiments/clas12tool
 
 mkdir my/Pi2/dir
+
 cd my/Pi2/dir
 
 cp $HSCODE/hsskeleton/jupyter/CreateMyFinalState.ipynb .
