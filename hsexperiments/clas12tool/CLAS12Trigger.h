@@ -80,7 +80,7 @@ namespace HS{
 }//namespace HS
 inline Float_t HS::CLAS12::CLAS12Trigger::StartTime(HS::THSParticle* part){
   //If FT shift time first
-  if(part->CLAS12()->region()==clas12::FT){part->ShiftTime(fTimeShiftFT);return StartTime(part->DeltaTime());}
+  if(part->CLAS12()->getRegion()==clas12::FT){part->ShiftTime(fTimeShiftFT);return StartTime(part->DeltaTime());}
   //else
   return StartTime(part->DeltaTime());
 }

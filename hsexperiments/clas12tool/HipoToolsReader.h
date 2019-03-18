@@ -10,7 +10,7 @@
 #include "EventInfo.h"
 #include "RunInfo.h"
 #include "reader.h"
-#include "hallB_event.h"
+#include "clas12reader.h"
 
 namespace HS{
   namespace CLAS12{
@@ -29,13 +29,12 @@ namespace HS{
       void FillParticles();
       void FillGenerated();
       
-      const hipo::reader* GetHipoReader()const {return &fReader;}
+      // const hipo::reader* GetHipoReader()const {return &fReader;}
       
     private :
       
       //clas12tools
-      hipo::reader  fReader;
-      unique_ptr<clas12::hallB_event> fEvent;
+       unique_ptr<clas12::clas12reader> fEvent;
 
       //HS data objects
       HS::THSParticle fParticle;

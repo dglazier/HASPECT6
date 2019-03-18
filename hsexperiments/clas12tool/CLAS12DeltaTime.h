@@ -57,7 +57,7 @@ inline Bool_t  HS::CLAS12::CLAS12DeltaTime::isFDToF(Int_t status) const{
 inline Bool_t HS::CLAS12::CLAS12DeltaTime::ParticleCut(HS::THSParticle* part) const{
   if(part->Time()==0) return kFALSE;
   
-  Short_t det=Detector(part->CLAS12()->region(),part->CLAS12()->par()->getStatus());
+  Short_t det=Detector(part->CLAS12()->getRegion(),part->CLAS12()->par()->getStatus());
   if(det>3) return kFALSE; //not a defined detector
   
   //FT det=0, FD det=1, CD det=2, FDCAL det=3

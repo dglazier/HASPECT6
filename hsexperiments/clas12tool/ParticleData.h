@@ -81,7 +81,7 @@ namespace HS{
     Time  =  fParticle->DeltaTime();
 
     //All
-    Region = c12p->region();
+    Region = c12p->getRegion();
     Edep = c12p->getDetEnergy();
     Sector = c12p->getSector();
     Status = c12p->par()->getStatus();
@@ -95,7 +95,7 @@ namespace HS{
     LTCC=0;
     TrChi2=0;
     
-    switch(c12p->region()) {
+    switch(c12p->getRegion()) {
       
     case clas12::FD :
       PreE = c12p->cal(clas12::PCAL)->getEnergy();

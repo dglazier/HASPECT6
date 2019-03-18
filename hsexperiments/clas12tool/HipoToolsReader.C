@@ -46,10 +46,7 @@ Bool_t CLAS12::HipoToolsReader::Init(TString filename,TString name){
   fCurFileName=gSystem->BaseName(filename);
 
   //open new hipo file
-  fReader.open(filename);
-  fEvent.reset(new clas12::hallB_event(fReader));
-
-  //  fEvent->init(fReader);
+  fEvent.reset(new clas12::clas12reader(filename.Data()));
   return kTRUE;
 }
 

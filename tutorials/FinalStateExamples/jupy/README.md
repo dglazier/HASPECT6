@@ -2,17 +2,24 @@
 
 ## Prerequisites
 
-Assume HSCODE is setand rootrc is correct.
+ROOT 6.14+ with jupyter installed :
+
+https://root.cern.ch/how/how-create-rootbook
+
+Assume HSCODE is set and rootrc is correct.
+
 See README https://github.com/dglazier/HASPECT6/tree/hsfit
 
-Assume CLAS12TOOL is set and Lz4 is compiled.
+Assume CLAS12TOOL is set and Lz4 is compiled, if not :
 
-For Hipo3 see https://github.com/dglazier/Clas12Tool/tree/mesonex
+see https://github.com/dglazier/Clas12Tool/tree/hipo34
+
+    setenv CLAS12TOOL /clas12/tool/directory
     setenv HSEXP $HSCODE/hsexperiments/clas12tool
 
-For Hipo4 see https://github.com/dglazier/Clas12Tool/tree/proof
-    setenv HSEXP $HSCODE/hsexperiments/clas12tool4
+If you are using hipo4 files then also
 
+   setenv USE_HIPO4 1
 
 mkdir my/Pi2/dir
 
@@ -26,7 +33,7 @@ cp $HSCODE/hsskeleton/jupyter/Run_CLAS12_HIPO.ipynb  .
 
 root --notebook &
 
-Open CreateMyFinalState.ipynb and floow instructions.
+Open CreateMyFinalState.ipynb and follow instructions.
      You will need to change FSSkeleton to CLAS12Skeleton
 
 

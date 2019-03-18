@@ -24,41 +24,19 @@ void LoadExperiment(){
   //Add CLAS12TOOL paths.
   TString C12TOOL=gSystem->Getenv("CLAS12TOOL");
   if(C12TOOL!=TString("")) {
-    TString LZ4=C12TOOL+"/Lz4/lib";
-    gSystem->AddDynamicPath(LZ4);
-    gSystem->AddIncludePath(TString("-I")+LZ4);
-     if(!gSystem->Load("liblz4")){
-      //Found liblz4 in LD_LIBRARY_PATH 
-      gROOT->ProcessLine("#define __LZ4__");
-      gSystem->AddIncludePath("-D__LZ4__");
-      gSystem->AddIncludePath(TString("-I")+LZ4);
+    TString USE_HIPO4=gSystem->Getenv("USE_HIPO4");
+    
+    TString LIB=C12TOOL+"/lib/";
+    gSystem->Load(LIB+"liblz4");
+    if(USE_HIPO4!=TString()){
+      gSystem->Load(LIB+"libHipo4");
+      gSystem->Load(LIB+"libClas12Banks4");
     }
     else{
-      printf("\n   >>>>> LZ4 compression is not supported.");
-      printf("\n   >>>>> check if libz4 is installed on your system.");  
-      printf("\n   >>>>> and included in LD_LIBRARY_PATH");  
-    }
-    //Add CLAS12TOOL Hipo classes
-    gROOT->SetMacroPath(Form("%s:%s/Hipo",gROOT->GetMacroPath(),C12TOOL.Data()));
-    gSystem->AddIncludePath(TString("-I")+C12TOOL+"/Hipo");
-    gROOT->SetMacroPath(Form("%s:%s/Banks",gROOT->GetMacroPath(),C12TOOL.Data()));
-    gSystem->AddIncludePath(TString("-I")+C12TOOL+"/Banks");
-    
-    std::vector<TString > HipoClasses={"utils","dictionary","node","event","record","reader","bank"};
-    for(auto const& name : HipoClasses){
-      std::cout<<"C12C12C12C12C12C12C12C12C12    "<<name<<std::endl;
-      if(!gROOT->GetListOfClasses()->Contains(name))
-	gROOT->LoadMacro(C12TOOL+"/Hipo/"+name+".cpp+");
+      gSystem->Load(LIB+"libHipo3");
+    gSystem->Load(LIB+"libClas12Banks3");
     }
     
-    std::vector<TString > C12BClasses={"header","particle","mcparticle","particle_detector","scintillator","calorimeter","cherenkov","forwardtagger","tracker","covmatrix","scaler","vtp","region_particle","region_ft","region_fdet","region_cdet","hallB_event"};
-    for(auto const& name : C12BClasses){
-      std::cout<<"C12C12C12C12C12C12C12C12C12    "<<name<<std::endl;
-      if(!gROOT->GetListOfClasses()->Contains(name))
-	gROOT->LoadMacro(C12TOOL+"/Banks/"+name+".cpp+");
-    }
-    
-  
   }
   else{
     cout<<"Warning : LoadExperiment() You need to set CLAS12TOOL"<<endl;
@@ -85,7 +63,6 @@ void LoadExperiment(){
  // Now we can Load FinalState
   TString HSFINAL=gSystem->Getenv("HSFINAL");
   if(HSFINAL!=TString("")) {
-  
     gROOT->ProcessLine(".x $HSCODE/hsfinalstate/LoadFinalState.C+");
 
     //additional classes for this experiment
