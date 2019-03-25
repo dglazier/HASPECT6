@@ -16,21 +16,16 @@ namespace HS{
       
       fOutDir=setup.GetOutDir();
       
-      //   auto vars=setup.FitVars();
-      
-      for(auto& var : setup.FitVars()){
-       	fVarNames.push_back(var->GetName());
+      auto vars=setup.DataVars();//get dataset variables
+      auto it=vars.iterator(); //iterate over them
+
+      TObject * var=nullptr;
+      while ((var=it.Next())){
+	fVarNames.push_back(var->GetName()); //store name of dataset varible for filtering tree branches
       }
-      for(auto& cat : setup.FitCats()){
-       	fVarNames.push_back(cat->GetName());
-      }
-      
-      fVarNames.push_back(setup.GetIDBranchName());
+ 
     }
 
-    // void  Binner::LoadAuxVar(TString vname){
-    //   fVarNames.push_back(vname);
-    // }
     void  Binner::LoadBinVar(TString opt,Int_t nbins,Double_t min,Double_t max){
       fBins.AddAxis(opt,nbins,min,max);     
     }
@@ -46,19 +41,19 @@ namespace HS{
       fBinNames=bins.GetBinNames();
       
       }
-      void Binner::SplitData(TString tname,TString fname,TString name){
-	if(fBins.GetNAxis()==0){ //no splits required
-	  fNameToFiles[name]={{fname}};
-	  fNameToTree[name]=tname;
-	  fBinNames={{""}};
-	  return;
-	}
-	if(!fIsSetup) {
-	  cout<<"Binner::SplitData ERROR not setup yet!"<<endl;
-	  exit(0);
-	}
-	auto filetree=FiledTree::Read(tname,fname);
-	SplitData(filetree->Tree().get(), name);
+    void Binner::SplitData(TString tname,TString fname,TString name){
+      if(fBins.GetNAxis()==0){ //no splits required
+	fNameToFiles[name]={{fname}};
+	fNameToTree[name]=tname;
+	fBinNames={{""}};
+	return;
+      }
+      if(!fIsSetup) {
+	cout<<"Binner::SplitData ERROR not setup yet!"<<endl;
+	exit(0);
+      }
+      auto filetree=FiledTree::Read(tname,fname);
+      SplitData(filetree->Tree().get(), name);
     }
 
     void Binner::SplitData(TTree* tree,TString name){

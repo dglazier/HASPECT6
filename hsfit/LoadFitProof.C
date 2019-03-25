@@ -45,10 +45,10 @@ void LoadFitProof(Int_t Nworkers=1,TString Selection=""){
   Int_t NCores=Nworkers;
   proof->SetParallel(NCores);
   
-  proof->Load("PhiAsymmetryPDF.cxx+");
 
   proof->AddIncludePath(fitpath);
   proof->AddIncludePath(dmpath);
+  proof->AddIncludePath(PWD);
 
   for(auto const& name : DATAClasses){
     if(Selection!=TString())
@@ -68,12 +68,5 @@ void LoadFitProof(Int_t Nworkers=1,TString Selection=""){
   }
 
   
-  // for(Int_t i=1;i<gApplication->Argc();i++){
-  //   TString opt=gApplication->Argv(i);
-  //  if(opt.Contains("--")&&opt.Contains(".cxx")){opt.Remove(0,2); cout<<"Loading "<<opt<<endl;proof->Load(opt);} //Load additional THS classes
-  //   if(opt.Contains("--")&&opt.Contains(".cpp")){opt.Remove(0,2); cout<<"Loading "<<opt<<endl;proof->Load(opt);} //Load additional THS classes
-  //   if(opt.Contains("--")&&opt.Contains(".C")){opt.Remove(0,2); cout<<"Loading "<<opt<<endl;proof->Load(opt);} //Load additional THS classes
-  //   if(opt.Contains("--")&&opt.Contains(".cc")){opt.Remove(0,2); cout<<"Loading "<<opt<<endl;proof->Load(opt);} //Load additional THS classes
-  // }
-
+ 
 }

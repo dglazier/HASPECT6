@@ -98,7 +98,8 @@ namespace HS{
 	fPlots.push_back(std::move(plotresult_uptr{new PlotResults(fCurrSetup.get(),fCurrDataSet.get())}));
       }
       void RedirectOutput(TString log="");
-
+      void SetRedirectOutput(){fRedirect=kTRUE;}
+      
       void SetRefit(UInt_t n){fNRefits=n;}
       void StoreLikelihood(vector<Double_t> &likelies);
     protected:
@@ -124,6 +125,8 @@ namespace HS{
 
 
       UInt_t fNRefits=0;
+
+      Bool_t fRedirect=kFALSE;
       
       ClassDef(HS::FIT::FitManager,1);
      };

@@ -117,7 +117,8 @@ namespace HS{
 
       weights_uptr fInWeights;
       
-      const char *fInWeightName=nullptr;
+      //  const char *fInWeightName=nullptr;
+      TString fInWeightName;
       unique_ptr<RooRealVar> fWeightVar;
       
       ClassDef(HS::FIT::DataEvents,1);

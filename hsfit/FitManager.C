@@ -98,10 +98,10 @@ namespace HS{
     }
     void FitManager::RunOne(Int_t ifit){
       cout<<"FitManager::RunOne() "<<ifit<< " "<<fSetup.GetOutDir()<<endl;
-      // RedirectOutput(fSetup.GetOutDir()+Form("logRooFit%d.txt",ifit));
+      if(fRedirect) RedirectOutput(fSetup.GetOutDir()+Form("logRooFit%d.txt",ifit));
       Run(ifit);
       cout<<"FitManager::RunOne() done "<<fResult<<endl;
-      //RedirectOutput();
+      if(fRedirect) RedirectOutput();
       SaveResults();
       // fResult->Print();
       Reset(ifit);

@@ -52,9 +52,10 @@ namespace HS{
     }
  
     dset_uptr DataEvents::Get(const UInt_t iset) {
-      cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" "<<fTreeName<<" "<<fSetup<<" with weights ? "<<fInWeightName<<endl;
-     fSetup->DataVars().Print();
-     fFiledTrees[iset]=FiledTree::Read(fTreeName,fFileNames[iset]); //will be delted at end of function
+      
+      // cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" "<<fTreeName<<endl;
+      fSetup->DataVars().Print();
+      fFiledTrees[iset]=FiledTree::Read(fTreeName,fFileNames[iset]); //will be delted at end of function
   
      auto rawtree= fFiledTrees[iset]->Tree().get() ;
      auto vars = fSetup->DataVars();
@@ -63,13 +64,15 @@ namespace HS{
        rawtree=rawtree->CloneTree();//read tree into memory
        rawtree->SetDirectory(0);
        fInWeights->AddToTree(rawtree);
+       cout<<"ADDING WEIGHT "<<fInWeightName<<endl;
        fWeightVar.reset(new RooRealVar(fInWeightName,fInWeightName,0));
+       fWeightVar->Print();
        vars.add(*fWeightVar.get());
      }
-     rawtree->Print();
+     // rawtree->Print();
      auto ds=dset_uptr(new  RooDataSet("DataEvents","DataEvents",
 				       rawtree,vars,
-				       fSetup->Cut(),fInWeightName));
+				       fSetup->Cut(),fInWeightName.Data()));
      if(fInWeights.get())
        delete rawtree;
      
