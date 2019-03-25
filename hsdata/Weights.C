@@ -450,13 +450,14 @@ void Weights::AddToTree(TTree* tree){
   for(UInt_t i=0;i<fSpecies.size();i++)
     branches.push_back(tree->Branch(GetSpeciesName(i),&fWVals[i]));
 
-  Double_t wID=0;
-  tree->SetBranchAddress(fIDName,&wID);
+  //Double_t wID=0;
+  //tree->SetBranchAddress(fIDName,&wID);
+  auto id_leaf=tree->GetLeaf(fIDName);
   
   auto Nentries=tree->GetEntries();
   for(Long64_t i=0;i<Nentries;i++){
     tree->GetEntry(i);
-    GetEntryBinarySearch((Long64_t)wID);
+    GetEntryBinarySearch((Long64_t)id_leaf->GetValue());
     for(auto* br: branches)
       br->Fill();
   }

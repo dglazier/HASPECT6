@@ -37,7 +37,7 @@ void HS::TreeParticleData::SetBranches() {
   
    // tree->Print();
    AddSigBck(); //Add branches for signal and background weights
-   tree->Branch("UID",&fUID,"UID/L");
+   tree->Branch("UID",&fUID,"UID/D");
 }
 //////////////////////////////////////////////////////////////////////////
 ///Add signal and background flags (for HSMVA)

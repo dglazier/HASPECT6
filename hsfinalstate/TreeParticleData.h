@@ -88,7 +88,7 @@ namespace HS{
     Long64_t fNSig=-1;
     Long64_t fNBck=-1;
     Long64_t fNRequested=-1;
-    Long64_t fUID=-1;
+    Double_t fUID=-1;
 
     //    FiledTree* fTree=nullptr;
     filed_uptr fTree;
