@@ -53,7 +53,8 @@ namespace HS{
       virtual void Run(UInt_t ifit=0);
       virtual void RunAll();
       virtual void RunOne(Int_t ifit);
-        
+      virtual void FitTo();
+      
       virtual void Reset(UInt_t ifit){
 	fData.Reset(ifit);
 	fFiledTrees.clear();
@@ -98,7 +99,8 @@ namespace HS{
       }
       void RedirectOutput(TString log="");
 
-      
+      void SetRefit(UInt_t n){fNRefits=n;}
+      void StoreLikelihood(vector<Double_t> &likelies);
     protected:
       std::unique_ptr<Setup> fCurrSetup; //!
       std::unique_ptr<RooDataSet> fCurrDataSet; //!
@@ -116,10 +118,13 @@ namespace HS{
       
       Binner fBinner;
 
-       std::vector<HS::filed_uptr> fFiledTrees;//!
+      std::vector<HS::filed_uptr> fFiledTrees;//!
       std::vector<plotresult_uptr> fPlots;//!
       RooFitResult* fResult=nullptr;//!
 
+
+      UInt_t fNRefits=0;
+      
       ClassDef(HS::FIT::FitManager,1);
      };
 

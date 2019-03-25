@@ -19,37 +19,32 @@ namespace HS{
     
     void FitManager::Run(UInt_t ifit){
       
-      // if(!fData.get()){
-      // 	cout<<"ERROR FitManager::Run no data loaded"<<endl;
-      // 	return;
-      // }
-      
       fCurrSetup.reset(new Setup(ConstSetUp())); //Copy setup from template
       fCurrSetup->SetName(fBinner.BinName(Data().GetGroup(ifit)));
       fCurrSetup->SetTitle(Data().GetItemName(ifit));
       cout<<"FitManager::Run "<<Data().GetGroup(ifit)<<" "<<fBinner.BinName(Data().GetGroup(ifit))<<" "<<Data().GetItemName(ifit)<<endl;
       fCurrSetup->Print();
-      
+
+      //get dataset ifit
+      fCurrDataSet=std::move(Data().Get(ifit));
+
+      //Look for Special case of RooHSEventsPDFs
       FillEventsPDFs(Data().GetGroup(ifit));
       
+      //Add fit constraints
+      fCurrSetup->AddFitOption(RooFit::ExternalConstraints
+			       (fCurrSetup->Constraints()));
+      //initialise yields
+      SetAllValLimits(fCurrSetup->Yields(),
+		      fCurrDataSet->sumEntries()/2,0,fCurrDataSet->sumEntries()*2);
+      //create extended max likelihood pdf
       fCurrSetup->TotalPDF();
       auto *model=fCurrSetup->Model();
 
-      fCurrDataSet=std::move(Data().Get(ifit));
-  
-      fCurrSetup->AddFitOption(RooFit::ExternalConstraints
-			       (fCurrSetup->Constraints()));
+      // fResult=model->fitTo(*fCurrDataSet,fCurrSetup->FitOptions());
+      //      PlotDataModel();
+      FitTo();
       
-      SetAllValLimits(fCurrSetup->Yields(),
-		      fCurrDataSet->sumEntries()/2,0,fCurrDataSet->sumEntries()*2);
-
-      cout<<"FitManager::Run start fit "<<endl;
-      fCurrSetup->FitOptions().Print("v");
-      cout<<"FitManager::Run start fit "<<endl;      
-      fResult=model->fitTo(*fCurrDataSet,fCurrSetup->FitOptions());
-
-      PlotDataModel();
-
       fResult->Print();
     }
     
@@ -60,12 +55,53 @@ namespace HS{
       }
       
     }
-     void FitManager::RunOne(Int_t ifit){
+    void FitManager::FitTo(){
+      //original fit using intial parameters
+      auto *model=fCurrSetup->Model();    
+      fResult=model->fitTo(*fCurrDataSet,fCurrSetup->FitOptions());
+      
+      //Perform many fits with differnt initial parameters
+      if(fNRefits){
+	UInt_t nrefit = 0;
+	fCurrSetup->SaveSnapShot(Form("Refit_%d",nrefit)); //original
+	vector<Double_t> likelies;
+
+	using result_uptr=std::unique_ptr<RooFitResult>;
+	
+	vector<result_uptr> results;
+
+	//save original likelihood and results
+	StoreLikelihood(likelies);
+	results.push_back(result_uptr{dynamic_cast<RooFitResult*>(fResult->clone())});
+
+	//loop over refits
+	while(nrefit++<fNRefits){
+	  fCurrSetup->RandomisePars();
+	  fResult=model->fitTo(*fCurrDataSet,fCurrSetup->FitOptions());
+	  fCurrSetup->SaveSnapShot(Form("Refit_%d",nrefit));
+	  StoreLikelihood(likelies);
+	  results.push_back(result_uptr{dynamic_cast<RooFitResult*>(fResult->clone())});
+	}
+	//Find the best fit result and save it
+	Int_t best=std::distance(likelies.begin(), std::min_element(likelies.begin(), likelies.end()));
+	cout<<"FitManager::FitTo() best fit likelihood "<<likelies[best]<<" from fit "<<best<<" all likelihoods "<<endl;
+	for(auto& lh:likelies)
+	  cout<<lh<<" ";
+	cout<<endl;
+	fCurrSetup->LoadSnapShot(Form("Refit_%d",best));
+	fResult=dynamic_cast<RooFitResult*>(results[best]->clone());
+      }
+     ///////////////////////////
+      //Plot best fit and return
+      PlotDataModel();
+
+    }
+    void FitManager::RunOne(Int_t ifit){
       cout<<"FitManager::RunOne() "<<ifit<< " "<<fSetup.GetOutDir()<<endl;
       // RedirectOutput(fSetup.GetOutDir()+Form("logRooFit%d.txt",ifit));
       Run(ifit);
       cout<<"FitManager::RunOne() done "<<fResult<<endl;
-      //  RedirectOutput();
+      //RedirectOutput();
       SaveResults();
       // fResult->Print();
       Reset(ifit);
@@ -79,6 +115,8 @@ namespace HS{
 	auto pdf=dynamic_cast<RooHSEventsPDF*>( &pdfs[ip]);
 	cout<<ip<<" "<<pdf<<" "<<endl;
 	if(pdf){
+	  if(fBinner.FileNames(pdf->GetName()).size()==0)
+	    continue;
 	  cout<<"FitManager::FillEventsPDFs"<<pdf->GetName()<<" "<<fBinner.FileNames(pdf->GetName())[idata]<<endl;
 	  auto filetree=FiledTree::
 	    Read(fBinner.TreeName(pdf->GetName()),
@@ -96,7 +134,7 @@ namespace HS{
 	  }
 	  else{
 	    pdf->SetEvTree(tree.get(),fCurrSetup->Cut());
-	    //  pdf->AddProtoData(fCurrDataSet.get());
+	    pdf->AddProtoData(fCurrDataSet.get());
 	    RooHSEventsHistPDF* histspdf=0;
 	    if((histspdf=dynamic_cast<RooHSEventsHistPDF*>(pdf))){
 	      histspdf->CreateHistPdf();
@@ -151,5 +189,14 @@ namespace HS{
       treeDS->Write();
       
     }
+    void FitManager::StoreLikelihood(vector<Double_t> &likelies){
+      Bool_t nan=TMath::IsNaN(fResult->minNll());
+      //check covariance OK or externally provide (SumW2Error) =-1
+      Bool_t edm=(fResult->covQual()>1)||(fResult->covQual()==-1);
+      Bool_t fail=(fResult->minNll()!=-1e+30);
+      if((!nan)&&edm&&fail)likelies.push_back(fResult->minNll());
+      else likelies.push_back(1E300);
+    }
+
   }//namespace FIT
 }//namespace HS

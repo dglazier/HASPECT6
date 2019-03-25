@@ -12,7 +12,7 @@ using namespace HS::FIT::PROCESS;
 void LoadFit(TString Selection=""){
   
   TString HSCODE=gSystem->Getenv("HSCODE");
-  TString fitpath="/hsfit2";
+  TString fitpath="/hsfit";
   TString dmpath="/hsdata";
    
   if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+fitpath)){

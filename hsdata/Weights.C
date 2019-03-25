@@ -31,6 +31,7 @@ Weights::Weights(TString name) :TNamed(name,name){
   fIsSorted=kFALSE;
   fN=0;
   fSpecies.clear();
+  fIDName="UID";
 }
 
 Weights::~Weights(){
@@ -298,16 +299,11 @@ void Weights::Save(){
   if(!fFile->IsWritable()) return;
   if(!fIDTree)return ;
   if(!fWTree)return ;
-  
-  // cout<<" Weights::Save() "<<fFile->GetName()<<" "<<fFile->GetTitle()<<endl;
-  //fWTree->Print();
-  //fIDTree->Print();
-  //  fWTree->SetDirectory(fFile);
   fFile->cd();
   fWTree->Write();//Note can't just save whole object
   fIDTree->Write(); //As 1GB limit on object buffers in TFile
   Write();//save the rest (not trees) of the weights class
-  // fFile->Close();
+ 
   delete fFile;fFile=0;fWTree=0;fIDTree=0;
   cout<<"Weights::Save() Saved weights to file"<<endl;
 
@@ -429,7 +425,7 @@ void Weights::WeightBySelection(TTree* tree,TCut cut,TString wgt){
 }
 
 ////////////////////////////////////////////
-
+///This creates a new file with a copy of the original tree + wname
 filed_uptr  Weights::DFAddToTree(TString wname,TString outfname,TString tname,TString infname){
   //  ROOT::RDataFrame df(tname.Data(),fname.Data(),{GetIDName().Data()});
   Int_t isp=GetSpeciesID(wname);
@@ -444,4 +440,27 @@ filed_uptr  Weights::DFAddToTree(TString wname,TString outfname,TString tname,TS
 
   return std::move(FiledTree::Read(tname.Data(),outfname.Data()));
  }
- 
+/////////////////////////////////////////////
+// void Weights::AddToTree(TString outfname,TString tname,TString infname){
+
+// }
+void Weights::AddToTree(TTree* tree){
+  vector<TBranch*> branches;
+  
+  for(UInt_t i=0;i<fSpecies.size();i++)
+    branches.push_back(tree->Branch(GetSpeciesName(i),&fWVals[i]));
+
+  Double_t wID=0;
+  tree->SetBranchAddress(fIDName,&wID);
+  
+  auto Nentries=tree->GetEntries();
+  for(Long64_t i=0;i<Nentries;i++){
+    tree->GetEntry(i);
+    GetEntryBinarySearch((Long64_t)wID);
+    for(auto* br: branches)
+      br->Fill();
+  }
+  tree->ResetBranchAddresses();
+
+}
+

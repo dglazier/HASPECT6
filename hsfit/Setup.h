@@ -106,7 +106,10 @@ namespace HS{
 	AddFitOption(RooFit::Minos(kFALSE));
 	AddFitOption(RooFit::Minimizer("Minuit2"));
       }
+      void RandomisePars();
 
+      void SaveSnapShot(TString name){fWS.saveSnapshot(name,RooArgSet(fYields,fParameters),kTRUE);};
+      void LoadSnapShot(TString name){fWS.loadSnapshot(name);}
     protected:
       
     private:

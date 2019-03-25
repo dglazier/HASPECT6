@@ -185,7 +185,7 @@ void HSexp(){
 void HSfit(){
   cout<<"Loading HSFit classes"<<endl;
   //set prompt
-  gROOT->ProcessLine(".x $HSCODE/hsfit/LoadHSFit.C+");
+  gROOT->ProcessLine(".x $HSCODE/hsfit/LoadFit.C+");
 
 }
 

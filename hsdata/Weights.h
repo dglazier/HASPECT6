@@ -69,6 +69,8 @@ namespace HS{
     void LoadSaved(TString fname,TString wname);
     void WeightBySelection(TTree* tree,TCut cut,Double_t wgt);
     void WeightBySelection(TTree* tree,TCut cut,TString wgt);
+
+    void AddToTree(TTree* tree);
     
     filed_uptr DFAddToTree(TString wname,TString outfname,TString tname,TString infname);
   private:
@@ -83,7 +85,7 @@ namespace HS{
     Long64_t *fIDi=nullptr;//!
     Long64_t *fIDv=nullptr;//!
     StrIntMap_t fSpecies;//names of species with index in map
-    TString fIDName="UID"; //name of tree branch with event ID
+    TString fIDName; //name of tree branch with event ID
     Bool_t fGotEntry;
     Bool_t fIsSorted;
     

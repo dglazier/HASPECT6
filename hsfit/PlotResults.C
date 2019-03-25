@@ -27,6 +27,11 @@ namespace HS{
 
 	RooPlot* frame = var->frame();
 	data->plotOn(frame, DataError(RooAbsData::SumW2) ) ; 
+
+	auto pdfs = setup->PDFs();
+	for(Int_t ic=0;ic<pdfs.getSize();ic++)
+	  model->plotOn(frame,Components(pdfs[ic]),LineStyle(kDashed),LineColor(ic%8+1),Precision(1E-2)) ;
+	
 	model->plotOn(frame,LineColor(kRed),Precision(4E-2)) ;
 
 	model->paramOn(frame,
@@ -48,7 +53,7 @@ namespace HS{
 	hres->Draw();
      	fRooHists.push_back(std::move(hres));//keep it live
 
-	// //Residual distributions
+	//Pull distributions
 	halfCanvas->cd(2);
 	
 	auto hpull=roohist_uptr(frame->pullHist());
@@ -56,10 +61,6 @@ namespace HS{
 	fRooHists.push_back(std::move(hpull));//keep it live
 	//////////////////////////////////////////////
 
-	canvas->cd(1);
-	auto pdfs = setup->PDFs();
-	for(Int_t ic=0;ic<pdfs.getSize();ic++)
-	  model->plotOn(frame,Components(pdfs[ic]),LineStyle(kDashed),LineColor(ic%8+1),Precision(1E-2)) ;  
 	
 	canvas->Modified();
 	canvas->Update();

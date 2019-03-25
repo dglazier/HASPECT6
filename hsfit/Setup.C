@@ -1,6 +1,8 @@
 #include "Setup.h"
 #include <RooGenericPdf.h>
 #include <RooAbsData.h>
+#include <RooDataSet.h>
+#include <TRandom.h>
 
 
 namespace HS{
@@ -145,7 +147,31 @@ namespace HS{
       return fVars;
     }
 
-    
+    void Setup::RandomisePars(){
+      //randomise fit parameters
+      for(Int_t ip=0;ip<fParameters.getSize();ip++){
+	RooRealVar *par=((RooRealVar*)&fParameters[ip]);
+	//check if par this is fxed constant.
+	if(par->isConstant()) continue;
+	//Look through constraints to see if one is defined for this parameter
+	Bool_t hadCon=kFALSE;
+	for(Int_t ic=0;ic<fConstraints.getSize();ic++){
+	  RooAbsPdf *pdfCon=((RooAbsPdf*)&fConstraints[0]);//get RooPdf constraint
+	  if(pdfCon->getObservables(fParameters)->contains(*par)){ //does it contain par?
+	    //Yes, must generate random number from constraint
+	    RooArgSet setPar(*par); //make an argset from this 1 par as needed for..
+	    RooDataSet *oneEv=pdfCon->generate(setPar,1); //gen 1 event
+	    const RooArgSet* theEv = oneEv->get(); //get the event
+	    theEv->getRealValue(par->GetName()); //get par value of event
+	    hadCon=kTRUE;
+	    delete oneEv;
+	    break;//can only have 1!	
+	  }
+	}
+	//If there was no constraint to select from just take random in range 
+	if(!hadCon)par->setVal(gRandom->Uniform(par->getMin(""),par->getMax("")));
+      }//end Paramter loop
+    }
     ////////////////////////////////////////////////////////////
     ///Utiltiy functions
     RooArgSet MakeArgSet(realvars_t vars){

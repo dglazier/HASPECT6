@@ -10,6 +10,7 @@
 #include "Setup.h"
 #include "BootStrapper.h"
 #include "FiledTree.h"
+#include "Weights.h"
 #include <RooAbsData.h>
 #include <RooDataSet.h>
 #include <RooDataHist.h>
@@ -21,6 +22,7 @@ namespace HS{
   namespace FIT{
 
     using strings_t = std::vector<TString>;
+    using weights_uptr = std::unique_ptr<HS::Weights>;
     
     class FitData : public TObject {
       
@@ -95,6 +97,9 @@ namespace HS{
 
 	return std::move(TString());
       }
+
+      void LoadWeights(TString wname,TString fname);
+      
     protected:
       
     private:
@@ -109,7 +114,12 @@ namespace HS{
       std::unique_ptr<BootStrapper> fBootStrap;//!;
 
       Int_t fNBoots=-1;
-   
+
+      weights_uptr fInWeights;
+      
+      const char *fInWeightName=nullptr;
+      unique_ptr<RooRealVar> fWeightVar;
+      
       ClassDef(HS::FIT::DataEvents,1);
      };
     

@@ -9,18 +9,14 @@ namespace HS{
     void sPlot::Run(UInt_t ifit){
       cout<<"HS::FIT::sPlot::Do prelimanry fits "<<gDirectory->GetName()<<endl;
       FitManager::Run(ifit);
-    
-       // if(!Data()){
-       // 	cout<<"ERROR FitManager::Run no data loaded"<<endl;
-       // 	return;
-       // }
-       //Note sPlot is much (10X) faster with tree store
-       //Normal fit is 2X faster with vector...
-       RooAbsData::setDefaultStorageType(RooAbsData::Tree);
-       RooDataSet* dataset =dynamic_cast<RooDataSet*>( fCurrDataSet->emptyClone());
-       dataset->append(*fCurrDataSet.get());
-       RooAbsData::setDefaultStorageType(RooAbsData::Vector);
-       
+      
+      //Note sPlot is much (10X) faster with tree store
+      //Normal fit is 2X faster with vector...
+      RooAbsData::setDefaultStorageType(RooAbsData::Tree);
+      RooDataSet* dataset =dynamic_cast<RooDataSet*>( fCurrDataSet->emptyClone());
+      dataset->append(*fCurrDataSet.get());
+      RooAbsData::setDefaultStorageType(RooAbsData::Vector);
+      
       auto *model=fCurrSetup->Model();
       cout<<" splot model y"<<model<<endl;
       ////////////////////////////////////////////////////////
@@ -102,27 +98,30 @@ namespace HS{
       return std::move(wts);
     }
 
-    filed_uptr sPlot::WeightedTree(TString wname){
+    void sPlot::WeightedTree(){
       weights_uptr wts;
-      if(Bins().GetSize()>1)
+      if(Bins().GetSize()>0)
 	wts = MergeWeights();
       else{
 	wts.reset(new HS::Weights());
 	wts->LoadSaved(SetUp().GetOutDir()+TString("Weights")+SetUp().GetName()+".root","HSsWeights");
       }
-      return std::move(wts->DFAddToTree(wname,SetUp().GetOutDir()+"Tree"+wname+
-					".root",Data().ParentTreeName(),
-					Data().ParentName()));
+
+      auto ftree=FiledTree::Read(Data().ParentTreeName(),
+					Data().ParentName());
+      fWeightedTree.reset(ftree->Tree()->CloneTree());//read tree into memory
+      fWeightedTree->SetDirectory(0);
+      wts->AddToTree(fWeightedTree.get());
     }
 
     void sPlot::DrawWeighted(TString var,TString wname){
       if(!fWeightedTree.get())
-	fWeightedTree=WeightedTree(wname);
+	WeightedTree();
 
       if(!fWeightedTree.get())
 	return;
 
-      fWeightedTree->Tree()->Draw(var,wname);
+      fWeightedTree->Draw(var,wname);
 
     }
     void sPlot::WriteThis(){

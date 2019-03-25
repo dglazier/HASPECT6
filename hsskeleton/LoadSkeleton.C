@@ -19,7 +19,7 @@ void LoadSkeleton(){
     gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+skpath).Data()));
   }
 
-  vector<TString > SkClasses={"Skeleton","FSSkeleton","CLAS12Skeleton","CLASSkeleton"};
+  vector<TString > SkClasses={"Skeleton","FSSkeleton","CLAS12Skeleton","CLASSkeleton","RooFitSkeleton"};
   
   for(auto const& name : SkClasses){
     cout<<"$$$$$$$$$$$$$$$$$$$$$$$$$ "<<name<<endl;
