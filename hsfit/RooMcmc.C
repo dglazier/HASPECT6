@@ -154,7 +154,8 @@ namespace HS{
     void RooMcmc::SetModel( ModelConfig*  model) {
       // set the model
       fModelConfig=std::move(model);
-      fPdf = fModelConfig->GetPdf();
+      //fPdf = fModelConfig->GetPdf();
+      fPdf = fSetup->Model();
       fPriorPdf = fModelConfig->GetPriorPdf();
       fPOI.removeAll();
       fNuisParams.removeAll();
@@ -227,7 +228,7 @@ namespace HS{
      fData=&fitdata;
      //initialise MCMCCalculator
      SetData(fitdata);
-     SetModel(setup.GetModelConfig());
+     SetModel(fSetup->GetModelConfig());
      SetupBasicUsage();
       
      auto NumIters0=fNumIters;

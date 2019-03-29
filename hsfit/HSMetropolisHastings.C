@@ -103,7 +103,7 @@ namespace HS{
 	hadEvalError = false;
 
 	// print a dot every 1% of the chain construction
-	if (icount%100 == 0&&havePrinted==0){ ooccoutP((TObject*)0, Generation) << "_"<<icount<<"/"<<fNumIters; havePrinted=1;}
+	if (icount%100 == 0&&havePrinted==0){ ooccoutP((TObject*)0, Generation) << " "<<icount<<"/"<<fNumIters; havePrinted=1;}
 	if (icount%100 == 1) havePrinted=0;
 	
 	fPropFunc->Propose(xPrime, x);

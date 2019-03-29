@@ -196,14 +196,15 @@ void RooHSEventsPDF::generateEvent(Int_t code){
 }
 Int_t RooHSEventsPDF::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,const char* rangeName) const
 {
-    if(fForceNumInt) return 0; //might be good to check numerical integral sometimes
+  // cout<<"RooHSEventsPDF::getAnalyticalIntegral "<<fEvTree<<" "<<fvecReal.size()<<endl;
+  if(fForceNumInt) return 0; //might be good to check numerical integral sometimes
   if(!fEvTree&&!fForceConstInt) return 0; //no MC events to integrate over
 
   if(fProxSet.size()==1){//special case 1 variable
     if (matchArgs(allVars,analVars,VarSet(0))) return 1 ;
   }
   else{//For variables
-     //    for(UInt_t i=0;i<1+fProxSet.size();i++){
+    //    for(UInt_t i=0;i<1+fProxSet.size();i++){
     for(UInt_t i=0;i<1+fProxSet.size();i++){
       if(!fEvTree&&fForceConstInt&&i==0) {return 1;} //no tree, but const int
       else if(!fEvTree) return 0; //no const integral for projections
