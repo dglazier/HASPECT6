@@ -16,6 +16,7 @@
 #include <RooDataHist.h>
 #include <TString.h>
 #include <TObject.h>
+#include <TObjString.h>
 
 
 namespace HS{
@@ -109,17 +110,18 @@ namespace HS{
       TString fTreeName;
       TString fParentName;
       TString fParentTreeName;
+      TString fInWeightName;
+      TString fInWeightFile;
       
+
       filedtrees_t fFiledTrees;
       std::unique_ptr<BootStrapper> fBootStrap;//!;
 
       Int_t fNBoots=-1;
 
-      weights_uptr fInWeights;
+      weights_uptr fInWeights;//!
       
-      //  const char *fInWeightName=nullptr;
-      TString fInWeightName;
-      unique_ptr<RooRealVar> fWeightVar;
+      unique_ptr<RooRealVar> fWeightVar;//!
       
       ClassDef(HS::FIT::DataEvents,1);
      };

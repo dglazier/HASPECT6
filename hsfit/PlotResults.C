@@ -1,5 +1,6 @@
 #include "PlotResults.h"
 #include <RooPlot.h>
+#include <RooMsgService.h>
 #include <TCanvas.h>
 
 namespace HS{
@@ -42,7 +43,9 @@ namespace HS{
 	frame->SetTitle(TString("Fit components for ")+var->GetName());
 
 	frame->Draw() ;
-
+	auto level = RooMsgService::instance().globalKillBelow();
+	RooMsgService::instance().setGlobalKillBelow(RooFit::ERROR) ;
+ 
 	///////////////////////////////////////////
 	//Residual distributions
 	auto halfCanvas=canvas->cd(2);
@@ -62,6 +65,8 @@ namespace HS{
 	//////////////////////////////////////////////
 
 	
+	RooMsgService::instance().setGlobalKillBelow(level);
+
 	canvas->Modified();
 	canvas->Update();
 	canvas->Draw();

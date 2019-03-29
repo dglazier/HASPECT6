@@ -15,7 +15,7 @@ void Model1(TString filename,Bool_t IsData=kTRUE){
   tree->Branch("M1",&M1,"M1/D");
   tree->Branch("Phi",&Phi,"Phi/D");
   tree->Branch("M2",&M2,"M2/D");
-  tree->Branch("fgID",&fgID,"ID/D");
+  tree->Branch("fgID",&fgID,"fgID/D");
   tree->Branch("Sig",&Sig,"Sig/D");
   if(IsData){
   tree->Branch("PolState",&PolState,"PolState/I");

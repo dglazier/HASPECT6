@@ -44,10 +44,11 @@ namespace HS{
 	static void Go(FitManager* fm,Int_t N){
 	  if(!fm) return;
 	  fm->WriteThis();
-	  auto  proof = TProof::Open("://lite");
+	  TProof*  proof = TProof::Open("://lite");
 	  gROOT->ProcessLine(Form(".x LoadFitProof.C+(%d)",N));
-	  for(auto& macro : gCompilesList) 
-	    proof->Load(Form("%s+",macro.Data()));
+	  
+	  for(auto& macro : gCompilesList)
+	    proof->Load(Form("%s++",macro.Data()),kTRUE);
 	  
 	  FitSelector selector;
 	  selector.SetFitManager(fm);
@@ -65,7 +66,7 @@ namespace HS{
 	  if(!std::count(gCompilesList.begin(),gCompilesList.end(),macro))gCompilesList.push_back(macro);
 	}
 
-	std::vector<TString> GetCompiled(){return gCompilesList;};
+	///	std::vector<TString> GetCompiled(){return gCompilesList;};
 	
       private :
 	

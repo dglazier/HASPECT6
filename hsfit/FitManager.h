@@ -11,6 +11,7 @@
 #include "PlotResults.h"
 #include "Data.h"
 #include "Binner.h"
+#include "Minimiser.h"
 #include "TNamed.h"
 #include "RooMinimizer.h"
 #include "RooMinuit.h"
@@ -92,7 +93,13 @@ namespace HS{
       // dataevs_ptr& Data() {return fData;}
       DataEvents& Data() {return fData;}
       
-
+      void SetMinimiser(Minimiser* mi){
+	fMinimiser.reset(std::move(mi));
+	SetMinimiserType(fMinimiser->GetName());
+      }
+      void SetMinimiserType(TString mtype){fMinimiserType=mtype;}
+      TString GetMinimiserType(){return fMinimiserType;}
+      
       void FillEventsPDFs(UInt_t idata);
       void PlotDataModel(){
 	fPlots.push_back(std::move(plotresult_uptr{new PlotResults(fCurrSetup.get(),fCurrDataSet.get())}));
@@ -100,9 +107,7 @@ namespace HS{
       void RedirectOutput(TString log="");
       void SetRedirectOutput(){fRedirect=kTRUE;}
       
-      void SetRefit(UInt_t n){fNRefits=n;}
-      void StoreLikelihood(vector<Double_t> &likelies);
-    protected:
+     protected:
       std::unique_ptr<Setup> fCurrSetup; //!
       std::unique_ptr<RooDataSet> fCurrDataSet; //!
       
@@ -119,13 +124,15 @@ namespace HS{
       
       Binner fBinner;
 
+      minimiser_uptr fMinimiser; //!
+      TString fMinimiserType;
+      
       std::vector<HS::filed_uptr> fFiledTrees;//!
       std::vector<plotresult_uptr> fPlots;//!
       RooFitResult* fResult=nullptr;//!
 
 
-      UInt_t fNRefits=0;
-
+  
       Bool_t fRedirect=kFALSE;
       
       ClassDef(HS::FIT::FitManager,1);

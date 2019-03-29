@@ -446,14 +446,14 @@ filed_uptr  Weights::DFAddToTree(TString wname,TString outfname,TString tname,TS
 // }
 void Weights::AddToTree(TTree* tree){
   vector<TBranch*> branches;
-  
+  cout<<"Weights::AddToTree "<<tree<<endl;
   for(UInt_t i=0;i<fSpecies.size();i++)
     branches.push_back(tree->Branch(GetSpeciesName(i),&fWVals[i]));
 
   //Double_t wID=0;
   //tree->SetBranchAddress(fIDName,&wID);
   auto id_leaf=tree->GetLeaf(fIDName);
-  
+  cout<<"id "<<id_leaf<<" "<<fIDName<<endl;
   auto Nentries=tree->GetEntries();
   for(Long64_t i=0;i<Nentries;i++){
     tree->GetEntry(i);
@@ -461,6 +461,7 @@ void Weights::AddToTree(TTree* tree){
     for(auto* br: branches)
       br->Fill();
   }
+  cout<<"done"<<endl;
   tree->ResetBranchAddresses();
 
 }

@@ -150,7 +150,7 @@ void hslogon(){
 
 void hsCleanExperiments(){gROOT->ProcessLine(".x $HSCODE/hsexperiments/CleanExperiments.C");}
 void hsCleanData(){ gROOT->ProcessLine(".x $HSCODE/hsdata/CleanData.C");}
-void hsCleanHSFit(){ gROOT->ProcessLine(".x $HSCODE/hsfit/CleanHSFit.C");}
+void hsCleanHSFit(){ gROOT->ProcessLine(".x $HSCODE/hsfit/CleanFit.C");}
 void hsCleanFinal(){ gROOT->ProcessLine(".x $HSCODE/hsfinalstate/CleanFinalState.C");}
 void hsCleanHSMVA(){ gROOT->ProcessLine(".x $HSCODE/hsmva/CleanHSMVA.C");}
 

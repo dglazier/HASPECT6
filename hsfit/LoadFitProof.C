@@ -19,7 +19,7 @@ void LoadFitProof(Int_t Nworkers=1,TString Selection=""){
 
   //Now finalsstate classes
   vector<TString > DATAClasses={"FiledTree","Bins","Weights"};
-  vector<TString > FITClasses= {"RooHSEventsPDF","RooHSEventsHistPDF","Setup","Data","Binner","PlotResults","BootStrapper","FitManager","sPlot","FitSelector","Process"};
+  vector<TString > FITClasses= {"RooHSEventsPDF","RooHSEventsHistPDF","Setup","Data","Binner","Minimiser","PlotResults","BootStrapper","FitManager","sPlot","FitSelector","Process"};
 
 
   if(!TString(gInterpreter->GetIncludePath()).Contains(fitpath)){
@@ -56,7 +56,7 @@ void LoadFitProof(Int_t Nworkers=1,TString Selection=""){
     
     std::cout<<"DDDDDDDDDDDDDDDDDDDDDD "<<name<<std::endl;
     if(!gROOT->GetListOfClasses()->Contains(name))
-      proof->Load(dmpath+"/"+name+".C++",kTRUE);
+      proof->Load(dmpath+"/"+name+".C+",kTRUE);
   }
   for(auto const& name : FITClasses){
     if(Selection!=TString())
@@ -64,7 +64,7 @@ void LoadFitProof(Int_t Nworkers=1,TString Selection=""){
     
     std::cout<<"FFFFFFFFFFFFFFFFFFFFFFF "<<name<<std::endl;
     if(!gROOT->GetListOfClasses()->Contains(name))
-      proof->Load(fitpath+"/"+name+".C++",kTRUE);
+      proof->Load(fitpath+"/"+name+".C+",kTRUE);
   }
 
   

@@ -39,14 +39,12 @@ namespace HS{
 	auto last = vrandom.begin() + (i+1)*EvPerBoot;
 	vector<Long64_t> newVec(first, last);
 
-	//std::sort(newVec.begin(),newVec.end());
 
 	std::unique_ptr<TEntryList> elist(new TEntryList(Form("%d",i),Form("%d",i)));
 
 	for(auto& entry: newVec)
 	  elist->Enter(entry);
-	cout<<"loop "<<fNBoots <<" "<<elist->GetN()<<endl;
-  
+ 
 	tree->SetEntryList(elist.get());
 
 	TString newFileName=tree->GetDirectory()->GetName();

@@ -36,30 +36,34 @@ namespace HS{
       //Loop over all the filenames (e.g different bins) and split the data
       for(auto &filename : files){
 	fBootStrap->DivideData(tname,filename);
-	auto newFiles=fBootStrap->GetFileNames();
-	fFileNames.insert( fFileNames.end(), newFiles.begin(), newFiles.end() );
       }
+      auto newFiles=fBootStrap->GetFileNames();
+      fFileNames.insert( fFileNames.end(), newFiles.begin(), newFiles.end() );
       fTreeName=tname;
       fFiledTrees.resize(fFileNames.size());
- 
     }
     void  DataEvents::LoadWeights(TString wname,TString fname){
       fInWeights.reset(new HS::Weights());
       fInWeights->LoadSaved(fname,"HSsWeights");
       fInWeights->PrintWeight();
       fInWeightName=wname.Data();
+      fInWeightFile=fname.Data();
       cout<<"  DataEvents::LoadWeights using "<<fInWeightName<<" weights "<<endl;
     }
  
     dset_uptr DataEvents::Get(const UInt_t iset) {
-      
-      // cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" "<<fTreeName<<endl;
+      cout<<fInWeightName<<" "<<fInWeightFile<<endl;
+      cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" "<<fTreeName<<" "<<fInWeights.get()<<" "<<fInWeightName<<endl;
       fSetup->DataVars().Print();
+
       fFiledTrees[iset]=FiledTree::Read(fTreeName,fFileNames[iset]); //will be delted at end of function
   
      auto rawtree= fFiledTrees[iset]->Tree().get() ;
      auto vars = fSetup->DataVars();
-     
+     cout<<"cerate weights"<<endl;
+     if(!fInWeights.get()&&fInWeightName!=TString()){ //if Data object read from root file
+       LoadWeights(fInWeightName,fInWeightFile);
+     }
      if(fInWeights.get()){//if weights add branches and vars
        rawtree=rawtree->CloneTree();//read tree into memory
        rawtree->SetDirectory(0);
@@ -69,13 +73,15 @@ namespace HS{
        fWeightVar->Print();
        vars.add(*fWeightVar.get());
      }
+     cout<<"make data set "<<endl;
      // rawtree->Print();
      auto ds=dset_uptr(new  RooDataSet("DataEvents","DataEvents",
 				       rawtree,vars,
-				       fSetup->Cut(),fInWeightName.Data()));
+				       fSetup->Cut(),fInWeightName));
      if(fInWeights.get())
        delete rawtree;
-     
+
+     cout<<" return DATA "<<endl;
      ds->Print();
      return std::move(ds); 
     }

@@ -8,10 +8,12 @@
 #define HS_FIT_SETUP_h
 
 
+#include <RooStats/ModelConfig.h>
 #include <RooWorkspace.h>
 #include <RooRealVar.h>
 #include <RooCategory.h>
 #include <RooAddPdf.h>
+#include <RooStats/ModelConfig.h>
 #include <RooGaussian.h>
 #include <RooFormulaVar.h>
 #include <TNamed.h>
@@ -103,13 +105,16 @@ namespace HS{
 	AddFitOption(RooFit::NumCPU(1));
 	AddFitOption(RooFit::Save(kTRUE));
 	AddFitOption(RooFit::Warnings(kFALSE));
-	AddFitOption(RooFit::Minos(kFALSE));
-	AddFitOption(RooFit::Minimizer("Minuit2"));
+	//AddFitOption(RooFit::Minos(kFALSE));
+	//AddFitOption(RooFit::Minimizer("Minuit2"));
       }
       void RandomisePars();
 
       void SaveSnapShot(TString name){fWS.saveSnapshot(name,RooArgSet(fYields,fParameters),kTRUE);};
       void LoadSnapShot(TString name){fWS.loadSnapshot(name);}
+
+      RooStats::ModelConfig*  GetModelConfig();
+      
     protected:
       
     private:

@@ -69,91 +69,39 @@ namespace HS{
       
       if(!fInput) fInput=new TList();
       TNamed *outdir=new TNamed("HSOUTDIR",fFitManager->SetUp().GetOutDir().Data());
-      //      fFitManager.SetUp().SetName("HSFitSetup");
-      //     auto* setup = &fFitManager.SetUp();
- // auto *setup=new Setup(fFitManager.SetUp());
-      // setup->SetName("HSFitSetup");
       fInput->Add(outdir);
-      //fFitManager->SetName("HSFit");
-      //fInput->Add(fFitManager);
-     
+      
     }
 
     void FitSelector::SlaveBegin(TTree * /*tree*/)
     {
-      // The SlaveBegin() function is called after the Begin() function.
-      // When running with PROOF SlaveBegin() is called on each slave server.
-      // The tree argument is deprecated (on PROOF 0 is passed).
-
+  
       TString option = GetOption();
       fInput->Print();
+
+      //Get the outpur directory where HSFit.root should reside
       auto outdir=dynamic_cast<TNamed*>(fInput->FindObject("HSOUTDIR"));
       TString outdirstr=TString(outdir->GetTitle());
-      if(outdirstr!=TString("")||!outdirstr.EndsWith("/"))
-	//	outdirstr.Append('/');
-	fFitfile=TFile::Open(outdirstr+"HSFit.root");
-      fFitManager=dynamic_cast<FitManager*>( fFitfile->Get("HSFit") );
-      // fFitManager->Data().LoadSetup(&fFitManager->SetUp());
-      // auto* setup = dynamic_cast<Setup*>(fInput->FindObject("HSFitSetup"));
-	// fFitfile=TFile::Open(outdirstr+"HSFitDump.root","recreate");
-	//fFitManager=dynamic_cast<FitManager*>( fInput->FindObject("HSFit") );
-      fFitManager->Data().LoadSetup(&fFitManager->SetUp());
-     cout<<"FitSelector::SlaveBegin( "<<fFitManager->SetUp().GetOutDir()<<endl;
-      // fFitManager.CopySetup(fInput->FindObject("HSFitSetup"));
+      // if(outdirstr!=TString("")||!outdirstr.EndsWith("/"))
+      if(outdirstr!=TString(""))
+	outdirstr.Append('/');
+
+      //Get the fitmanager
+      fFitfile=TFile::Open(outdirstr+"HSFit.root");
+      fFitManager=dynamic_cast<FitManager*>( fFitfile->Get("HSFit")->Clone() );
+      fFitManager->SetMinimiser(std::move(dynamic_cast<Minimiser*>( fFitfile->Get(fFitManager->GetMinimiserType())->Clone() )));
+      delete fFitfile; //close file to stop memeory resident issue!
       
-      //    auto onames=dynamic_cast<TList*>( fInput->FindObject("HSFitFiles"));
-      //    for(Int_t i=0;i<onames->GetEntries();i++)
-      //      fFitFileNames.push_back(onames->At(i)->GetName());
-      //
+      fFitManager->Data().LoadSetup(&fFitManager->SetUp());
+      cout<<"FitSelector::SlaveBegin( "<<fFitManager->SetUp().GetOutDir()<<endl;
     }
 
     Bool_t FitSelector::Process(Long64_t entry)
     {
-      // The Process() function is called for each entry in the tree (or possibly
-      // keyed object in the case of PROOF) to be processed. The entry argument
-      // specifies which entry in the currently loaded tree is to be processed.
-      // When processing keyed objects with PROOF, the object is already loaded
-      // and is available via the fObject pointer.
-      //
-      // This function should contain the \"body\" of the analysis. It can contain
-      // simple or elaborate selection criteria, run algorithms on the data
-      // of the event and typically fill histograms.
-      //
-      // The processing can be stopped by calling Abort().
-      //
-      // Use fStatus to set the return value of TTree::Process().
-      //
-      // The return value is currently not used.
-      std::cout<<"Wntry "<<entry<<std::endl;
-      std::cout<<"Out dir  "<<fFitManager->SetUp().GetOutDir()<<std::endl;
-      
+         
       fFitManager->RunOne(entry);
 
   
-      // fReader.SetEntry(entry);
-      // cout<<fFitFileNames[*bindex]<<endl;
-      // std::this_thread::sleep_for(std::chrono::seconds(2));
-      // HS::FIT::Setup RF;
-      // RF.SetOutDir("/work/Dropbox/HaSpect/dev/HASPECT6/hsfit2/out/");
-      // ///////////////////////////////Load Variables
-      // RF.LoadVariable("Mmiss[0,10]");//should be same name as variable in tree  
-      // RF.SetIDBranchName("fgID");
-   
-      // /////////////////////////////Make Model Signal
-      // RF.Factory("Gaussian::Signal( Mmiss, SIMm[6,4,7], SIMw[0.2,0.0001,3] )");
-      // RF.LoadSpeciesPDF("Signal",1);
-   
-   
-      // ////////////////////////////////Additional background
-      // RF.Factory("Chebychev::BG(Mmiss,{a0[-0.1,-1,1],a1[0.1,-1,1]})");
-      // RF.LoadSpeciesPDF("BG",1);
-
-      // RF.TotalPDF();
-
-      // HS::FIT::DataEvents dataset(RF,"BinnedTree",{fFitFileNames[*bindex]});
-      // RF.Model()->fitTo(dataset.Get());
-      // dataset.Clear();
- 
       return kTRUE;
     }
 
@@ -162,8 +110,6 @@ namespace HS{
       // The SlaveTerminate() function is called after all entries or objects
       // have been processed. When running with PROOF SlaveTerminate() is called
       // on each slave server.
-      delete fFitfile;
-      
     }
 
     void FitSelector::Terminate()
