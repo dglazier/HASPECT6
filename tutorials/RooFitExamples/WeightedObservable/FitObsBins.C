@@ -24,23 +24,26 @@
   RF.SetUp().LoadSpeciesPDF("SigAsym",1);
 
   ////////////////////////////Make Bins
-  //RF.Bins().LoadBinVar("Eg",1,3,4);
+  // RF.Bins().LoadBinVar("Eg",4,3,4);
    
   ///////////////////////////Load Data
   //RF.Data().BootStrap(2);
   RF.LoadData("MyModel",pwd+"Data.root");
-  //RF.LoadSimulated("MyModel","MC.root","SigAsym");
+  RF.LoadSimulated("MyModel","MC.root","SigAsym");
   
-  //////////////////////////Load Weights
+  //////////////////////////Load Weight
   RF.Data().LoadWeights("Signal",pwd+"outsPlot/Tweights.root");
 
-  // RF.SetMinimiser(new RooMcmcUniform2Seq(1000,200,200));
-  // Here::Go(&RF);
 
   //use Minuit2(5) to run 5 fits and take the best likelihood
   RF.SetMinimiser(new Minuit2());
+
+  //Or try an mcmc minimser 1000-># of points, 200->burnin 200 ~ 1/step size
+  //RF.SetMinimiser(new RooMcmcUniform2Seq(1000,200,200));
+  
+
   Here::Go(&RF);
-   
-  //Proof::Go(&RF,1);
+  //OR run with PROOF-LITE on N=4 cores (you can change the 4)
+  // Proof::Go(&RF,4);
  
 }
