@@ -446,22 +446,27 @@ filed_uptr  Weights::DFAddToTree(TString wname,TString outfname,TString tname,TS
 // }
 void Weights::AddToTree(TTree* tree){
   vector<TBranch*> branches;
-  cout<<"Weights::AddToTree "<<tree<<endl;
+  
   for(UInt_t i=0;i<fSpecies.size();i++)
     branches.push_back(tree->Branch(GetSpeciesName(i),&fWVals[i]));
-
+  Int_t Nsp=fSpecies.size();
   //Double_t wID=0;
   //tree->SetBranchAddress(fIDName,&wID);
   auto id_leaf=tree->GetLeaf(fIDName);
-  cout<<"id "<<id_leaf<<" "<<fIDName<<endl;
+ 
   auto Nentries=tree->GetEntries();
-  for(Long64_t i=0;i<Nentries;i++){
-    tree->GetEntry(i);
+  for(Long64_t ient=0;ient<Nentries;ient++){
+    tree->GetEntry(ient);
     GetEntryBinarySearch((Long64_t)id_leaf->GetValue());
+    
+    if(!GotEntry())
+      for(Int_t ivec=0;ivec<Nsp;ivec++)
+	fWVals[ivec]=0;
+
     for(auto* br: branches)
       br->Fill();
   }
-  cout<<"done"<<endl;
+ 
   tree->ResetBranchAddresses();
 
 }

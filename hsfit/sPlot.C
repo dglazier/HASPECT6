@@ -127,10 +127,7 @@ namespace HS{
       if(!fWeightedTree.get())
 	return;
 
-      //got a tree already but now want a different weight species
-      if(!fWeightedTree->GetBranch(wname))
-	fWeights->AddToTree(fWeightedTree.get());
-
+ 
       if(cut==TString()) cut="1";
       
       fWeightedTree->Draw(var,wname+"*("+cut+")",opt);
