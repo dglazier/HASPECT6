@@ -95,33 +95,45 @@ namespace HS{
 		 SetUp().GetOutDir()+"/"+SetUp().GetName()+"Tweights.root",
 		 "HSsWeights");
       //wts->Save();
+
+      //reset to save and reopen
+      wts.reset(new HS::Weights());
+      wts->LoadSaved(SetUp().GetOutDir()+TString("Tweights.root"),"HSsWeights");
+      
       return std::move(wts);
     }
 
     void sPlot::WeightedTree(){
-      weights_uptr wts;
-      if(Bins().GetSize()>0)
-	wts = MergeWeights();
-      else{
-	wts.reset(new HS::Weights());
-	wts->LoadSaved(SetUp().GetOutDir()+TString("Weights")+SetUp().GetName()+".root","HSsWeights");
+      if(!fWeights.get()){
+	if(Bins().GetSize()>0)
+	  fWeights = MergeWeights();
+	else{
+	  fWeights.reset(new HS::Weights());
+	  fWeights->LoadSaved(SetUp().GetOutDir()+TString("Weights")+SetUp().GetName()+".root","HSsWeights");
+	}
       }
-
+      
       auto ftree=FiledTree::Read(Data().ParentTreeName(),
-					Data().ParentName());
+				 Data().ParentName());
       fWeightedTree.reset(ftree->Tree()->CloneTree());//read tree into memory
       fWeightedTree->SetDirectory(0);
-      wts->AddToTree(fWeightedTree.get());
+      fWeights->AddToTree(fWeightedTree.get());
     }
 
-    void sPlot::DrawWeighted(TString var,TString wname){
+    void sPlot::DrawWeighted(TString var,TString wname,TString cut, TString opt){
       if(!fWeightedTree.get())
 	WeightedTree();
 
       if(!fWeightedTree.get())
 	return;
 
-      fWeightedTree->Draw(var,wname);
+      //got a tree already but now want a different weight species
+      if(!fWeightedTree->GetBranch(wname))
+	fWeights->AddToTree(fWeightedTree.get());
+
+      if(cut==TString()) cut="1";
+      
+      fWeightedTree->Draw(var,wname+"*("+cut+")",opt);
 
     }
     void sPlot::WriteThis(){

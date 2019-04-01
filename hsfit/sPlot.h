@@ -42,7 +42,7 @@ namespace HS{
       void CreateWeights();
       void ExportWeights();
       weights_uptr MergeWeights();
-      void DrawWeighted(TString var,TString wname);
+      void DrawWeighted(TString var,TString wname,TString cut="1",TString opt="");
 
       void WriteThis() override;
     protected:

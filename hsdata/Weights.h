@@ -21,7 +21,7 @@ namespace HS{
   public:
     Weights() =default;
     Weights(TString name);
-    ~Weights();
+    virtual ~Weights();
     
     TTree* GetIDTree(){return fIDTree;};
     void SetIDTree(TTree* tree){fIDTree=tree;}
