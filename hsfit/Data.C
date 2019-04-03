@@ -75,12 +75,19 @@ namespace HS{
      }
      cout<<"make data set "<<endl;
      // rawtree->Print();
+
+     //only let datset clone active branches
+     TIter iter=vars.createIterator();
+     rawtree->SetBranchStatus("*",0);
+     while(RooAbsArg* arg=(RooAbsArg*)iter())	
+       rawtree->SetBranchStatus(arg->GetName(),1);	
+
      auto ds=dset_uptr(new  RooDataSet("DataEvents","DataEvents",
 				       rawtree,vars,
 				       fSetup->Cut(),fInWeightName));
      if(fInWeights.get())
        delete rawtree;
-
+     fFiledTrees[iset].reset();
      cout<<" return DATA "<<endl;
      ds->Print();
      return std::move(ds); 

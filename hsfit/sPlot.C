@@ -13,7 +13,7 @@ namespace HS{
       //Note sPlot is much (10X) faster with tree store
       //Normal fit is 2X faster with vector...
       RooAbsData::setDefaultStorageType(RooAbsData::Tree);
-      RooDataSet* dataset =dynamic_cast<RooDataSet*>( fCurrDataSet->emptyClone());
+       RooDataSet* dataset =dynamic_cast<RooDataSet*>( fCurrDataSet->emptyClone());
       dataset->append(*fCurrDataSet.get());
       RooAbsData::setDefaultStorageType(RooAbsData::Vector);
       
