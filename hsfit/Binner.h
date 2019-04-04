@@ -52,12 +52,11 @@ namespace HS{
 	return strings_t();
       }
 
-      const TString BinName(UInt_t i) const {
-	return fBinNames[i];
-      }
-      UInt_t GetSize(){return fBinNames.size();}
+      const TString BinName(UInt_t i);
       
-      Bool_t IsSetup(){return fIsSetup;}
+      UInt_t GetSize() const{return fBinNames.size();}
+      
+      Bool_t IsSetup() const{return fIsSetup;}
 
    
 

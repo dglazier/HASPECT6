@@ -63,8 +63,7 @@ namespace HS{
       for(auto &vname : fVarNames) {//only copy variable branches for speed
 	tree->SetBranchStatus(vname,1);
       }
-      tree->Print();
-      cout<<fOutDir<<" "<<name<<" "<<endl;
+    
       //now split the tree into bins and save in subdirs of fOutDir
       fBins.SetOutDir(fOutDir);
       fBins.SetDataName(name);
@@ -74,7 +73,21 @@ namespace HS{
       fNameToTree[name]=tree->GetName();
       fBinNames=fBins.GetBinNames();
   }
-
+    const TString Binner::BinName(UInt_t i)  {
+      if(!GetSize()){
+	fBins.InitialiseBins();
+	fBinNames=fBins.GetBinNames();
+      }
+      if(!GetSize())
+	return TString(); //no bins
+      
+      if(i>=GetSize()){
+	cout<<"Error Binner::BinName not enough bins "<<i <<GetSize()<<endl;
+	return TString();
+      }
+      return fBinNames[i];
+    }
+ 
   
   }//namepsace FIT
 }//namespace HS

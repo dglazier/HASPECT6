@@ -23,11 +23,17 @@ namespace HS{
       public :
       
    
+	static void Go(std::shared_ptr<FitManager> fm){
+	  Go(fm.get());
+	}
 	static void Go(FitManager* fm){
 	  if(!fm) return;
 	  fm->RunAll();
  	
 	};
+	static void One(std::shared_ptr<FitManager> fm,Int_t ifit){
+	  One(fm.get(),ifit);
+	}
 	static void One(FitManager* fm,Int_t ifit){
 	  if(!fm) return;
 	  fm->RunOne(ifit);
@@ -41,6 +47,10 @@ namespace HS{
 
       public :
       
+	static void Go(std::shared_ptr<FitManager> fm,Int_t N){
+	  Go(fm.get(),N);
+	}
+	
 	static void Go(FitManager* fm,Int_t N){
 	  if(!fm) return;
 	  fm->WriteThis();
@@ -52,7 +62,7 @@ namespace HS{
 	  
 	  FitSelector selector;
 	  selector.SetFitManager(fm);
-	  proof->Process(&selector,fm->Data().GetN());
+	  proof->Process(&selector,fm->GetN());
  	}
 	
       }; //class Proof

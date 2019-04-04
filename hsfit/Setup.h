@@ -58,6 +58,9 @@ namespace HS{
       const RooWorkspace& WS(){return fWS;}
 
       RooArgSet& DataVars();
+      RooArgSet& FitVarsAndCats();
+      RooArgSet& ParsAndYields();
+      
       RooAbsPdf* Model()  const {return fModel;}
       RooAddPdf ExtendModel() const{return RooAddPdf(*dynamic_cast<RooAddPdf*>(fModel));}
 
@@ -124,6 +127,8 @@ namespace HS{
       realvars_t fAuxVars;      
       catvars_t  fFitCats;
       RooArgSet fVars;
+      RooArgSet fVarsAndCats;
+      RooArgSet fParsAndYields;
       RooArgList fYields;//species yields
       RooArgList fPDFs;//species pdfs
       RooArgList fParameters;//model parameters

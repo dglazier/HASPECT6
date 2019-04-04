@@ -64,7 +64,7 @@ namespace HS{
       TString fileName=fSetup->GetOutDir()+fSetup->GetName()+"/Results"+fSetup->GetTitle()+GetName()+".root";
       file_uptr file(TFile::Open(fileName,"recreate"));
       
-       fSetup->Parameters().Print();
+      fSetup->Parameters().Print();
       fSetup->Yields().Print();
       //save paramters and chi2s in  dataset (for easy merging)
       RooArgSet saveArgs(fSetup->Parameters());
@@ -73,10 +73,11 @@ namespace HS{
       RooRealVar Nllval("NLL","NLL",fResult->minNll());
       saveArgs.add(Nllval);
 	
-      RooDataSet saveDS(TString(GetName())+"Results",TString(GetName())+"Results",saveArgs);
+      RooDataSet saveDS(FinalParName(),TString(GetName())+"Results",saveArgs);
       saveDS.add(saveArgs);
       saveDS.Write();
-      TTree* treeDS=RooStats::GetAsTTree("ResultsTree","ResultsTree",saveDS);
+      
+      TTree* treeDS=RooStats::GetAsTTree(ResultTreeName(),ResultTreeName(),saveDS);
       treeDS->Write();
       fResult->Write("MinuitResult");
 

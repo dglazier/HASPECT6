@@ -12,7 +12,23 @@ namespace HS{
 	return;
 
     }
-     void DataEvents::Load(Setup &setup,TString tname,strings_t files)
+    TString DataEvents::GetItemName(Int_t ii){
+      TString itemName;
+      
+      if(fNBoots>0&&!fBootStrap.get())
+	BootStrap(fNBoots);//.recreate bootstrapper
+      
+      
+      if(fBootStrap.get())
+	itemName+=Form("Boot%d",fBootStrap->GetBootID(ii));
+      
+      else if(fNToys>0) //only toys if no bootstrap
+	itemName+=Form("Toy%d",(Int_t) ii%fNToys);
+      
+      return itemName;
+    }
+
+    void DataEvents::Load(Setup &setup,TString tname,strings_t files)
     {
       fSetup=&setup;
       cout<<"DataEvents::Load "<<tname<<" "<<files.size()<<endl;
@@ -52,7 +68,7 @@ namespace HS{
     }
  
     dset_uptr DataEvents::Get(const UInt_t iset) {
-      cout<<fInWeightName<<" "<<fInWeightFile<<endl;
+      cout<<fInWeightName<<" "<<fInWeightFile<<" "<<fFileNames.size()<<endl;
       cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" "<<fTreeName<<" "<<fInWeights.get()<<" "<<fInWeightName<<endl;
       fSetup->DataVars().Print();
 
@@ -87,7 +103,9 @@ namespace HS{
 				       fSetup->Cut(),fInWeightName));
      if(fInWeights.get())
        delete rawtree;
-     fFiledTrees[iset].reset();
+     
+     fFiledTrees[iset].reset(); //delete rawtree 
+     
      cout<<" return DATA "<<endl;
      ds->Print();
      return std::move(ds); 

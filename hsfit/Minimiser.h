@@ -33,7 +33,9 @@ namespace HS{
 
       //return file in case you want to save anything else
       virtual file_uptr SaveInfo()=0;
-       
+      static const TString FinalParName(){return "FinalParameters";}
+      static const TString ResultTreeName(){return "ResultTree";}
+
     protected:
       Setup *fSetup=nullptr; //!not owned by minimiser
       RooAbsData* fData=nullptr; //!not owned by minimiser
@@ -66,12 +68,14 @@ namespace HS{
 
       file_uptr SaveInfo() override;
 
+      
     protected :
       void StoreLikelihood(vector<Double_t> &likelies);
 
       RooFitResult* fResult=nullptr;//! dont write
        
       UInt_t fNRefits=0;
+    
       
       ClassDefOverride(HS::FIT::Minuit,1);
       

@@ -6,9 +6,9 @@ namespace HS{
 
 
   
-    void sPlot::Run(UInt_t ifit){
+    void sPlot::Run(){
       cout<<"HS::FIT::sPlot::Do prelimanry fits "<<gDirectory->GetName()<<endl;
-      FitManager::Run(ifit);
+      FitManager::Run();
       
       //Note sPlot is much (10X) faster with tree store
       //Normal fit is 2X faster with vector...

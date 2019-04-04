@@ -10,7 +10,7 @@ namespace HS{
 
       using namespace RooFit;
       cout<<"PlotResults::PlotResults "<<fCanvases.get()<<" "<<setup<<" "<<endl;
-      fCanvases->SetOwner();
+      //  fCanvases->SetOwner();
       fCanvases->SetName(TString("RFPlots")+setup->GetName());
 
   	

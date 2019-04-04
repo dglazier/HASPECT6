@@ -83,22 +83,17 @@ namespace HS{
 	fNBoots=N;
 	fBootStrap.reset(new BootStrapper(N));
       }
-      Int_t GetGroup(Int_t ii){
+      void Toys(Int_t N){fNToys=N;}
+      
+      Int_t GetDataBin(Int_t ii){
 	if(fNBoots>0&&!fBootStrap.get())
 	  BootStrap(fNBoots);//.recreate bootstrapper
 	if(fBootStrap.get())
 	  return fBootStrap->GetGroup(ii);
 	return ii;
       }
-      TString GetItemName(Int_t ii){
-	if(fNBoots>0&&!fBootStrap.get())
-	  BootStrap(fNBoots);//.recreate bootstrapper
-	if(fBootStrap.get())
-	  return Form("Boot%d",fBootStrap->GetBootID(ii));
-
-	return std::move(TString());
-      }
-
+      TString GetItemName(Int_t ii);
+      
       void LoadWeights(TString wname,TString fname);
       
     protected:
@@ -118,7 +113,8 @@ namespace HS{
       std::unique_ptr<BootStrapper> fBootStrap;//!;
 
       Int_t fNBoots=-1;
-
+      Int_t fNToys=-1;
+      
       weights_uptr fInWeights;//!
       
       unique_ptr<RooRealVar> fWeightVar;//!

@@ -19,8 +19,7 @@ namespace HS{
     }
     
     Setup::Setup(const Setup& other):TNamed(other.fName,other.fName){
-      cout<<"%%%%%%%%%%%%%%%%%%%%%copy setup "<<endl;
-      fWS={"HSWS"};
+       fWS={"HSWS"};
       for(auto &varStr: other.fVarString)
     	LoadVariable(varStr);
       for(auto &catStr: other.fCatString)
@@ -42,8 +41,7 @@ namespace HS{
     }
 
     Setup& Setup::operator=(const Setup& other){
-      cout<<"@@@@@@@@@@@@@@@@@@@copy setup "<<endl;
-      fWS={"HSWS"};
+       fWS={"HSWS"};
       for(auto &varStr: other.fVarString){
     	LoadVariable(varStr);
       }
@@ -146,6 +144,20 @@ namespace HS{
       fWS.factory(fIDBranchName+"[0,9.99999999999999e14]");
       fVars.add(*fWS.var(fIDBranchName));
       return fVars;
+    }
+   RooArgSet& Setup::FitVarsAndCats(){
+      if(fVarsAndCats.getSize())
+	return fVarsAndCats;
+      fVarsAndCats.add(MakeArgSet(fFitVars));
+      fVarsAndCats.add(MakeArgSet(fFitCats));
+      return fVarsAndCats;
+    }
+   RooArgSet& Setup::ParsAndYields(){
+      if(fParsAndYields.getSize())
+	return fParsAndYields;
+      fParsAndYields.add(fParameters);
+      fParsAndYields.add(fYields);
+      return fParsAndYields;
     }
 
     void Setup::RandomisePars(){

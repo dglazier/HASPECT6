@@ -59,6 +59,10 @@ namespace HS{
       if(fData->isNonPoissonWeighted()&&fCorrectForWeights){
       	Double_t SumW=SumWeights();
       	Double_t SumW2=SumWeights2();
+	TString NllName=nll->GetName();
+	NllName.ReplaceAll("-","m");
+	NllName.ReplaceAll("+","p");
+	nll->SetName(NllName);
       	RooFormulaVar *alphanll=new RooFormulaVar("alphanll",Form("%lf*%s",SumW/SumW2,nll->GetName()),RooArgSet(*nll));
       	nll=alphanll;
       }
@@ -195,10 +199,10 @@ namespace HS{
       RooRealVar Nllval("NLL","NLL",NLL());
       saveArgs.add(Nllval);
      
-      RooDataSet saveDS(TString(GetName())+"Results",TString(GetName())+"Results",saveArgs);
+      RooDataSet saveDS(FinalParName(),TString(GetName())+"Results",saveArgs);
       saveDS.add(saveArgs);
       saveDS.Write();
-      TTree* treeDS=RooStats::GetAsTTree("ResultsTree","ResultsTree",saveDS);
+      TTree* treeDS=RooStats::GetAsTTree(ResultTreeName(),ResultTreeName(),saveDS);
       treeDS->Write();
 
       return std::move(file);

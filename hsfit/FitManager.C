@@ -8,6 +8,13 @@ namespace HS{
   namespace FIT{
 
  
+    FitManager::FitManager(const FitManager& other):TNamed(other.fName,other.fName){
+      fSetup=other.fSetup;
+      fBinner=other.fBinner;
+      LoadData(GetDataTreeName(),GetDataFileNames());
+  
+    }
+
     FitManager&  FitManager::operator=(const FitManager& other){
       cout<<"=============FitManager"<<endl;
       fSetup=other.fSetup;
@@ -16,19 +23,21 @@ namespace HS{
       return *this;
     }
     
-    void FitManager::Run(UInt_t ifit){
+    void FitManager::Run(){
       
-      fCurrSetup.reset(new Setup(ConstSetUp())); //Copy setup from template
-      fCurrSetup->SetName(fBinner.BinName(Data().GetGroup(ifit)));
-      fCurrSetup->SetTitle(Data().GetItemName(ifit));
-      cout<<"FitManager::Run "<<Data().GetGroup(ifit)<<" "<<fBinner.BinName(Data().GetGroup(ifit))<<" "<<Data().GetItemName(ifit)<<endl;
-      fCurrSetup->Print();
+      // fCurrSetup.reset(new Setup(ConstSetUp())); //Copy setup from template
+      // fCurrSetup->SetName(fBinner.BinName(Data().GetGroup(fFiti)));
+      // fCurrSetup->SetTitle(Data().GetItemName(fFiti));
+      // cout<<"FitManager::Run "<<Data().GetGroup(fFiti)<<" "<<fBinner.BinName(Data().GetGroup(fFiti))<<" "<<Data().GetItemName(fFiti)<<endl;
+      // fCurrSetup->Print();
 
-      //get dataset ifit
-      fCurrDataSet=std::move(Data().Get(ifit));
+      CreateCurrSetup();
+      
+      //get dataset fFiti
+      fCurrDataSet=std::move(Data().Get(fFiti));
 
       //Look for Special case of RooHSEventsPDFs
-      FillEventsPDFs(Data().GetGroup(ifit));
+      FillEventsPDFs();
       
       //Add fit constraints
       fCurrSetup->AddFitOption(RooFit::ExternalConstraints
@@ -40,12 +49,23 @@ namespace HS{
       fCurrSetup->TotalPDF();
       FitTo();
     }
-    
+    void FitManager::CreateCurrSetup(){
+      cout<<"FitManager::CreateCurrSetup()"<<endl;
+      fCurrSetup.reset(new Setup(ConstSetUp())); //Copy setup from template
+      cout<<"copied"<<endl;
+      cout<<GetCurrName()<<endl;
+      cout<<GetCurrTitle()<<endl;
+      fCurrSetup->SetName(GetCurrName());
+      fCurrSetup->SetTitle(GetCurrTitle());
+    }
     /////////////////////////////////////////////////////////////
     void FitManager::RunAll(){
 
-       for(UInt_t i=0;i<fData.GetN();i++){
-	RunOne(i);
+      PreRun();
+
+      UInt_t Nf=GetN();
+      for(UInt_t i=0;i<Nf;i++){
+	 RunOne(i);
       }
       
     }
@@ -61,23 +81,25 @@ namespace HS{
 
     }
     void FitManager::RunOne(Int_t ifit){
-      cout<<"FitManager::RunOne() "<<ifit<< " "<<fSetup.GetOutDir()<<endl;
-      if(fRedirect) RedirectOutput(fSetup.GetOutDir()+Form("logRooFit%d.txt",ifit));
-      Run(ifit);
-      cout<<"FitManager::RunOne() done "<<fResult<<endl;
+      fFiti=ifit;
+      
+      if(fRedirect) RedirectOutput(fSetup.GetOutDir()+Form("logRooFit%d.txt",fFiti));
+      Run();
       if(fRedirect) RedirectOutput();
       SaveResults();
      
-      Reset(ifit);
+      Reset();
     }
     
-    void FitManager::FillEventsPDFs(UInt_t idata){
+    void FitManager::FillEventsPDFs(){
+      UInt_t idata=GetDataBin(fFiti);
+
       auto pdfs=fCurrSetup->PDFs();
 
       cout<<" FitManager::FillEventsPDFs "<<pdfs.getSize()<<endl;
       for(Int_t ip=0;ip<pdfs.getSize();ip++){
 	auto pdf=dynamic_cast<RooHSEventsPDF*>( &pdfs[ip]);
-	cout<<ip<<" "<<pdf<<" "<<endl;
+
 	if(pdf){
 	  if(fBinner.FileNames(pdf->GetName()).size()==0)
 	    continue;
@@ -91,12 +113,13 @@ namespace HS{
 	      "    No tree data found for EventPDF "<<pdf->GetName()<<endl;
 	    continue;
 	  }
+	  //if too few events remove this PDF
 	  if(!tree->GetEntries()||!pdf->IsValid()){
 	    fCurrSetup->Yields().remove(fCurrSetup->Yields()[ip]);
 	    pdfs.remove(*pdf);
 	    ip--;
 	  }
-	  else{
+	  else{ //use it and give it the simulated tree
 	    pdf->SetEvTree(tree.get(),fCurrSetup->Cut());
 	    pdf->AddProtoData(fCurrDataSet.get());
 	    RooHSEventsHistPDF* histspdf=0;
@@ -107,8 +130,8 @@ namespace HS{
 	      fCurrSetup->AddGausConstraint(histspdf->ScaleConstraint());
 	    }
 	  }
-	  fFiledTrees.push_back(std::move(filetree));
-	  
+	  //keep the simulated tree alive until Reset()
+	  fFiledTrees.push_back(std::move(filetree));	  
 	}
       }
     }

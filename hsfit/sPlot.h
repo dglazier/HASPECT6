@@ -30,12 +30,11 @@ namespace HS{
       sPlot& operator=(const sPlot& other) = default;
       sPlot& operator=(sPlot&& other) = default;
       
-      void Run(UInt_t ifit=0) override;
+      void Run() override;
  
-      void Reset(UInt_t ifit) override{
-	FitManager::Reset(ifit);
+      void Reset() override{
+	FitManager::Reset();
         fSPlot.reset();
-	//	fWeights->PrintWeight();
 	fWeights.reset();
        }
 

@@ -47,26 +47,7 @@ namespace HS{
 
       TString option = GetOption();
 
-      // HS::FIT::Setup RF;
-      // RF.SetOutDir("/work/Dropbox/HaSpect/dev/HASPECT6/hsfit2/out/");
-      // ///////////////////////////////Load Variables
-      // RF.LoadVariable("Mmiss[0,10]");//should be same name as variable in tree  
-      // RF.SetIDBranchName("fgID");
-      // ////////////////////////////Make Bins
-      // HS::FIT::Binner bins(RF);
-      // bins.LoadBinVar("Eg",4,3,4);
-      // bins.MakeTrees(HS::FiledTree::Read("MyModel","/work/Dropbox/HaSpect/dev/HASPECT6/hsfit2/Data.root")->Tree().get(), "BD");
-      
-      // auto flist = new TList();
-      // flist->SetName("HSFitFiles");
-      // for(auto &st : bins.FileNames())
-      //   flist->Add(new TNamed(st.Data(),""));
-
-      //cout<<"saving to "<<fFitManager->SetUp().GetOutDir()<<endl;
-      // fFitManager->WriteThis();
-      //cout<<"done saving "<<endl;
-      //      fFitManager.SaveBins();
-      
+       
       if(!fInput) fInput=new TList();
       TNamed *outdir=new TNamed("HSOUTDIR",fFitManager->SetUp().GetOutDir().Data());
       fInput->Add(outdir);
@@ -98,7 +79,7 @@ namespace HS{
 
     Bool_t FitSelector::Process(Long64_t entry)
     {
-         
+      cout<<"FitSelector::Process Run entry "<<entry<<endl; 
       fFitManager->RunOne(entry);
 
   
