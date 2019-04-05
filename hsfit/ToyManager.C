@@ -9,28 +9,31 @@
 namespace HS{
   namespace FIT{
 
-   void ToyManager::Run(){
-     cout<<"ToyManager::Run() "<<endl;
-     CreateCurrSetup();
-   
+    void ToyManager::Run(){
+  
+      CreateCurrSetup();
+
       //Look for Special case of RooHSEventsPDFs
-     // FillEventsPDFs(ifit);
-      
+      FillEventsPDFs();
+     
       //create extended max likelihood pdf
       fCurrSetup->TotalPDF();
-
+      
       Generate();
     }
     
     void  ToyManager::Generate(){
 
       Long64_t geni=0;
+
       auto *model=fCurrSetup->Model();
 
       auto fitvars=fCurrSetup->FitVarsAndCats();
-
       RooRandom::randomGenerator()->SetSeed(0);//random seed
-      Long64_t nexp=RooRandom::randomGenerator()->Poisson(model->expectedEvents(fitvars));
+
+      // Long64_t nexp=RooRandom::randomGenerator()->Poisson(model->expectedEvents(fitpars));
+      Long64_t nexp=RooRandom::randomGenerator()->Poisson(fCurrSetup->SumOfYields());
+      
       fGenData=model->generate(fitvars,nexp);
       fGenData->SetName("ToyData");
       fGenData->Print();
@@ -45,8 +48,33 @@ namespace HS{
       auto outfile=unique_ptr<TFile> {new TFile(fileName,"recreate")};
       //convert dataset to a tree for saving
       TTree* tree=RooStats::GetAsTTree("ToyData","ToyData",*fGenData);
-      tree->Write();
 
+      auto numEntries=fGenData->numEntries();
+      auto cats=fCurrSetup->Cats();
+
+      //add categories to tree! not done by GetAsTTree
+      TIter iter=cats.createIterator();
+      vector<TBranch*> branches(cats.getSize());
+      vector<Int_t> branchVal(cats.getSize());
+      Int_t ib=0;
+      while(RooCategory* arg=dynamic_cast<RooCategory*>(iter())){	
+	TString catName=arg->GetName();
+	branches[ib]=tree->Branch(catName,&branchVal[ib],catName+"/I");
+	ib++;
+      }
+      //Now loop over dataset
+      for(Int_t entry=0;entry<numEntries;entry++){
+	auto vars=fGenData->get(entry);
+	ib=0;
+	for(auto& branch: branches){
+	  branchVal[ib++]=vars->getCatIndex(branch->GetName());
+	  branch->Fill();
+	}
+      }
+      tree->Write();
+      // for(auto& branch: branches){
+      // 	delete branch;
+      // }
       delete fGenData; fGenData=nullptr;
      }
     ////////////////////////////////////////////////////////////////
@@ -55,8 +83,7 @@ namespace HS{
       auto initpars=SetUp().ParsAndYields();
       initpars.setName(InitialParsName());
       initpars.Write();
-      
-    }
+      }
     ////////////////////////////////////////////////////////////////
     std::shared_ptr<FitManager> ToyManager::Fitter(){
       std::shared_ptr<FitManager> fit{new FitManager(*this)};      

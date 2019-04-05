@@ -11,7 +11,7 @@ namespace HS{
     FitManager::FitManager(const FitManager& other):TNamed(other.fName,other.fName){
       fSetup=other.fSetup;
       fBinner=other.fBinner;
-      LoadData(GetDataTreeName(),GetDataFileNames());
+      //LoadData(other.GetDataTreeName(),other.GetDataFileNames());
   
     }
 
@@ -19,18 +19,12 @@ namespace HS{
       cout<<"=============FitManager"<<endl;
       fSetup=other.fSetup;
       fBinner=other.fBinner;
-      LoadData(other.fData.ParentTreeName(),other.fData.FileNames());
+      //LoadData(other.fData.ParentTreeName(),other.fData.FileNames());
       return *this;
     }
     
     void FitManager::Run(){
       
-      // fCurrSetup.reset(new Setup(ConstSetUp())); //Copy setup from template
-      // fCurrSetup->SetName(fBinner.BinName(Data().GetGroup(fFiti)));
-      // fCurrSetup->SetTitle(Data().GetItemName(fFiti));
-      // cout<<"FitManager::Run "<<Data().GetGroup(fFiti)<<" "<<fBinner.BinName(Data().GetGroup(fFiti))<<" "<<Data().GetItemName(fFiti)<<endl;
-      // fCurrSetup->Print();
-
       CreateCurrSetup();
       
       //get dataset fFiti
@@ -50,13 +44,13 @@ namespace HS{
       FitTo();
     }
     void FitManager::CreateCurrSetup(){
-      cout<<"FitManager::CreateCurrSetup()"<<endl;
-      fCurrSetup.reset(new Setup(ConstSetUp())); //Copy setup from template
-      cout<<"copied"<<endl;
-      cout<<GetCurrName()<<endl;
-      cout<<GetCurrTitle()<<endl;
+      fCurrSetup.reset(new Setup(fSetup)); //Copy setup from template
       fCurrSetup->SetName(GetCurrName());
       fCurrSetup->SetTitle(GetCurrTitle());
+      //make sure we take current setup values
+      //If not it will use the string from Factory() etc,
+      fCurrSetup->ParsAndYields().assignFast(fSetup.ParsAndYields());
+
     }
     /////////////////////////////////////////////////////////////
     void FitManager::RunAll(){
@@ -103,7 +97,7 @@ namespace HS{
 	if(pdf){
 	  if(fBinner.FileNames(pdf->GetName()).size()==0)
 	    continue;
-	  cout<<"FitManager::FillEventsPDFs"<<pdf->GetName()<<" "<<fBinner.FileNames(pdf->GetName())[idata]<<endl;
+	  cout<<"FitManager::FillEventsPDFs "<<idata <<" "<<pdf->GetName()<<" "<<fBinner.FileNames(pdf->GetName())[idata]<<endl;
 	  auto filetree=FiledTree::
 	    Read(fBinner.TreeName(pdf->GetName()),
 		 fBinner.FileNames(pdf->GetName())[idata]);
@@ -121,7 +115,12 @@ namespace HS{
 	  }
 	  else{ //use it and give it the simulated tree
 	    pdf->SetEvTree(tree.get(),fCurrSetup->Cut());
-	    pdf->AddProtoData(fCurrDataSet.get());
+
+	    //See if data to load for proto data
+	    if(!fCurrDataSet.get())
+	      fCurrDataSet=std::move(Data().Get(idata));
+
+	    if(fCurrDataSet.get())pdf->AddProtoData(fCurrDataSet.get());
 	    RooHSEventsHistPDF* histspdf=0;
 	    if((histspdf=dynamic_cast<RooHSEventsHistPDF*>(pdf))){
 	      histspdf->CreateHistPdf();

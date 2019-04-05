@@ -20,7 +20,12 @@ namespace HS{
     
     Setup::Setup(const Setup& other):TNamed(other.fName,other.fName){
        fWS={"HSWS"};
-      for(auto &varStr: other.fVarString)
+       fFitOptions=other.fFitOptions;
+       fConstraints=other.fConstraints;   
+       fCut=other.fCut;
+       fIDBranchName=other.fIDBranchName;
+       fOutDir=other.fOutDir;
+       for(auto &varStr: other.fVarString)
     	LoadVariable(varStr);
       for(auto &catStr: other.fCatString)
     	LoadCategory(catStr);
@@ -31,17 +36,18 @@ namespace HS{
       for(auto &specStr: other.fSpecString)
     	LoadSpeciesPDF(specStr.first,specStr.second);
       
-      fFitOptions=other.fFitOptions;
-      fConstraints=other.fConstraints;
-      
-      fCut=other.fCut;
-      fIDBranchName=other.fIDBranchName;
-      fOutDir=other.fOutDir;
-
+       cout<<"****************************COPY "<<fIDBranchName<<" "<<fVars.getSize()<<endl;
     }
 
     Setup& Setup::operator=(const Setup& other){
-       fWS={"HSWS"};
+       cout<<"****************************== "<<fIDBranchName<<" "<<fVars.getSize()<<endl;
+      fFitOptions=other.fFitOptions;
+      fConstraints=other.fConstraints;
+      fCut=other.fCut;
+      fIDBranchName=other.fIDBranchName;
+      fOutDir=other.fOutDir;
+      fWS={"HSWS"};
+      
       for(auto &varStr: other.fVarString){
     	LoadVariable(varStr);
       }
@@ -55,13 +61,8 @@ namespace HS{
     	LoadSpeciesPDF(specStr.first,specStr.second);
       
   
-      fFitOptions=other.fFitOptions;
-      fConstraints=other.fConstraints;
-
-      fCut=other.fCut;
-      fIDBranchName=other.fIDBranchName;
-      fOutDir=other.fOutDir;
-
+      cout<<"****************************== "<<fIDBranchName<<" "<<fVars.getSize()<<endl;
+      fVars.Print();
       return *this;
     }
  
@@ -134,6 +135,24 @@ namespace HS{
 			   fYields);
       fModel->Print();
       AddFitOption(RooFit::Extended());
+    }
+    //////////////////////////////////////////////////////////
+    Double_t Setup::SumOfYields(){
+      fYields.Print("v");
+      fParsAndYields.Print("v");
+      Double_t sum=0;
+      TIter iter=fYields.createIterator();
+      while(RooRealVar* arg=(RooRealVar*)iter())
+	sum+=arg->getValV();
+
+      return sum;
+ 
+    }
+    RooArgSet& Setup::Cats(){
+      if(fCats.getSize())
+	return fCats;
+      fCats.add(MakeArgSet(fFitCats));
+      return fCats;
     }
     RooArgSet& Setup::DataVars(){
       if(fVars.getSize())

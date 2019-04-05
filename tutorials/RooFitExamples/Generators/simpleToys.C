@@ -1,7 +1,7 @@
 //Run with 
 //root --hsfit simpleToys.C
 {
-
+  //start with creating 1 data sample
   ToyManager toy(1);
 
   TString PWD=gSystem->Getenv("PWD");
@@ -27,13 +27,13 @@
   auto fit=toy.Fitter();
 
   //And fit the sample data
-  Here::Go(fit);
+  //  Here::Go(fit);
   //////////////////////////////////////////////////////////////////
   
   //now create another toymanager from the results of the sample fit
   //and initialise it to create 20 toy datasets
   //Note Minuit2 comes from the default minimiser name
-  auto toy2=ToyManager::GetFromFit(20,fit,fit->SetUp().GetOutDir()+"ResultsToy0HSMinuit2.root");
+  auto toy2=ToyManager::GetFromFit(2,fit,fit->SetUp().GetOutDir()+"ResultsToy0HSMinuit2.root");
   //Give it a new output directory
   toy2->SetUp().SetOutDir(PWD+"/outSimpleToy2");
   //create toy data

@@ -58,6 +58,7 @@ namespace HS{
       const RooWorkspace& WS(){return fWS;}
 
       RooArgSet& DataVars();
+      RooArgSet& Cats();
       RooArgSet& FitVarsAndCats();
       RooArgSet& ParsAndYields();
       
@@ -90,7 +91,8 @@ namespace HS{
       const RooArgList& PDFs() const  {return fPDFs;}
       RooArgList& Constraints(){return fConstraints;}
 
-
+      Double_t SumOfYields();
+      
       void AddGausConstraint(RooGaussian *pdf){
 	if(!pdf) return;
 	fConstraints.add(*(pdf));
@@ -127,6 +129,7 @@ namespace HS{
       realvars_t fAuxVars;      
       catvars_t  fFitCats;
       RooArgSet fVars;
+      RooArgSet fCats; //only categories
       RooArgSet fVarsAndCats;
       RooArgSet fParsAndYields;
       RooArgList fYields;//species yields

@@ -83,6 +83,7 @@ namespace HS{
       
      
       void LoadData(TString tname,strings_t fnames){
+	cout<<"LoadData  "<<fSetup.GetIDBranchName()<<endl;
 	 fData.Load(fSetup,tname,fnames);
       }
       void LoadData(TString tname,TString fname,TString name="Data"){

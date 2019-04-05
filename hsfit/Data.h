@@ -90,10 +90,12 @@ namespace HS{
 	  BootStrap(fNBoots);//.recreate bootstrapper
 	if(fBootStrap.get())
 	  return fBootStrap->GetGroup(ii);
+	else if(fNToys>0) //only toys if no bootstrap
+	  return (int)std::round(ii/fNToys);
+	//no boots or toys
 	return ii;
       }
       TString GetItemName(Int_t ii);
-      
       void LoadWeights(TString wname,TString fname);
       
     protected:

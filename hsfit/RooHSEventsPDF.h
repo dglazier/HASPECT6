@@ -60,7 +60,7 @@ namespace HS{
       Bool_t fIsClone=kFALSE;
       Bool_t fForceConstInt=kFALSE;
       Bool_t fForceNumInt=kFALSE;
-      Bool_t fUseWeightsGen=kTRUE;
+      Bool_t fUseWeightsGen=kFALSE;
       Bool_t fUseEvWeights=kFALSE;
       Bool_t fIsValid=kTRUE;
 
