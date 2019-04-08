@@ -74,10 +74,9 @@ namespace HS{
       fBinNames=fBins.GetBinNames();
   }
     const TString Binner::BinName(UInt_t i)  {
-      if(!GetSize()){
-	fBins.InitialiseBins();
-	fBinNames=fBins.GetBinNames();
-      }
+
+      InitBins();
+      
       if(!GetSize())
 	return TString(); //no bins
       
@@ -86,6 +85,12 @@ namespace HS{
 	return TString();
       }
       return fBinNames[i];
+    }
+    void Binner::InitBins(){
+      if(!GetSize()){
+	fBins.InitialiseBins();
+	fBinNames=fBins.GetBinNames();
+      }
     }
  
   

@@ -64,7 +64,14 @@ namespace HS{
       //while (i < 1000 && hadEvalError ) {
       while (i < 1000 && hadEvalError && fRandomiseStart) {
 	RooStats::RandomizeCollection(x);
-	RooStats::SetParameters(&x, &fParameters);
+	//remove yields
+	RooArgSet noYldPars;
+	TIter iter=x.createIterator();
+	while(RooRealVar* arg=(RooRealVar*)iter())
+	  if(!TString(arg->GetName()).Contains("Yld") )
+	    noYldPars.add(*arg);
+	
+	RooStats::SetParameters(&noYldPars, &fParameters);
 	xL = fFunction->getVal();
 
 	if (fType == kLog) {
@@ -96,14 +103,23 @@ namespace HS{
       //for (i = 0; i < fNumIters; i++) {
       int icount=0;
       int totcount=0;
+      int snapcount=0;
+      
       int havePrinted=0;
+      x.Print("v");
+      
+   
       while (icount <fNumIters) {
 	totcount++;
+	snapcount++;
 	// reset error handling flag
 	hadEvalError = false;
-
 	// print a dot every 1% of the chain construction
-	if (icount%100 == 0&&havePrinted==0){ ooccoutP((TObject*)0, Generation) << " "<<icount<<"/"<<fNumIters; havePrinted=1;}
+	if (icount%100 == 0&&havePrinted==0){
+	  ooccoutP((TObject*)0, Generation) << " "<<icount<<"/"<<fNumIters;
+	  havePrinted=1;
+	  snapcount=0;
+	}
 	if (icount%100 == 1) havePrinted=0;
 	
 	fPropFunc->Propose(xPrime, x);
@@ -145,7 +161,8 @@ namespace HS{
             a += TMath::Log(xPrimePD) - TMath::Log(xPD);
 	}
 	
-
+	//	cout<<"a "<<a<<" xPL "<<xPrimeL<<" "<<"xL "<<" "<<xL<<endl;
+	//	x.Print("v");xPrime.Print("v");
 	if (!hadEvalError && ShouldTakeStep(a)) {
 	  // go to the proposed point xPrime
 

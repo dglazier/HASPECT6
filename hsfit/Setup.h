@@ -32,9 +32,13 @@ namespace HS{
     using catvar_ptr  = std::shared_ptr<RooCategory>;
     using catvars_t     = std::vector<RooCategory*>;
     using strings_t = std::vector<TString>;
+
+    //Helper functions
     RooArgSet MakeArgSet(realvars_t vars);
     RooArgSet MakeArgSet(catvars_t cats);
     void SetAllValLimits(RooArgList&,Double_t val,Double_t low=0,Double_t high=0);
+    void ReadFormula(TString forma, strings_t& svars,strings_t& sranges);
+    
       
     class Setup : public TNamed {
       
@@ -52,6 +56,8 @@ namespace HS{
       void LoadVariable(TString opt);
       void LoadCategory(TString opt);
       void LoadAuxVar(TString opt);
+      void LoadFormula(TString formu);
+      void LoadParameter(TString opt);
       void LoadSpeciesPDF(TString opt,Float_t Scale0);
       void TotalPDF();
       
@@ -130,6 +136,8 @@ namespace HS{
       catvars_t  fFitCats;
       RooArgSet fVars;
       RooArgSet fCats; //only categories
+      RooArgSet fPars;//!
+      RooArgSet fFormulas;//! CANT WRITE formulas ArgSet!
       RooArgSet fVarsAndCats;
       RooArgSet fParsAndYields;
       RooArgList fYields;//species yields
@@ -147,6 +155,8 @@ namespace HS{
 
       strings_t fVarString;
       strings_t fCatString;
+      strings_t fParString;
+      strings_t fFormString;
       strings_t fAuxVarString;
       strings_t fPDFString;
       vector<std::pair<TString,Float_t> > fSpecString;

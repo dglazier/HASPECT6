@@ -78,7 +78,8 @@ namespace HS{
     Int_t FindBin(Double_t v0,Double_t v1);
     Int_t FindBin(Double_t v0,Double_t v1,Double_t v2);
     Int_t FindBin(Double_t v0,Double_t v1,Double_t v2,Double_t v3,Double_t v4=0,Double_t v5=0);
-
+    void MakeDirectories();
+    
     void SetMaxEntries(Long64_t ent){fMaxEntries=ent;}
     void SetMaxFiles(Long64_t ent){fMAXFILES=ent;}
     void SetOutDir(TString name) {fOutDir=name;}

@@ -37,9 +37,17 @@ namespace HS{
       fCurrSetup->AddFitOption(RooFit::ExternalConstraints
 			       (fCurrSetup->Constraints()));
       //initialise yields
-      SetAllValLimits(fCurrSetup->Yields(),
-		      fCurrDataSet->sumEntries()/2,0,fCurrDataSet->sumEntries()*1.2);
+      if(fCurrSetup->Yields().getSize()==1){//special case only 1 yield)
+	Double_t yld=fCurrDataSet->sumEntries();
+	SetAllValLimits(fCurrSetup->Yields(),
+			yld,yld-6*sqrt(yld),yld+6*sqrt(yld));
+		
+      }
+      else
+	SetAllValLimits(fCurrSetup->Yields(),
+			fCurrDataSet->sumEntries()/2,0,fCurrDataSet->sumEntries()*1.2);
       //create extended max likelihood pdf
+
       fCurrSetup->TotalPDF();
       FitTo();
     }
@@ -55,7 +63,7 @@ namespace HS{
     /////////////////////////////////////////////////////////////
     void FitManager::RunAll(){
 
-      PreRun();
+      // PreRun();
 
       UInt_t Nf=GetN();
       for(UInt_t i=0;i<Nf;i++){

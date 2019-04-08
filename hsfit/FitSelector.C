@@ -51,7 +51,7 @@ namespace HS{
       if(!fInput) fInput=new TList();
       TNamed *outdir=new TNamed("HSOUTDIR",fFitManager->SetUp().GetOutDir().Data());
       fInput->Add(outdir);
-      
+      fFitManager->PreRun();
     }
 
     void FitSelector::SlaveBegin(TTree * /*tree*/)
@@ -99,6 +99,9 @@ namespace HS{
       // a query. It always runs on the client, it can be used to present
       // the results graphically or save the results to file.
 
+      //HERE we should gather information for slaves if we want to
+      //pass to another fit manager, i.e. produce toys in proof
+      //then pass file names to fitter
     }
     void FitSelector::Init(TTree *tree)
     {

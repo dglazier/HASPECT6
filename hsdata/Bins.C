@@ -192,6 +192,17 @@ void HS::Bins::PrintAxis(){
     std::cout<<fVarAxis[iA].GetName()<<" "<<fVarAxis[iA].GetNbins()<<" "<<fVarAxis[iA].GetXmin()<<" "<<fVarAxis[iA].GetXmax()<<" "<<std::endl;
 }
 
+void HS::Bins::MakeDirectories(){
+  if(fNbins==0)
+    InitialiseBins();
+  if(fNbins==0)
+    return;
+  cout<<"Make dirs "<< fNbins<<" "<<fOutDir<<" "<<GetBinName(0)<<endl;
+  gSystem->MakeDirectory(fOutDir+"/");
+  for(Int_t ib=0;ib<fNbins;ib++){
+    gSystem->MakeDirectory(fOutDir+"/"+GetBinName(ib));
+  }
+}
 
 Int_t HS::Bins::FindBin(Double_t v0){
   TVectorD vals(1);vals[0]=v0;

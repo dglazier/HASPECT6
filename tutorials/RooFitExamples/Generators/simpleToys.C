@@ -20,6 +20,9 @@
   toy.SetUp().FactoryPDF("Chebychev::BG(Mmiss,{a0[-0.1,-1,1],a1[0.1,-1,1]})");
   toy.SetUp().LoadSpeciesPDF("BG",50); //Geenrate will produce 50 background events
 
+  ////////////////////////////Make Bins
+  toy.Bins().LoadBinVar("Eg",5,3,4);
+
   //Create a sample of data
   Here::Go(&toy);
 
@@ -27,21 +30,23 @@
   auto fit=toy.Fitter();
 
   //And fit the sample data
-  //  Here::Go(fit);
+  Here::Go(fit);
   //////////////////////////////////////////////////////////////////
   
   //now create another toymanager from the results of the sample fit
   //and initialise it to create 20 toy datasets
   //Note Minuit2 comes from the default minimiser name
-  auto toy2=ToyManager::GetFromFit(2,fit,fit->SetUp().GetOutDir()+"ResultsToy0HSMinuit2.root");
+  auto toy2=ToyManager::GetFromFit(10,fit,"ResultsToy0HSMinuit2.root");
   //Give it a new output directory
   toy2->SetUp().SetOutDir(PWD+"/outSimpleToy2");
   //create toy data
   Here::Go(toy2);
   //fit toy data
-  Here::Go(toy2->Fitter());
-  //  Proof::Go(toy2->Fitter(),4);//or use proof with 4 workers
+  //Here::Go(toy2->Fitter());
+  
+  //fit toy data
+  Proof::Go(toy2->Fitter(),4);//or use proof with 4 workers
   //summarise, summary results will be saved to outSimpleToy2/ToySummary.root
   toy2->Summarise();
-   
+  
 }

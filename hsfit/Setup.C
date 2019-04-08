@@ -19,6 +19,7 @@ namespace HS{
     }
     
     Setup::Setup(const Setup& other):TNamed(other.fName,other.fName){
+      cout<<"****************************COPY "<<fIDBranchName<<" "<<fVars.getSize()<< " "<< other.fFormString.size()<<endl;
        fWS={"HSWS"};
        fFitOptions=other.fFitOptions;
        fConstraints=other.fConstraints;   
@@ -31,8 +32,16 @@ namespace HS{
     	LoadCategory(catStr);
       for(auto &varStr: other.fAuxVarString)
     	LoadAuxVar(varStr);
+      // for(auto &parStr: other.fParString)
+      // 	LoadParameter(parStr);
+     for(auto &formStr: other.fFormString)
+    	LoadFormula(formStr);
       for(auto &pdfStr: other.fPDFString)
     	FactoryPDF(pdfStr);
+
+      fWS.Print("v");
+
+      cout<<"                   DONE "<<endl;
       for(auto &specStr: other.fSpecString)
     	LoadSpeciesPDF(specStr.first,specStr.second);
       
@@ -55,7 +64,11 @@ namespace HS{
     	LoadCategory(catStr);
      for(auto &varStr: other.fAuxVarString)
     	LoadAuxVar(varStr);
-       for(auto &pdfStr: other.fPDFString)
+     // for(auto &parStr: other.fParString)
+     // 	LoadParameter(parStr);
+     for(auto &formStr: other.fFormString)
+    	LoadFormula(formStr);
+     for(auto &pdfStr: other.fPDFString)
     	FactoryPDF(pdfStr);
       for(auto &specStr: other.fSpecString)
     	LoadSpeciesPDF(specStr.first,specStr.second);
@@ -78,6 +91,54 @@ namespace HS{
       }
       fVarString.push_back(opt);
       fFitVars.push_back(var);      
+    }
+    ////////////////////////////////////////////////////////////
+    /// Load a fit variable e.g s.LoadVariable("X[-1,1]");
+    /// Fit a variable in your tree called X between -1 and 1
+    void Setup::LoadParameter(TString opt){
+      cout<<"Setup::LoadParameter "<<opt<<endl;
+      auto var=dynamic_cast<RooRealVar*>(fWS.factory(opt));
+      if(!var) {
+	cout<<"Setup::LoadVariable "<<opt<<" failed"<<endl;
+	return;
+      }
+						      // fParString.push_back(opt);
+      fPars.add(*var);      
+    }
+    ////////////////////////////////////////////////////////////
+    /// Load a formulaVar e.g s.LoadFormula("name=@v1[1,0,2]+@v2[]");
+    /// Fit a variable in your tree called X between -1 and 1
+    void Setup::LoadFormula(TString formu){
+	cout<<"  Setup::LoadFormula    "<<formu <<endl;
+      fFormString.push_back(formu);
+      //get formula name
+      TString name=formu(0,formu.First("="));
+      strings_t pars;
+      strings_t ranges;
+      ReadFormula(formu,pars,ranges);
+      for(UInt_t i=0;i<pars.size();i++)
+	if(ranges[i]!=TString("[]")) LoadParameter(pars[i]+ranges[i]);
+
+
+      //get rid of [range]
+      for(auto& range:ranges)
+	formu.ReplaceAll(range, "");
+      //get rid of name=
+      formu=formu(formu.First("=")+1,formu.Sizeof());
+      //get rid of @
+      formu.ReplaceAll("@", "");
+
+      cout<<"Setup::LoadFormula "<<formu<<endl;
+     
+      RooArgList rooPars;
+      for(auto& par:pars)
+	rooPars.add(*fWS.var(par));
+
+      RooFormulaVar fovar(name,formu,rooPars) ;
+      fFormulas.add(fovar);
+
+      fWS.import(fovar);
+      
     }
     ////////////////////////////////////////////////////////////
     /// Load a category e.g. s.LoadCategory("Pol[m=-1,p=1]");
@@ -237,5 +298,32 @@ namespace HS{
 	}
       }
     }
+
+    void ReadFormula(TString forma, strings_t& svars,strings_t& sranges){
+      
+      svars.clear();
+      sranges.clear();
+      for(Int_t i=0;i<forma.Sizeof();i++){
+	if(TString(forma[i])=="@"){
+	  Int_t j=i;
+	  for(;j<forma.Sizeof();j++){
+	    if(TString(forma[j])=="["){
+	      svars.push_back(forma(i+1,j-i-1));
+	      i=j;
+	      continue;
+	    }
+	    if(TString(forma[j])=="]"){
+	      sranges.push_back(forma(i,j-i+1));
+	      i=j;
+	      break;
+	    }
+	    
+	  }
+	}
+      }
+    }
+
+
+    
   }//namespace FIT
 }//namesapce HS

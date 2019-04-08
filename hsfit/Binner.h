@@ -55,10 +55,11 @@ namespace HS{
       const TString BinName(UInt_t i);
       
       UInt_t GetSize() const{return fBinNames.size();}
+      void InitBins();
       
       Bool_t IsSetup() const{return fIsSetup;}
 
-   
+      Bins& GetBins(){return fBins;}
 
     protected:
       

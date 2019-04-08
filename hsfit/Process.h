@@ -54,15 +54,17 @@ namespace HS{
 	static void Go(FitManager* fm,Int_t N){
 	  if(!fm) return;
 	  fm->WriteThis();
-	  TProof*  proof = TProof::Open("://lite");
-	  gROOT->ProcessLine(Form(".x LoadFitProof.C+(%d)",N));
+	  if(!gProof){
+	    TProof*  proof = TProof::Open("://lite");
+	    gROOT->ProcessLine(Form(".x LoadFitProof.C+(%d)",N));
 	  
 	  for(auto& macro : gCompilesList)
 	    proof->Load(Form("%s++",macro.Data()),kTRUE);
+	  }
 	  
 	  FitSelector selector;
 	  selector.SetFitManager(fm);
-	  proof->Process(&selector,fm->GetN());
+	  gProof->Process(&selector,fm->GetN());
  	}
 	
       }; //class Proof

@@ -22,7 +22,7 @@ namespace HS{
       ToyManager()=default;
     ToyManager(Int_t n):fNToys(n){};
       ToyManager(const ToyManager&)=default;
-    ToyManager(Int_t n,const FitManager& fm):fNToys(n), FitManager(fm){};
+    ToyManager(Int_t n,const FitManager& fm,TString outDir="",TString resultFile=""):fNToys(n), FitManager(fm),fResultOutDir(outDir),fResultFileName(resultFile){};
       ToyManager(ToyManager&&)=default;
       virtual ~ToyManager()=default;
       ToyManager& operator=(const ToyManager& other) = default;
@@ -30,8 +30,14 @@ namespace HS{
       
       void Run() override;
       void SaveResults() override;
-      Int_t GetN() override {return fNToys;}
-      TString GetCurrTitle() override {return Form("Toy%d",GetFiti());}
+      Int_t GetN() override {
+	if(!(Bins().GetSize()))
+	  Bins().InitBins();
+	if(Bins().GetSize())return fNToys*Bins().GetSize();
+	return fNToys;
+      }
+      Int_t GetCurrToy(){ return GetFiti()%fNToys;}
+      TString GetCurrTitle() override {return Form("Toy%d",GetCurrToy());}
       TString GetDataTreeName() override{return "ToyData";}
       strings_t GetDataFileNames() override{return fToyFileNames;}
 
@@ -51,17 +57,24 @@ namespace HS{
       static std::shared_ptr<ToyManager> GetFromFit(Int_t N,std::shared_ptr<FitManager> fit,TString result="");
 
       void Summarise();
+      void Summarise(Int_t ib);
       void PreRun() override;
-
+      void LoadResult();
+      void InitSummary();
+      
       static const TString InitialParsName(){return "InitialParameters";}
 
+      void SetResultFileName(TString name){fResultFileName=name;}
     protected:
     
     private:
       RooDataSet* fGenData=nullptr;//!
-     strings_t fToyFileNames;
- 
-     Int_t fNToys=1;
+      strings_t fToyFileNames;
+
+      TString fResultOutDir;
+      TString fResultFileName;
+      
+      Int_t fNToys=1;
       
       ClassDefOverride(HS::FIT::ToyManager,1);
     };

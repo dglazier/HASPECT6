@@ -10,7 +10,13 @@ namespace HS{
   namespace FIT{
 
     void ToyManager::Run(){
-  
+
+
+      if(GetCurrToy()==0){
+	InitSummary(); 
+      }
+      LoadResult();
+ 
       CreateCurrSetup();
 
       //Look for Special case of RooHSEventsPDFs
@@ -33,6 +39,9 @@ namespace HS{
 
       // Long64_t nexp=RooRandom::randomGenerator()->Poisson(model->expectedEvents(fitpars));
       Long64_t nexp=RooRandom::randomGenerator()->Poisson(fCurrSetup->SumOfYields());
+
+      model->Print("v");
+      fitvars.Print("v");
       
       fGenData=model->generate(fitvars,nexp);
       fGenData->SetName("ToyData");
@@ -77,13 +86,21 @@ namespace HS{
       // }
       delete fGenData; fGenData=nullptr;
      }
-    ////////////////////////////////////////////////////////////////
-    void ToyManager::PreRun(){
-      std::unique_ptr<TFile> resFile{TFile::Open(SetUp().GetOutDir()+"ToySummary.root","recreate")};
+    ///////////////////////////////////////////////////////////////
+    void ToyManager::InitSummary(){
+      std::unique_ptr<TFile> resFile{TFile::Open(SetUp().GetOutDir()+GetCurrName()+"/ToySummary.root","recreate")};
       auto initpars=SetUp().ParsAndYields();
       initpars.setName(InitialParsName());
       initpars.Write();
-      }
+      
+    }
+    ////////////////////////////////////////////////////////////////
+    void ToyManager::PreRun(){
+  
+      //if using bins make sure directories are made
+      Bins().GetBins().SetOutDir(SetUp().GetOutDir());
+      Bins().GetBins().MakeDirectories();
+    }
     ////////////////////////////////////////////////////////////////
     std::shared_ptr<FitManager> ToyManager::Fitter(){
       std::shared_ptr<FitManager> fit{new FitManager(*this)};      
@@ -108,27 +125,43 @@ namespace HS{
     ////////////////////////////////////////////////////////////////
     std::shared_ptr<ToyManager> ToyManager::GetFromFit(Int_t N,FitManager& fit,TString resultFile){
       
-      std::shared_ptr<ToyManager> toy{new ToyManager(N,fit)};
+      std::shared_ptr<ToyManager> toy{new ToyManager(N,fit,fit.SetUp().GetOutDir(),resultFile)};
+
+        return std::move(toy);
+    }
+
+    void ToyManager::LoadResult(){
+      if(fResultFileName==TString())
+	return;
+      cout<<"LOAD  "<<fResultFileName<<endl;
+      TString resultFile=fResultOutDir+Bins().BinName(GetDataBin(GetFiti()))+"/"+fResultFileName;
       std::unique_ptr<TFile> fitFile{TFile::Open(resultFile)};
       std::unique_ptr<RooDataSet> result{dynamic_cast<RooDataSet*>( fitFile->Get(Minimiser::FinalParName()))};
-
       //Set the values of the paramteres to those in the given result
       if(result.get()){
-	auto newPars = toy->SetUp().ParsAndYields();
+	auto newPars = SetUp().ParsAndYields();
 	auto* resAll = result->get(); //get all result info
 	auto* resPars=resAll->selectCommon(newPars); //just select pars and yieds
 	newPars.assignFast(*resPars); //set values to results
-	cout<<"ToyManager::GetFromFit setting values from fit results "<<resultFile<<" : "<<endl;
+	cout<<"ToyManager::LoadResult setting values from fit results "<<resultFile<<" : "<<endl;
 	newPars.Print("v");
-     }
-      
-      return std::move(toy);
+      }
     }
     //////////////////////////////////////////////////////////////////////
     void ToyManager::Summarise(){
+      if(!Bins().GetSize())
+	Summarise(0);
+  
+      for(UInt_t i=0;i<Bins().GetSize();i++)
+	Summarise(i);
+      
+    }
+    //////////////////////////////////////////////////////////////////////
+    void ToyManager::Summarise(Int_t ibin){
+     
       TChain resChain(Minimiser::ResultTreeName());
-      resChain.Add(SetUp().GetOutDir()+"Results*.root");
-      std::unique_ptr<TFile> resFile{TFile::Open(SetUp().GetOutDir()+"ToySummary.root","update")};
+      resChain.Add(SetUp().GetOutDir()+Bins().BinName(ibin)+"/Results*.root");
+      std::unique_ptr<TFile> resFile{TFile::Open(SetUp().GetOutDir()+Bins().BinName(ibin)+"/ToySummary.root","update")};
       auto tree=resChain.CloneTree();
        
       //Loop over all parameters
