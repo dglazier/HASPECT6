@@ -1,6 +1,7 @@
 #include "RooMcmc.h"
 #include "HSMetropolisHastings.h"
 #include <TIterator.h>
+#include <TLeaf.h>
 #include <RooStats/UniformProposal.h>
 #include <RooStats/SequentialProposal.h>
 #include <RooStats/ProposalHelper.h>
@@ -121,9 +122,50 @@ namespace HS{
       auto entryBranch=fTreeMCMC->Branch("entry",&entry,"entry/L");
       for(entry=0;entry<fTreeMCMC->GetEntries();entry++)
 	entryBranch->Fill();
-      
-    }
 
+      AddFormulaToMCMCTree();
+    }
+    void RooMcmc::AddFormulaToMCMCTree(){
+
+      auto formulas=fSetup->Formulas();
+      if(!formulas.getSize()) return;
+      vector<Double_t> formVals(formulas.getSize());
+      vector<TBranch*> formBranches(formulas.getSize());
+      TIter iter=formulas.createIterator();
+      Int_t iform=0;
+      while(RooFormulaVar* formu=dynamic_cast<RooFormulaVar*>(iter())){
+	TString formuName=formu->GetName();
+	
+	formBranches[iform]=fTreeMCMC->Branch(formuName,&formVals[iform],formuName+"/D");
+	iform++;
+      }
+
+      Long64_t Nmcmc=fTreeMCMC->GetEntries();
+      Int_t Nleaf=fTreeMCMC->GetListOfLeaves()->GetEntries();
+      for(Int_t entry=0;entry<Nmcmc;entry++){
+	
+	fTreeMCMC->GetEntry(entry);
+	
+	for(Int_t ibr=0;ibr<Nleaf;ibr++){
+	  TLeaf *leaf=dynamic_cast<TLeaf*>(fTreeMCMC->GetListOfLeaves()->At(ibr));
+	  RooRealVar* brVar=dynamic_cast<RooRealVar*>(fParams->find(leaf->GetName()));
+	  if(brVar) brVar->setVal(leaf->GetValue());
+	    
+	}
+	  
+	
+	iter.Reset();
+	iform=0;
+	while(RooFormulaVar* formu=dynamic_cast<RooFormulaVar*>(iter())){
+	  
+	  formVals[iform]=formu->getValV();
+	  formBranches[iform]->Fill();
+	  iform++;
+
+	}
+      }  
+ 
+    }
     ///////////////////////////////////////////////
     Double_t  RooMcmc::SumWeights(){
       // Otherwise sum the weights in the event

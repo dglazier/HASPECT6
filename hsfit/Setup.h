@@ -94,6 +94,7 @@ namespace HS{
       
       RooArgList& Yields()  {return fYields;}
       RooArgList& Parameters() {return fParameters;}
+      RooArgList& Formulas() {return fFormulas;}
       const RooArgList& PDFs() const  {return fPDFs;}
       RooArgList& Constraints(){return fConstraints;}
 
@@ -137,7 +138,7 @@ namespace HS{
       RooArgSet fVars;
       RooArgSet fCats; //only categories
       RooArgSet fPars;//!
-      RooArgSet fFormulas;//! CANT WRITE formulas ArgSet!
+      RooArgList fFormulas;//! CANT WRITE formulas ArgSet!
       RooArgSet fVarsAndCats;
       RooArgSet fParsAndYields;
       RooArgList fYields;//species yields

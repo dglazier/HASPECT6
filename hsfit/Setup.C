@@ -135,10 +135,10 @@ namespace HS{
 	rooPars.add(*fWS.var(par));
 
       RooFormulaVar fovar(name,formu,rooPars) ;
-      fFormulas.add(fovar);
 
       fWS.import(fovar);
-      
+      fFormulas.add(*fWS.function(name));
+
     }
     ////////////////////////////////////////////////////////////
     /// Load a category e.g. s.LoadCategory("Pol[m=-1,p=1]");

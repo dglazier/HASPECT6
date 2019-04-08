@@ -37,7 +37,8 @@ namespace HS{
       void FitTo();
       
       file_uptr SaveInfo() override;
- 
+      void AddFormulaToMCMCTree();
+      
       void MakeChain();
       TTree* GetTree(){return fTreeMCMC;}
       Double_t SumWeights();
