@@ -39,7 +39,7 @@
   //RF.SetMinimiser(new RooMcmcUniform2Seq(1000,200,200));
   
 
-  //Here::Go(&RF);
+  Here::Go(&RF);
   //OR run with PROOF-LITE on N=4 cores (you can change the 4)
   // Proof::Go(&RF,4);
   auto toy=ToyManager::GetFromFit(10,RF,"outEventsToy/ResultsHSMinuit2.root");
