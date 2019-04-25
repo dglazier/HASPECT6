@@ -98,6 +98,8 @@ namespace HS{
 
       auto pdfs=fCurrSetup->PDFs();
 
+      auto savedir=gDirectory;
+      
       cout<<" FitManager::FillEventsPDFs "<<pdfs.getSize()<<endl;
       for(Int_t ip=0;ip<pdfs.getSize();ip++){
 	auto pdf=dynamic_cast<RooHSEventsPDF*>( &pdfs[ip]);
@@ -141,6 +143,7 @@ namespace HS{
 	  fFiledTrees.push_back(std::move(filetree));	  
 	}
       }
+      savedir->cd();
     }
     void FitManager::SaveSetup(){
       auto file=TFile::Open(fSetup.GetOutDir()+"HSSetup.root","recreate");

@@ -243,12 +243,13 @@ void Weights::SortWeights(){
   idtree->SetDirectory(fFile); //set file to save memory
   BuildIndex();
   cout<<"Weights::SortWeights() Clone emptry tree to save "<<endl;
+  // fFile->cd();
   TTree* Mwtree=fWTree->CloneTree(); //create clone tree in memory or very slow!
+  //savedir->cd();
   Mwtree->SetDirectory(0);
   cout<<"Weights::SortWeights() Clone tree to save "<<endl;
   TTree* wtree=fWTree->CloneTree(0); //create empty tree with branch adresses set
   wtree->SetDirectory(fFile);//set file to save memory
-   
   cout<<"Weights::SortWeights() reordering trees "<<fWTree->GetDirectory()<<endl; 
   for( Long64_t i =  0; i < fN ; i++ ) {
     fID=fIDv[i];

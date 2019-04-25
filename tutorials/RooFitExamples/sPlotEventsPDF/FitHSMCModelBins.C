@@ -23,12 +23,12 @@
   RF.Bins().LoadBinVar("Eg",5,3,4);
 
   ///////////////////////////Load Data
-  RF.LoadData("MyModel","Data.root");
-  RF.LoadSimulated("MyModel","SigData.root", "Signal");
-  RF.LoadSimulated("MyModel","BGData.root", "BG");
-  //RF.ReloadData("Data.root");
-  //RF.ReloadSimulated("SigData.root", "Signal");
-  //RF.ReloadSimulated("BGData.root", "BG");
+  //RF.LoadData("MyModel","Data.root");
+  // RF.LoadSimulated("MyModel","SigData.root", "Signal");
+  //RF.LoadSimulated("MyModel","BGData.root", "BG");
+  RF.ReloadData("Data.root");
+  RF.ReloadSimulated("SigData.root", "Signal");
+  RF.ReloadSimulated("BGData.root", "BG");
 
   gBenchmark->Start("timer");
   Here::Go(&RF);
@@ -36,7 +36,7 @@
   gBenchmark->Stop("timer");
   gBenchmark->Print("timer");
 
-  auto filetree=RF.WeightedTree("Signal");
-  filetree->Tree()->Draw("Mmiss>>(100,0,10)","Signal");
+  new TCanvas;
+  RF.DrawWeighted("Mmiss>>(100,0,10)","Signal");
 
 }

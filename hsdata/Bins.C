@@ -24,7 +24,7 @@ HS::Bins::Bins(TString name,TString filename):TNamed(name,name){
   fNbins=filebins->GetN();
   fNaxis=filebins->GetNAxis();
   fVarAxis=filebins->GetVarAxis();
-  //fBinnedTreeName = filebins->GetBinnedTreeName();
+  fBinnedTreeName = filebins->GetBinnedTreeName();
   fFileNames = filebins->GetFileNames();
   
   //tree is not written to file as data member
