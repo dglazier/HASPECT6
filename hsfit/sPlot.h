@@ -43,7 +43,7 @@ namespace HS{
       weights_uptr MergeWeights();
       void DrawWeighted(TString var,TString wname,TString cut="1",TString opt="");
 
-      void WriteThis() override;
+      // void WriteThis() override;
     protected:
       void WeightedTree();
     

@@ -133,10 +133,10 @@ namespace HS{
       fWeightedTree->Draw(var,wname+"*("+cut+")",opt);
 
     }
-    void sPlot::WriteThis(){
-      auto file=TFile::Open(SetUp().GetOutDir()+"HSFit.root","recreate");
-      file->WriteObject(this,"HSFit");
-      delete file;
-    }
+    // void sPlot::WriteThis(){
+    //   auto file=TFile::Open(SetUp().GetOutDir()+"HSFit.root","recreate");
+    //   file->WriteObject(this,"HSFit");
+    //   delete file;
+    // }
   }//namespace FIT 
 }//namespace HS

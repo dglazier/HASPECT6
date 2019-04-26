@@ -63,14 +63,14 @@ namespace HS{
       //Get the outpur directory where HSFit.root should reside
       auto outdir=dynamic_cast<TNamed*>(fInput->FindObject("HSOUTDIR"));
       TString outdirstr=TString(outdir->GetTitle());
-      // if(outdirstr!=TString("")||!outdirstr.EndsWith("/"))
-      if(outdirstr!=TString(""))
+         if(outdirstr!=TString(""))
 	outdirstr.Append('/');
 
       //Get the fitmanager
       fFitfile=TFile::Open(outdirstr+"HSFit.root");
       fFitManager=dynamic_cast<FitManager*>( fFitfile->Get("HSFit")->Clone() );
-      fFitManager->SetMinimiser(std::move(dynamic_cast<Minimiser*>( fFitfile->Get(fFitManager->GetMinimiserType())->Clone() )));
+      if(fFitManager->GetMinimiserType()!=TString()) fFitManager->SetMinimiser(std::move(dynamic_cast<Minimiser*>( fFitfile->Get(fFitManager->GetMinimiserType())->Clone() )));
+  
       delete fFitfile; //close file to stop memeory resident issue!
       
       fFitManager->Data().LoadSetup(&fFitManager->SetUp());
