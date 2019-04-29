@@ -85,6 +85,8 @@ namespace HS{
 	return fOutDir+"/";
       }
       void SetOutDir(TString name){
+	if(!name.BeginsWith("/"))
+		name = (TString)gSystem->Getenv("PWD")+"/"+name;
 	fOutDir=name;
 	gSystem->Exec(Form("mkdir -p %s",fOutDir.Data()));
       }
