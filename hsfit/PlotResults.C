@@ -2,6 +2,7 @@
 #include <RooPlot.h>
 #include <RooMsgService.h>
 #include <TCanvas.h>
+#include <TDirectory.h>
 
 namespace HS{
   namespace FIT{
@@ -10,7 +11,7 @@ namespace HS{
 
       using namespace RooFit;
       cout<<"PlotResults::PlotResults "<<fCanvases.get()<<" "<<setup<<" "<<endl;
-      //  fCanvases->SetOwner();
+      //fCanvases->SetOwner();
       fCanvases->SetName(TString("RFPlots")+setup->GetName());
 
   	
@@ -22,7 +23,8 @@ namespace HS{
 	
 	auto canName=TString(setup->GetName())+ "_" + var->GetName();
 	auto canvas=new TCanvas(canName,canName);
-	fCanvases->Add(canvas);	
+	fCanvases->Add(canvas);
+	
 	canvas->Divide(2,1);
 	canvas->cd(1);
 
@@ -42,7 +44,7 @@ namespace HS{
 	
 	frame->SetTitle(TString("Fit components for ")+var->GetName());
 
-	frame->Draw() ;
+	frame->Draw();
 	auto level = RooMsgService::instance().globalKillBelow();
 	RooMsgService::instance().setGlobalKillBelow(RooFit::ERROR) ;
  

@@ -19,17 +19,13 @@
 
 using namespace HS::FIT;
 
- RooHSEventsHistPDF::RooHSEventsHistPDF(const char *name, const char *title, 
-                        RooAbsReal& _x,
-			RooAbsReal& _alpha,	
-                        RooAbsReal& _offset,
-                        RooAbsReal& _scale) :
-   RooHSEventsPDF(name,title),
-   x("x","x",this,_x),
-   offset("offset","offset",this,_offset),
-   scale("scale","scale",this,_scale),
-   alpha("alpha","alpha",this,_alpha)
- {
+RooHSEventsHistPDF::RooHSEventsHistPDF(const char *name, const char *title, RooAbsReal& _x,RooAbsReal& _alpha,RooAbsReal& _offset, RooAbsReal& _scale) :
+  RooHSEventsPDF(name,title),
+  x("x","x",this,_x),
+  offset("offset","offset",this,_offset),
+  scale("scale","scale",this,_scale),
+  alpha("alpha","alpha",this,_alpha)
+{
   
    MakeSets();
    x.SetName(_x.GetName());
@@ -107,7 +103,7 @@ using namespace HS::FIT;
    if(other.fOffConstr)fOffConstr=(RooGaussian*)other.fOffConstr->Clone();
    if(other.fScaleConstr)fScaleConstr=(RooGaussian*)other.fScaleConstr->Clone();
    fVarMax=other.fVarMax;
-   if(fEvTree) SetEvTree(fEvTree,fCut);//Needs fProxSet filled first
+   // if(fEvTree) SetEvTree(fEvTree,fCut);//Needs fProxSet filled first
 
    fRHist->SetDirectory(0);
    MakeSets();
@@ -115,7 +111,6 @@ using namespace HS::FIT;
  }
 
 RooHSEventsHistPDF::~RooHSEventsHistPDF(){
-  cout<<"RooHSEventsPDF::~RooHSEventsHistPDF() 1"<<endl;
 
   if(fHist)delete fHist;
   if(fRHist)delete fRHist; fRHist=nullptr;
@@ -200,8 +195,7 @@ void RooHSEventsHistPDF::CreateHistPdf(){
     // Double_t tvar=fMCVar[0];
     fTreeEntry=itr;
     Double_t tvar=fvecReal[fTreeEntry*fNvars+0];
-    // cout<<NFT<<" "<<fTreeEntry<<" "<<tvar<<endl;
-     his1->Fill(tvar,GetIntegralWeight(itr));
+    his1->Fill(tvar,GetIntegralWeight(itr));
   }
   //Could be problems if weights result in -ve bins...
   for(Int_t ix=0;ix<his1->GetEntries();ix++)

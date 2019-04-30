@@ -52,13 +52,13 @@ namespace HS{
       Setup& operator=(Setup&& other) = default;
 
 
-      void FactoryPDF(TString opt){fWS.factory(opt);fPDFString.push_back(opt);}
-      void LoadVariable(TString opt);
+      void FactoryPDF(TString opt);
+       void LoadVariable(TString opt);
       void LoadCategory(TString opt);
       void LoadAuxVar(TString opt);
       void LoadFormula(TString formu);
       void LoadParameter(TString opt);
-      void LoadSpeciesPDF(TString opt,Float_t Scale0);
+      void LoadSpeciesPDF(TString opt,Float_t Scale0=1);
       void TotalPDF();
       
       const RooWorkspace& WS(){return fWS;}
@@ -85,6 +85,8 @@ namespace HS{
 	return fOutDir+"/";
       }
       void SetOutDir(TString name){
+	if(!name.BeginsWith("/"))
+	  name = TString(gSystem->Getenv("PWD"))+"/"+name;
 	fOutDir=name;
 	gSystem->Exec(Form("mkdir -p %s",fOutDir.Data()));
       }
@@ -126,7 +128,7 @@ namespace HS{
       void LoadSnapShot(TString name){fWS.loadSnapshot(name);}
 
       RooStats::ModelConfig*  GetModelConfig();
-      
+      TString GetPDFInWeights(TString name) {return fPDFInWeights[name];}
     protected:
       
     private:
@@ -160,7 +162,8 @@ namespace HS{
       strings_t fFormString;
       strings_t fAuxVarString;
       strings_t fPDFString;
-      vector<std::pair<TString,Float_t> > fSpecString;
+      std::vector<std::pair<TString,Float_t> > fSpecString;
+      std::map<TString,TString> fPDFInWeights;
       TString fYld="Yld_";//yield variable prepend
 
       ClassDef(HS::FIT::Setup,1);

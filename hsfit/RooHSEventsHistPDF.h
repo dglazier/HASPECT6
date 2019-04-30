@@ -27,14 +27,12 @@ namespace HS{
     public:
       
       RooHSEventsHistPDF() =default ; 
-      RooHSEventsHistPDF(const char *name, const char *title,
-			 RooAbsReal& _x,
-			 RooAbsReal& _offset,
-			 RooAbsReal& _scale,
-			 RooAbsReal& _alpha);
+       
+      RooHSEventsHistPDF(const char *name, const char *title, RooAbsReal& _x,RooAbsReal& _alpha,RooAbsReal& _offset, RooAbsReal& _scale);
+      
       RooHSEventsHistPDF(const RooHSEventsHistPDF& other, const char* name=0) ;
       virtual TObject* clone(const char* newname) const { return new RooHSEventsHistPDF(*this,newname); }
-      inline virtual ~RooHSEventsHistPDF();
+      virtual ~RooHSEventsHistPDF();
 
     protected:
       Double_t fMCx;

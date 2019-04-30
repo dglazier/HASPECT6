@@ -11,7 +11,7 @@
 //#include "ProcInfo_t.h"
 
 
-HS::Bins::Bins(TString name) :TNamed(name,name){
+HS::Bins::Bins(TString name) :TNamed(name,name),fNaxis(0),fNbins(0){
 }
 
 HS::Bins::Bins(TString name,TString filename):TNamed(name,name){
@@ -24,7 +24,7 @@ HS::Bins::Bins(TString name,TString filename):TNamed(name,name){
   fNbins=filebins->GetN();
   fNaxis=filebins->GetNAxis();
   fVarAxis=filebins->GetVarAxis();
-  //fBinnedTreeName = filebins->GetBinnedTreeName();
+  fBinnedTreeName = filebins->GetBinnedTreeName();
   fFileNames = filebins->GetFileNames();
   
   //tree is not written to file as data member
@@ -37,6 +37,8 @@ HS::Bins::Bins(const Bins& other, const char* name): TNamed(name,name){
   fVarAxis=other.fVarAxis;
   fFile=0;
   fBinnedTreeName = other.fBinnedTreeName;
+  fMAXFILES=other.fMAXFILES;
+  fMaxEntries=other.fMaxEntries;
 }
 HS::Bins::~Bins(){
   if(fFile){fFile->Close(); delete fFile;}
@@ -96,7 +98,6 @@ void HS::Bins::RunBinTree(TTree* tree){
   }
   Int_t Nlots=(Int_t)(fNbins/fMAXFILES);
   Int_t Nrem=fNbins%fMAXFILES;
-  
   for(Int_t i=0;i<Nlots;i++)
     RunBinTree(tree,fMAXFILES*i,fMAXFILES*(i+1));
   //and remainder

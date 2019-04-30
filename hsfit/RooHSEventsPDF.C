@@ -21,7 +21,7 @@
 
 using namespace HS::FIT;
 
-RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) :  RooAbsPdf(other,name)
+RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) :  RooAbsPdf(other,name) 
   {
    					    
     fIsClone=kTRUE;
@@ -32,10 +32,10 @@ RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) : 
     fvecRealGen=other.fvecRealGen;
     fvecCatGen=other.fvecCatGen;
     fNTreeEntries=other.fNTreeEntries;
-					      //			      cout<< "RooHSEventsPDF::RooHSEventsPD 2"<<other.fEvTree->GetName()<<endl;
+
     
     if(other.fEvTree)fEvTree=other.fEvTree->CopyTree("");
-    if(other.fInWeights) fInWeights=other.fInWeights; //probably need to clone this
+    //    if(other.fInWeights) fInWeights=other.fInWeights; //probably need to clone this
     fNInt=other.fNInt;
     fGeni=other.fGeni;
     //if(other.fEntryList)fEntryList=(TEntryList*)other.fEntryList->Clone();
@@ -47,8 +47,13 @@ RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) : 
     fCut=other.fCut;
     fIsValid=other.fIsValid;
     fUseEvWeights=other.fUseEvWeights;
+    
+    fWgtsConf=other.fWgtsConf;
+									     
     fEvWeights=other.fEvWeights;
-    fWgtSpecies=other.fWgtSpecies;
+    //fWgtSpecies=other.fWgtSpecies;
+    //fWgtsFile=other.fWgtsFile;
+    //fWgtsName=other.fWgtsName;
     fMaxValue=other.fMaxValue;
     fIntRangeLow=other.fIntRangeLow;
     fIntRangeHigh=other.fIntRangeHigh;
@@ -344,10 +349,10 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   
   for(UInt_t i=0;i<fProxSet.size();i++){
     fGotGenVar[i]=0;
-    cout<<fProxSet[i]->GetName()<<endl;
+    
     if(fEvTree->GetBranch(fProxSet[i]->GetName())){
       fEvTree->SetBranchStatus(fProxSet[i]->GetName(),1);
-      cout<<fEvTree->SetBranchAddress(fProxSet[i]->GetName(),&MCVar[i])<<endl;;
+      fEvTree->SetBranchAddress(fProxSet[i]->GetName(),&MCVar[i]);
       if(fEvTree->GetBranch(TString("gen")+fProxSet[i]->GetName())){
 	fEvTree->SetBranchStatus(TString("gen")+fProxSet[i]->GetName(),1);
 	fEvTree->SetBranchAddress(TString("gen")+fProxSet[i]->GetName(),&GenVar[i]);
@@ -443,20 +448,27 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   delete elist;elist=nullptr;
   
   //Read weights into fEvWeights
-  if(fInWeights){
+  if(fWgtsConf.IsValid()){
+    
     fEvWeights.clear();
+    LoadInWeights();
+    
     if(fEvTree->GetBranch(fInWeights->GetIDName())){ //the weight ID branch is in fEvTree
       fUseEvWeights=kTRUE;
       fEvTree->SetBranchStatus(fInWeights->GetIDName(),1);
       TLeaf* idleaf=(TLeaf*)fEvTree->GetBranch(fInWeights->GetIDName())->GetListOfLeaves()->First();
       if(!idleaf) { cout<<"ERROR RooHSEventsPDF::SetEvTree weights id branch "<<fInWeights->GetIDName()<<" is not part of event tree "<<endl; fEvTree->Print();exit(1);}
+      auto idbranch=fEvTree->GetBranch(fInWeights->GetIDName());
+      auto spId=fInWeights->GetSpeciesID(fWgtsConf.Species());
+      fEvWeights.resize(fNTreeEntries);
       for(Long64_t iw=0;iw<fNTreeEntries;iw++){
-	fEvTree->GetBranch(fInWeights->GetIDName())->GetEntry(iw);
-	fInWeights->GetEntryBinarySearch((Long64_t)idleaf->GetValue());
-	
-        fEvWeights.push_back(fInWeights->GetWeight(fWgtSpecies));
+	idbranch->GetEntry(iw);
+	fInWeights->GetEntryBinarySearch(static_cast<Long64_t>(idleaf->GetValue()));
+        fEvWeights[iw]=fInWeights->GetWeight(spId);
       }
     }
+    else cout<<"WARNING RooHSEventsPDF::SetEvTree InWeights ID : "<<fInWeights->GetIDName()<<" does not exist in event tree"<<endl;
+    delete fInWeights;fInWeights=nullptr;
   }
   if(dynamic_cast<TChain*>(fEvTree)){
     TTree* coptree=fEvTree->CloneTree(0);//convert chain to tree
@@ -465,19 +477,20 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   fEvTree->Reset();  //empty tree to save memory
   return fBranchStatus;
 }
-void  RooHSEventsPDF::LoadWeights(TString species,TString wfile,TString wname){
+void  RooHSEventsPDF::LoadInWeights(){
   //GetWeights object 
-  cout<<"void RooHSEventsPDF::LoadWeights and use species "<<species<<" "<<wfile<<" "<<wname<<endl;
+  cout<<"void RooHSEventsPDF::LoadWeights and use species "<< fWgtsConf.Species()<<" "<<fWgtsConf.File()<<" "<<fWgtsConf.ObjName()<<endl;
   if(fInWeights) delete fInWeights;
   fInWeights=nullptr;
   fInWeights=new HS::Weights();
-  fInWeights->LoadSaved(wfile,wname);
-  if(fInWeights->GetSpeciesID(species)==-1)fIsValid=kFALSE;
-
-  fInWeights->PrintWeight();
-  fWgtSpecies = species;
-  fUseEvWeights=kTRUE;
-}
+  fInWeights->LoadSaved(fWgtsConf.File(),fWgtsConf.ObjName());
+  // fWgtSpecies = fWgtsConf.Species();
+  if(fInWeights->GetSpeciesID(fWgtsConf.Species())==-1){
+    cout<<"ERROR RooHSEventsPDF::LoadInWeights() requested species "<<fWgtsConf.Species()<<" not found in given weights"<<endl;
+    fInWeights->Print();
+    fIsValid=kFALSE;
+  }
+ }
 
 void  RooHSEventsPDF::CheckIntegralParDep(Int_t Ntests){
   fCheckInt=Ntests;

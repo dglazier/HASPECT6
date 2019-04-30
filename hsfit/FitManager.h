@@ -94,6 +94,7 @@ namespace HS{
       }
       void ReloadData(TString fname,TString name="Data"){
 	fBinner.ReloadData(fname,name);
+	cout<<"RELOAD "<<fBinner.TreeName(name)<<endl;
   	LoadData(fBinner.TreeName(name),fBinner.FileNames(name));
  	fData.SetParentName(fname);
  	fData.SetParentTreeName(fBinner.TreeName(name));

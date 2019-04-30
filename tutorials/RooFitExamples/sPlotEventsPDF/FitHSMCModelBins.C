@@ -1,8 +1,11 @@
 //root --hsfit  FitHSMCModel.C
 {
-
+  //PROOF needs full paths!
+  TString PWD=gSystem->Getenv("PWD");
+  PWD+= "/";
+  
   sPlot RF;
-  RF.SetUp().SetOutDir("outBins/");
+  RF.SetUp().SetOutDir(PWD+"outBins/");
   ///////////////////////////////Load Variables
   RF.SetUp().LoadVariable("Mmiss[0,9.5]");//should be same name as variable in tree
   RF.SetUp().LoadAuxVar("Eg[0,10]");
@@ -23,20 +26,22 @@
   RF.Bins().LoadBinVar("Eg",5,3,4);
 
   ///////////////////////////Load Data
-  RF.LoadData("MyModel","Data.root");
-  RF.LoadSimulated("MyModel","SigData.root", "Signal");
-  RF.LoadSimulated("MyModel","BGData.root", "BG");
-  //RF.ReloadData("Data.root");
-  //RF.ReloadSimulated("SigData.root", "Signal");
-  //RF.ReloadSimulated("BGData.root", "BG");
+  RF.LoadData("MyModel",PWD+"Data.root");
+  RF.LoadSimulated("MyModel",PWD+"SigData.root", "Signal");
+  RF.LoadSimulated("MyModel",PWD+"BGData.root", "BG");
+  //RF.ReloadData(PWD+"Data.root");
+  //RF.ReloadSimulated(PWD+"SigData.root", "Signal");
+  //RF.ReloadSimulated(PWD+"BGData.root", "BG");
 
   gBenchmark->Start("timer");
+  //Or try an mcmc minimser 1000-># of points, 200->burnin 10 ~ 1/step size
+  //RF.SetMinimiser(new RooMcmcSeq(1000,200,10));
   Here::Go(&RF);
-  //Proof::Go(&RF,4); //run proof with 4 workers
+  // Proof::Go(&RF,5); //run proof with 4 workers
   gBenchmark->Stop("timer");
   gBenchmark->Print("timer");
 
-  auto filetree=RF.WeightedTree("Signal");
-  filetree->Tree()->Draw("Mmiss>>(100,0,10)","Signal");
+  new TCanvas;
+  RF.DrawWeighted("Mmiss>>(100,0,10)","Signal");
 
 }

@@ -7,14 +7,24 @@
 #define HS_KINEMATICS_h
 
 
-#include "THSParticle.h"
+//#include "THSParticle.h"
+#include <TLorentzVector.h> 
 #include <Math/VectorUtil.h> //for boosts etc.
+#include <Math/Vector4D.h>
 
-using namespace ROOT::Math::VectorUtil; //Just add VectorUtil:: to functions
 
 namespace HS{
-  class HSKinematics{
+    using ROOT::Math::VectorUtil::boost;
+    using ROOT::Math::VectorUtil::Angle;
+    using ROOT::Math::VectorUtil::RotateZ;
+
+    using  HSLorentzVector=ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<Double32_t> > ;
+    using  HSPosition= ROOT::Math::PositionVector3D< ROOT::Math::Cartesian3D< Double32_t >, ROOT::Math::DefaultCoordinateSystemTag >;
     
+    using  HSMomentum=ROOT::Math::DisplacementVector3D< ROOT::Math::Cartesian3D< Double_t >, ROOT::Math::DefaultCoordinateSystemTag >;
+
+    class HSKinematics{
+ 
   private :
     HSLorentzVector fElin;
     HSLorentzVector fElsc;
