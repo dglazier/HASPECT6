@@ -14,6 +14,7 @@ void LoadFinalState(TString Selection=""){
   TString mvapath="/hsmva";
   TString dmpath="/hsdata";
   TString fspath="/hsfinalstate";
+  TString phpath="/hsphysics";
 
   //Add HSMVA include path
   if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+mvapath)){
@@ -30,9 +31,14 @@ void LoadFinalState(TString Selection=""){
     gInterpreter->AddIncludePath(HSCODE+dmpath);
     gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+dmpath).Data()));
   }
+  //Add HSPhysics include path
+  if(!TString(gInterpreter->GetIncludePath()).Contains(HSCODE+phpath)){
+    gInterpreter->AddIncludePath(HSCODE+phpath);
+    gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+phpath).Data()));
+  }
 
-  //First need DataManager
-  //  gROOT->ProcessLine(".x $HSCODE/hsdata/LoadDataManager.C+");
+  //First need Physics
+  gROOT->ProcessLine(".x $HSCODE/hsphysics/LoadPhysics.C+");
 
 
   //Need hsmva results interface
@@ -40,7 +46,7 @@ void LoadFinalState(TString Selection=""){
     gROOT->LoadMacro("ResultInterface.C+");
   
   //Now finalsstate classes
-  vector<TString > FSClasses={"HSKinematics","Cuts","Combitorial","ParticleIter","Topology","FinalState","FiledTree","TopoActionManager","ParticleCuts","TreeParticleData","MVASignalID","ParticleCutsManager","ParticleDataManager","MVASignalIDManager"};
+  vector<TString > FSClasses={"Cuts","Combitorial","ParticleIter","Topology","FinalState","FiledTree","TopoActionManager","ParticleCuts","TreeParticleData","MVASignalID","ParticleCutsManager","ParticleDataManager","MVASignalIDManager"};
 
   for(auto const& name : FSClasses){
     if(Selection!=TString())
