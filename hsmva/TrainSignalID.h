@@ -1,7 +1,8 @@
 #ifndef HSMVA_TRAINSIGNALID_h
 #define HSMVA_TRAINSIGNALID_h
 
-#include "TMVA/TMVAGui.h"
+#include <TMVA/TMVAGui.h>
+#include <TCanvas.h>
 
 #include "FiledTree.h"
 #include "TrainingInterface.h"
@@ -29,15 +30,20 @@ namespace HS{
       void Gui() override{ TMVA::TMVAGui( GetOutDir()+GetOutFileName(),GetName() );};
       
       TCanvas* DrawROCCurve(){
+	DrawResponses();
 	TCanvas* can= Factory()->GetROCCurve(DataLoader());
+	can->SetName("ROCCan");
 	can->Draw();
 	return std::move(can);
       }
       void DrawResponses();
       
+      std::vector<TCanvas*> GetCanvases(){return fCanvases;}
     protected:
       
     private :
+
+      std::vector<TCanvas*> fCanvases;
       
       ClassDefOverride(TrainSignalID,1);  // HSMVA Signal Identification training
       

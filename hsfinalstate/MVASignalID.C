@@ -3,13 +3,10 @@
 
 
 void HS::MVASignalID::CreateResult(TString methname,TString dirname){
-  cout<<"varlink"<<endl;
   SetVarLinks();
-  cout<<"resutl"<<endl;
   //Create mva result giving directory, method and links
   fResult.reset(new HS::MVA::ResultByRefLink(dirname,methname,fParticleLinks));
-  cout<<"done create"<<endl;
-}
+ }
 //////////////////////////////////////////////////////////////
 ///Loop over particle data and connect the reference to each
 ///data member to its name in fParticleLinks

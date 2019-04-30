@@ -28,7 +28,7 @@ namespace HS{
     Float_t Theta=0;
     Float_t Phi=0;
     Float_t Time=0;
-    Float_t Edep=0;
+    //Float_t Edep=0;
     Float_t DeltaE=0;
     Float_t Vz=0;
     /////////////////////////////////////////////////
@@ -65,7 +65,7 @@ namespace HS{
     Theta =  fParticle->P4p()->Theta()*r2d;
     Phi   =  fParticle->P4p()->Phi()*r2d;
     Time  =  fParticle->DeltaTime();
-    Edep  =  fParticle->Edep();
+    //Edep  =  fParticle->Edep();
     DeltaE=  fParticle->DeltaE();
     Vz    =  fParticle->Vertex().Z();
 
