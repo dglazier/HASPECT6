@@ -96,7 +96,7 @@ namespace HS{
 	return ii;
       }
       TString GetItemName(Int_t ii);
-      void LoadWeights(TString wname,TString fname);
+      void LoadWeights(TString wname,TString fname,TString wobj="HSsWeights");
       
     protected:
       
@@ -109,6 +109,7 @@ namespace HS{
       TString fParentTreeName;
       TString fInWeightName;
       TString fInWeightFile;
+      TString fInWeightObjName;
       
 
       filedtrees_t fFiledTrees;

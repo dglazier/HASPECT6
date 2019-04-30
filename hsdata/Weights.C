@@ -35,8 +35,7 @@ Weights::Weights(TString name) :TNamed(name,name){
 }
 
 Weights::~Weights(){
-  cout<<"Weights::~Weights()"<<endl;
-  if(fFile)Save();			       
+   if(fFile)Save();			       
   if(fWeightList) delete fWeightList;
   if(fWTree) delete fWTree;
   if(fIDTree) delete fIDTree; 
@@ -121,9 +120,6 @@ Long64_t Weights::Merge(TString tempName,TString outName,TString wmName){
     if(fileName==TString(".."))continue;
     if(!fileName.Contains(prefix))continue;
     if(!fileName.Contains(".root"))continue;
-    cout<<"Weights::Merge Adding file "<<fileName<<endl;
-    //TFile* wfile=new TFile(dirName+"/"+fileName);
-    //Weights* wm=(Weights*)wfile->Get(wmName);
     Weights* wm=new Weights();
     wm->LoadSaved(dirName+"/"+fileName,wmName);
     fIDName=wm->GetIDName();
@@ -136,13 +132,6 @@ Long64_t Weights::Merge(TString tempName,TString outName,TString wmName){
   
   SortWeights();//needs sorted for binary search to work
   PrintWeight();
-  cout<<"Weights::Merge done "<<endl;
-  // if(outName!=TString("")) {
-  //   TFile* outFile=new TFile(outName,"recreate");
-  //   Write();
-  //   outFile->Close();
-  //   delete outFile;
-  // }
   return Size();
   
 }
@@ -169,11 +158,8 @@ void Weights::Add(Weights* Wts){
   UInt_t Ns1=sp1->size();
   UInt_t NnewSp=0;
   StrIntMap_t New_sp; //map for additional species from Wts with original index
-  cout<<"Weights Add "<<Wts->Size()<<" "<<Wts->GetSpecies().size()<<" "<<Wts->GetTree()->GetNbranches()<<" "<<GetTree()->GetNbranches()<<" "<<endl;
-  if(fFile) cout<<"FILE "<<fFile->GetName()<<endl;
   //Check for new species
   for(StrIntMap_t::iterator it1 = sp1->begin(); it1 != sp1->end(); ++it1){
-    cout<<"Weights Add new species :"<<it1->first<<endl;
     if(!(sp0->count(it1->first))){//this species is not in map already
       SetSpecies(it1->first);//add new species branch
       for(Long64_t ie=0;ie<fWTree->GetEntries();ie++)//fill previous entries with 0
@@ -226,12 +212,12 @@ void Weights::PrintWeight(){
 }
 
 void Weights::BuildIndex(){
-  cout<<"Weights::BuildIndex "<<fIDTree->BuildIndex(TString("(Long64_t)WID"))<<endl;
+  // cout<<"Weights::BuildIndex "<<fIDTree->BuildIndex(TString("(Long64_t)WID"))<<endl;
+  fIDTree->BuildIndex(TString("(Long64_t)WID"));
   TTreeIndex *index = (TTreeIndex*)fIDTree->GetTreeIndex();
   fIDi=index->GetIndex();//entry numbers
   fIDv=index->GetIndexValues();//id values
   fN=fWTree->GetEntries();
-  cout<<"Done"<<endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -242,15 +228,11 @@ void Weights::SortWeights(){
   TTree* idtree=fIDTree->CloneTree(0); //create empty tree with branch adresses set //Clone before create index so do not have to save index
   idtree->SetDirectory(fFile); //set file to save memory
   BuildIndex();
-  cout<<"Weights::SortWeights() Clone emptry tree to save "<<endl;
-  // fFile->cd();
-  TTree* Mwtree=fWTree->CloneTree(); //create clone tree in memory or very slow!
-  //savedir->cd();
-  Mwtree->SetDirectory(0);
+   TTree* Mwtree=fWTree->CloneTree(); //create clone tree in memory or very slow!
+   Mwtree->SetDirectory(0);
   cout<<"Weights::SortWeights() Clone tree to save "<<endl;
   TTree* wtree=fWTree->CloneTree(0); //create empty tree with branch adresses set
   wtree->SetDirectory(fFile);//set file to save memory
-  cout<<"Weights::SortWeights() reordering trees "<<fWTree->GetDirectory()<<endl; 
   for( Long64_t i =  0; i < fN ; i++ ) {
     fID=fIDv[i];
     idtree->Fill(); //fill as ordered by the build index
@@ -258,26 +240,24 @@ void Weights::SortWeights(){
     Mwtree->GetEntry(fIDi[i]);
     wtree->Fill(); //fill as ordered by the build index
   }
-  cout<<"Weights::SortWeights() reordering trees"<<endl;
   //swap sorted trees to datamembers
   delete fIDTree;fIDTree=nullptr;
   delete fWTree;fWTree=nullptr;
   delete Mwtree;Mwtree=nullptr;
   fIDTree=idtree;
   fWTree=wtree;
-  cout<<"Weights::SortWeights() entries "<<fIDTree->GetEntries()<<" "<<fWTree->GetEntries()<<endl;
   //resetbranch addresses
   fIDTree->SetBranchAddress("WID",&fID);
   for(UInt_t iss=0;iss<fSpecies.size();iss++)
   for(StrIntMap_t::iterator it1 = fSpecies.begin(); it1 != fSpecies.end(); ++it1)
     fWTree->SetBranchAddress(it1->first,&fWVals[it1->second]);
   
-  cout<<"Weights::SortWeights Print new ordering"<<endl;
-  PrintWeight();
+  //  cout<<"Weights::SortWeights Print new ordering"<<endl;
+  // PrintWeight();
   //reset index
   fIDv=0;//these have been deleted with orig fIDTree
   fIDi=0;
-  //  BuildIndex();//build for new tree!
+ 
   fIsSorted=kTRUE;
 }
 /////////////////////////////////////////////////////////////////
@@ -285,7 +265,6 @@ void Weights::SortWeights(){
 //Should be done before sort etc to save memory
 void Weights::SetFile(TString filename){
   TDirectory *saveDir=gDirectory;
-  cout<<"Weights::SetFile "<<filename<<endl;
   fFile=new TFile(filename,"recreate");
   if(fIDTree)fIDTree->SetDirectory(fFile);
   if(fWTree)fWTree->SetDirectory(fFile);
@@ -306,7 +285,6 @@ void Weights::Save(){
   Write();//save the rest (not trees) of the weights class
  
   delete fFile;fFile=0;fWTree=0;fIDTree=0;
-  cout<<"Weights::Save() Saved weights to file"<<endl;
 
 }
 ///////////////////////////////////////////////////////////////
@@ -318,12 +296,12 @@ void Weights::LoadSaved(TString fname,TString wname){
   TDirectory* savedir=gDirectory;
   TFile* wfile=new TFile(fname);
   if(!wfile) return;
-  wfile->ls();
+  
   Weights* file_wts=(Weights*)wfile->Get(wname);//read into memory
   if(!file_wts) return;
   fName=file_wts->GetName();
   fTitle=file_wts->GetTitle();
-  cout<<fName<<" "<<fTitle<<endl;
+
   savedir->cd();
   TTree* tempTree=0;
   tempTree=(TTree*)wfile->Get(wname+"_W");
@@ -447,23 +425,27 @@ filed_uptr  Weights::DFAddToTree(TString wname,TString outfname,TString tname,TS
 // }
 void Weights::AddToTree(TTree* tree){
   vector<TBranch*> branches;
-  
-  for(UInt_t i=0;i<fSpecies.size();i++)
+
+  const UInt_t Nsp=fSpecies.size();
+  for(UInt_t i=0;i<Nsp;i++)
     branches.push_back(tree->Branch(GetSpeciesName(i),&fWVals[i]));
-  Int_t Nsp=fSpecies.size();
-  //Double_t wID=0;
-  //tree->SetBranchAddress(fIDName,&wID);
-  auto id_leaf=tree->GetLeaf(fIDName);
  
+  auto id_leaf=tree->GetLeaf(fIDName);
+  if(!id_leaf) {
+    cout<<" ERROR Weights::AddToTree weights idname not found in tree : " <<fIDName<<endl;
+    tree->Print();
+  }
+  
   auto Nentries=tree->GetEntries();
   for(Long64_t ient=0;ient<Nentries;ient++){
     tree->GetEntry(ient);
+ 
     GetEntryBinarySearch((Long64_t)id_leaf->GetValue());
-    
+ 
     if(!GotEntry())
-      for(Int_t ivec=0;ivec<Nsp;ivec++)
+      for(UInt_t ivec=0;ivec<Nsp;ivec++)
 	fWVals[ivec]=0;
-
+ 
     for(auto* br: branches)
       br->Fill();
   }

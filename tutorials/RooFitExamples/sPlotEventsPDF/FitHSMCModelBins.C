@@ -26,12 +26,12 @@
   RF.Bins().LoadBinVar("Eg",5,3,4);
 
   ///////////////////////////Load Data
-  //RF.LoadData("MyModel",PWD+"Data.root");
-  // RF.LoadSimulated("MyModel",PWD+"SigData.root", "Signal");
-  //RF.LoadSimulated("MyModel",PWD+"BGData.root", "BG");
-  RF.ReloadData(PWD+"Data.root");
-  RF.ReloadSimulated(PWD+"SigData.root", "Signal");
-  RF.ReloadSimulated(PWD+"BGData.root", "BG");
+  RF.LoadData("MyModel",PWD+"Data.root");
+  RF.LoadSimulated("MyModel",PWD+"SigData.root", "Signal");
+  RF.LoadSimulated("MyModel",PWD+"BGData.root", "BG");
+  //RF.ReloadData(PWD+"Data.root");
+  //RF.ReloadSimulated(PWD+"SigData.root", "Signal");
+  //RF.ReloadSimulated(PWD+"BGData.root", "BG");
 
   gBenchmark->Start("timer");
   //Or try an mcmc minimser 1000-># of points, 200->burnin 10 ~ 1/step size

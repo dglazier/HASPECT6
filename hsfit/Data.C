@@ -58,25 +58,26 @@ namespace HS{
       fTreeName=tname;
       fFiledTrees.resize(fFileNames.size());
     }
-    void  DataEvents::LoadWeights(TString wname,TString fname){
+    void  DataEvents::LoadWeights(TString wname,TString fname,TString wobj){
+      auto wcon=WeightsConfig{wname,fname,wobj};
       fInWeights.reset(new HS::Weights());
-      fInWeights->LoadSaved(fname,"HSsWeights");
-      fInWeights->PrintWeight();
-      fInWeightName=wname.Data();
-      fInWeightFile=fname.Data();
+      fInWeights->LoadSaved(wcon.File(),wcon.ObjName());
+      // fInWeights->PrintWeight();
+      fInWeightName=wcon.Species().Data();
+      fInWeightFile=wcon.File().Data();
+      fInWeightObjName=wcon.ObjName().Data();
       cout<<"  DataEvents::LoadWeights using "<<fInWeightName<<" weights "<<endl;
     }
  
     dset_uptr DataEvents::Get(const UInt_t iset) {
-      cout<<"cehck "<<fInWeightName<<" "<<fInWeightFile<<" "<<fFileNames.size()<<endl;
+  
       cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" tree "<<fTreeName<<" weights "<<fInWeights.get()<<" "<<fInWeightName<<endl;
-      fSetup->DataVars().Print();
-
+      
       fFiledTrees[iset]=FiledTree::Read(fTreeName,fFileNames[iset]); //will be delted at end of function
   
      auto rawtree= fFiledTrees[iset]->Tree().get() ;
      auto vars = fSetup->DataVars();
-     cout<<"cerate weights"<<endl;
+     
      if(!fInWeights.get()&&fInWeightName!=TString()){ //if Data object read from root file
        LoadWeights(fInWeightName,fInWeightFile);
      }
@@ -84,13 +85,11 @@ namespace HS{
        rawtree=rawtree->CloneTree();//read tree into memory
        rawtree->SetDirectory(0);
        fInWeights->AddToTree(rawtree);
-       cout<<"ADDING WEIGHT "<<fInWeightName<<endl;
+      
        fWeightVar.reset(new RooRealVar(fInWeightName,fInWeightName,0));
        fWeightVar->Print();
        vars.add(*fWeightVar.get());
      }
-     cout<<"make data set "<<endl;
-     // rawtree->Print();
 
      //only let datset clone active branches
      TIter iter=vars.createIterator();
@@ -106,7 +105,6 @@ namespace HS{
      
      fFiledTrees[iset].reset(); //delete rawtree 
      
-     cout<<" return DATA "<<endl;
      ds->Print();
      return std::move(ds); 
     }

@@ -20,9 +20,11 @@ namespace HS{
     
     class RooHSEventsPDF : public RooAbsPdf {
     public:
-    RooHSEventsPDF(const char *name, const char *title):RooAbsPdf(name,title){};
+    RooHSEventsPDF(const char *name, const char *title):
+      RooAbsPdf(name,title){};
+      
       RooHSEventsPDF(const RooHSEventsPDF& other, const char* name=0);
-  
+      
       //virtual TObject* clone(const char* newname) const { return new RooHSEventsPDF(*this,newname); }
 
       RooHSEventsPDF(){}; 
@@ -64,7 +66,11 @@ namespace HS{
       Bool_t fUseEvWeights=kFALSE;
       Bool_t fIsValid=kTRUE;
 
-      TString fWgtSpecies;
+      HS::WeightsConfig fWgtsConf;
+      //      TString fWgtSpecies;
+      //TString fWgtsFile;
+      //TString fWgtsName;
+      
       TString fCut; //cut for applying to event tree
  
       vector< RooArgSet* > fVarSet;//set of variables for which integral defined
@@ -80,6 +86,8 @@ namespace HS{
       Long64_t fGeni=0; //index for tree generation
       TString fgenStr="gen";
 
+      void LoadInWeights();
+ 
     public:
  
       virtual Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,const char* rangeName) const;
@@ -102,7 +110,17 @@ namespace HS{
       void SetNInt(Long64_t n){fNInt=n;}
       // virtual Bool_t SetEvTree(TChain* tree,TString cut,Long64_t ngen=0);
       Bool_t SetEvTree(TTree* tree,TString cut,Long64_t ngen=0);
-      void LoadWeights(TString species,TString wfile,TString wname);
+      /* void SetInWeights(TString species, TString weightfile,TString wobj){ */
+      /* 	fWgtsConf.reset(new HS::WeightsConfig(species,weightfile,wobj)); */
+      /* } */
+      void SetInWeights(HS::WeightsConfig& wcon){
+	fWgtsConf.Copy(wcon);
+      }
+      void SetInWeights(TString wst){
+	if(wst==TString()) return;
+	HS::WeightsConfig wcon(wst);
+	fWgtsConf.Copy(wcon);
+      }
       void SetNMCGen(Long64_t N){fNMCGen=N;}
       TTree* GetEvTree(){return fEvTree;};
       //TVectorD GetMCVar(){return fMCVar;}
@@ -115,6 +133,7 @@ namespace HS{
       HS::Weights* GetWeights(){return fWeights;}
       void SetGeni(Long64_t gi){fGeni=gi;};
       Long64_t GetGeni(){return fGeni;}
+      
       void SetConstInt(Bool_t force=kTRUE){fForceConstInt=force;}
       void SetNumInt(Bool_t force=kTRUE){fForceNumInt=force;}
       void  CheckIntegralParDep(Int_t Ntests);

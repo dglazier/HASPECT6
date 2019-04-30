@@ -43,10 +43,10 @@ namespace HS{
       weights_uptr MergeWeights();
       void DrawWeighted(TString var,TString wname,TString cut="1",TString opt="");
 
-      // void WriteThis() override;
+      TTree* GetWeightedTree(){return fWeightedTree.get();};
+     // void WriteThis() override;
     protected:
       void WeightedTree();
-    
     private:
       splot_uptr fSPlot; //!sPlot object
       weights_ptr fWeights;//!

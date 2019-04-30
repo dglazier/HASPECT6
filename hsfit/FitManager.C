@@ -107,12 +107,12 @@ namespace HS{
 	if(pdf){
 	  if(fBinner.FileNames(pdf->GetName()).size()==0)
 	    continue;
-	  cout<<"FitManager::FillEventsPDFs "<<idata <<" "<<pdf->GetName()<<" "<<fBinner.FileNames(pdf->GetName())[idata]<<endl;
 	  auto filetree=FiledTree::
 	    Read(fBinner.TreeName(pdf->GetName()),
 		 fBinner.FileNames(pdf->GetName())[idata]);
 	  auto tree=filetree->Tree();
-	  if(!tree.get()){
+	  savedir->cd();
+ 	  if(!tree.get()){
 	    cout<<"WARNING FitManager::FillEventsPDFs :"<<
 	      "    No tree data found for EventPDF "<<pdf->GetName()<<endl;
 	    continue;
@@ -124,6 +124,7 @@ namespace HS{
 	    ip--;
 	  }
 	  else{ //use it and give it the simulated tree
+	    pdf->SetInWeights(fCurrSetup->GetPDFInWeights(pdf->GetName()));
 	    pdf->SetEvTree(tree.get(),fCurrSetup->Cut());
 
 	    //See if data to load for proto data

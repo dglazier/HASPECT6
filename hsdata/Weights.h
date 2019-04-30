@@ -3,6 +3,7 @@
 
 #include <TTree.h>
 #include <TNamed.h>
+#include <TSystem.h>
 #include <TList.h>
 #include <TVectorD.h>
 #include <ROOT/RDataFrame.hxx>
@@ -90,6 +91,40 @@ namespace HS{
     Bool_t fIsSorted;
     
     ClassDef(Weights, 1);  // Writeble Weight map  class
+  };
+
+  class WeightsConfig{
+  public:
+    WeightsConfig()=default;
+    WeightsConfig(TString wopt){
+      auto opts=wopt.Tokenize(",");
+      if(opts->GetEntries()!=3)
+	cout<<"Error WeightsConfig(TString wopt) need 3 arguments "<<endl;
+      fSpecies=opts->At(0)->GetName();
+      fFile=opts->At(1)->GetName();
+      fObjName=opts->At(2)->GetName();
+   }
+  WeightsConfig( TString species, TString weightfile,TString obname)
+    :fSpecies(species),fFile(weightfile),fObjName(obname){}
+
+    const TString Species() const {return fSpecies;}
+    const TString File()  const {
+      if(!fFile.BeginsWith("/"))
+	return  (TString)gSystem->Getenv("PWD")+"/"+fFile;
+      return fFile;
+    }
+    const TString ObjName() const {return fObjName;}
+
+    Bool_t IsValid() const{ if(fSpecies==TString()) return kFALSE;return kTRUE; }
+    void Copy(const HS::WeightsConfig& wcon){
+      fSpecies=wcon.Species();
+      fFile=wcon.File();
+      fObjName=wcon.ObjName();
+    }
+  private:
+    TString fSpecies;
+    TString fFile;
+    TString fObjName;
   };
 }//namespace HS
 #endif //ifdef Weights

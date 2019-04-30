@@ -1,4 +1,6 @@
 #include "Setup.h"
+#include "Weights.h"
+#include "RooHSEventsPDF.h"
 #include <RooGenericPdf.h>
 #include <RooAbsData.h>
 #include <RooDataSet.h>
@@ -19,7 +21,7 @@ namespace HS{
     }
     
     Setup::Setup(const Setup& other):TNamed(other.fName,other.fName){
-      cout<<"****************************COPY "<<fIDBranchName<<" "<<fVars.getSize()<< " "<< other.fFormString.size()<<endl;
+      //   cout<<"****************************COPY "<<fIDBranchName<<" "<<fVars.getSize()<< " "<< other.fFormString.size()<<endl;
        fWS={"HSWS"};
        fFitOptions=other.fFitOptions;
        fConstraints=other.fConstraints;   
@@ -32,24 +34,19 @@ namespace HS{
     	LoadCategory(catStr);
       for(auto &varStr: other.fAuxVarString)
     	LoadAuxVar(varStr);
-      // for(auto &parStr: other.fParString)
-      // 	LoadParameter(parStr);
-     for(auto &formStr: other.fFormString)
+      for(auto &formStr: other.fFormString)
     	LoadFormula(formStr);
       for(auto &pdfStr: other.fPDFString)
     	FactoryPDF(pdfStr);
 
-      fWS.Print("v");
+      //    fWS.Print("v");
 
-      cout<<"                   DONE "<<endl;
       for(auto &specStr: other.fSpecString)
     	LoadSpeciesPDF(specStr.first,specStr.second);
       
-       cout<<"****************************COPY "<<fIDBranchName<<" "<<fVars.getSize()<<endl;
     }
 
     Setup& Setup::operator=(const Setup& other){
-       cout<<"****************************== "<<fIDBranchName<<" "<<fVars.getSize()<<endl;
       fFitOptions=other.fFitOptions;
       fConstraints=other.fConstraints;
       fCut=other.fCut;
@@ -74,9 +71,7 @@ namespace HS{
     	LoadSpeciesPDF(specStr.first,specStr.second);
       
   
-      cout<<"****************************== "<<fIDBranchName<<" "<<fVars.getSize()<<endl;
-      fVars.Print();
-      return *this;
+        return *this;
     }
  
     ////////////////////////////////////////////////////////////
@@ -170,6 +165,31 @@ namespace HS{
       }
      fAuxVarString.push_back(opt);
      }
+    void Setup::FactoryPDF(TString opt){
+      fPDFString.push_back(opt);
+      if(opt.Contains("WEIGHTS@")){
+	TString wopt=opt(opt.First("@")+1,opt.Sizeof()-opt.First("@"));
+	opt=opt(0,opt.First("@"));
+	//auto wgtcon=WeightsConfig{wopt};
+
+	//create PDF as normal
+	auto pdf=fWS.factory(opt);
+
+	//check if EventsPDF
+	auto *evPdf=dynamic_cast<RooHSEventsPDF*>(pdf);
+	if(evPdf){
+	  // evPdf->SetInWeights(wgtcon);
+	  fPDFInWeights[evPdf->GetName()]=wopt;
+	}
+	else{
+	  cout<<"WARNING Setup::FactoryPDF trying to give weights to non RooHSEventsPDF "<< opt<<" "<<wopt<<endl;
+	}
+      }
+      else{
+	fWS.factory(opt);
+      }
+
+    }
     ///////////////////////////////////////////////////////////
     ///Set this PDF to be included in extended ML fit
     ///This function will create the associated yield paramter
@@ -265,7 +285,7 @@ namespace HS{
 	if(!hadCon)par->setVal(gRandom->Uniform(par->getMin(""),par->getMax("")));
       }//end Paramter loop
     }
-
+  
     ////////////////////////////////////////////////////////////
     RooStats::ModelConfig*  Setup::GetModelConfig(){
       auto modelConfig =new RooStats::ModelConfig(&fWS);

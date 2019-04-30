@@ -18,7 +18,7 @@ namespace HS{
       RooAbsData::setDefaultStorageType(RooAbsData::Vector);
       
       auto *model=fCurrSetup->Model();
-      cout<<" splot model y"<<model<<endl;
+      
       ////////////////////////////////////////////////////////
        //sPlot
        cout<<"HS::FIT::sPlot::Run create sWeights "<<endl;
