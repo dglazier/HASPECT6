@@ -35,7 +35,9 @@ namespace HS{
       // void LoadAuxVar(TString vname);
       void LoadBinVar(TString opt,Int_t nbins,Double_t min,Double_t max);
       void LoadBinVar(TString opt,Int_t nbins,Double_t* xbins);
- 
+
+      void AddCut(TString cut){fSelection=cut;}
+      
       void LoadSetup(Setup &setup);
 
       const TString TreeName(const TString name="Data") const {
@@ -72,6 +74,8 @@ namespace HS{
       std::map<TString, TString> fNameToTree;
   
       TString fOutDir;
+      TString fSelection;
+      
       Bool_t fIsSetup=kFALSE;
       
     };

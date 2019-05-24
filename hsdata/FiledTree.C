@@ -99,8 +99,9 @@ filed_uptr FiledTree::CloneEmpty(ttree_ptr tree,TString fname){
 }
 filed_uptr FiledTree::CloneFull(ttree_ptr tree,TString fname){
   auto saveDir=gDirectory;
+   
   filed_uptr f{new FiledTree()};
-  f->CreateFile(fname,"create");
+  f->CreateFile(fname,"recreate");
   f->SetTree(tree->CloneTree(-1,"fast"));
   f->SetMode(Mode_t::copyfull);
   f->SetTreeDirectory();
@@ -108,6 +109,7 @@ filed_uptr FiledTree::CloneFull(ttree_ptr tree,TString fname){
   return f;
 }
 filed_uptr FiledTree::RecreateCopyFull(ttree_ptr tree,TString fname){
+  cout<<"RCF wrong "<<tree.get()<<endl;
   //using copy tree allows use of tentrylists to filter
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
@@ -119,6 +121,7 @@ filed_uptr FiledTree::RecreateCopyFull(ttree_ptr tree,TString fname){
   return f;
 }
 filed_uptr FiledTree::RecreateCopyFull(TTree* tree,TString fname){
+  cout<<"RCF "<<tree<<endl;
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"recreate");

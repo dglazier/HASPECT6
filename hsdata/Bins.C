@@ -1,6 +1,7 @@
 //#include "Riostream.h"
 #include "Bins.h"
 #include "TROOT.h"
+#include "TTreeFormula.h"
 #include "TMath.h"
 #include "TDirectory.h"
 #include "TFileMerger.h"
@@ -88,8 +89,10 @@ void HS::Bins::IterateAxis(Int_t iA,TString binName) {
     fPartName.insert(fPartName.begin(),part);//for correct ordering with fVar.Axis vector
   }
 }
-void HS::Bins::RunBinTree(TTree* tree){
+void HS::Bins::RunBinTree(TTree* tree,TString selection){
+  fSelection=selection;
   fFileNames.clear();
+
   if(fNbins==0) InitialiseBins();//1 time initialisation
   
   if(fNbins<fMAXFILES){
@@ -147,8 +150,41 @@ void HS::Bins::RunBinTree(TTree* tree,Int_t BMin,Int_t BMax){
   saveDir->cd();
 
   Int_t totalBytes=0;
+
+ 
+  //Turn on any branches needed to evaluate selection
+
+  
+  auto leaves=tree->GetListOfLeaves();
+  auto branches=tree->GetListOfBranches();
+  vector<TString> on_branches;
+  for(Int_t ib=0;ib<branches->GetEntries();ib++){
+    if(tree->GetBranchStatus(branches->At(ib)->GetName())){
+      on_branches.push_back(branches->At(ib)->GetName());
+    }
+  }
+  //turn on all branches so can make formula
+  tree->SetBranchStatus("*",1);
+  
+  //create selection cut
+  TTreeFormula treeCut("selection",fSelection,tree);
+  vector<TString> cut_branches;
+  for(Int_t jl=0;jl<treeCut.GetNcodes();jl++){
+    if(treeCut.GetLeaf(jl)->GetBranch()){
+      cut_branches.push_back(treeCut.GetLeaf(jl)->GetBranch()->GetName());
+    }
+   }
+  //Now only turn on required branches
+  tree->SetBranchStatus("*",0);
+  for(const auto& brname: on_branches)
+     tree->SetBranchStatus(brname,1);
+  for(const auto& brname: cut_branches)
+     tree->SetBranchStatus(brname,1);
+  
   for(Long64_t i=0;i<tree->GetEntries();i++){//loop over events
     tree->GetEntry(i);
+    if(!static_cast<Bool_t>(treeCut.EvalInstance()))
+      continue;
     if(GotAnInt){//put the integer value in the double array
       for(UInt_t iv=0;iv<vIntIndex.size();iv++){
 	vVal[vIntIndex[iv]]=vValI[vIntIndex[iv]];
@@ -168,7 +204,11 @@ void HS::Bins::RunBinTree(TTree* tree,Int_t BMin,Int_t BMax){
       fTrees[aBin]->Reset();
     }
   }
-
+  for(const auto& brname: cut_branches)
+    if(std::find(on_branches.begin(),on_branches.end(),brname)==on_branches.end()){
+      tree->SetBranchStatus(brname,0);
+    }
+  
   tree->ResetBranchAddresses();
   saveDir->cd();
   //cleanup
@@ -257,7 +297,7 @@ HS::BinTree::BinTree(Int_t nbins,TString name,TTree* tree0){
   fTree->SetName(tree0->GetName());
   fTree->SetDirectory(fFile);
   fTree->SetAutoSave(1E12); //We do our won autosave as this one changes basket size greatly increasing memory when large number of bins
-   fTree->SetBasketSize("*",32000); //cloned trees have the parent basket size which can be very large and use large amount of memeory when we great many bins
+   fTree->SetBasketSize("*",64000); //cloned trees have the parent basket size which can be very large and use large amount of memeory when we great many bins
   fTree->SetAutoFlush(1E12); //Don't let root flush or it will make basket sizes
 }
 HS::BinTree::~BinTree(){

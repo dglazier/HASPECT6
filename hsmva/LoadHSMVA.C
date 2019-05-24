@@ -10,11 +10,15 @@ void LoadHSMVA(){
   
   TString HSCODE=gSystem->Getenv("HSCODE");
   TString mvapath="/hsmva";
+  TString datpath="/hsdata";
   
   gInterpreter->AddIncludePath(HSCODE+mvapath);
   gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+mvapath).Data()));
+  gInterpreter->AddIncludePath(HSCODE+datpath);
+  gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSCODE+datpath).Data()));
  
   gROOT->LoadMacro("FiledTree.C+");
+  
   gROOT->LoadMacro("TrainingInterface.C+");
   gROOT->LoadMacro("TrainSignalID.C+");
   gROOT->LoadMacro("TrainReg.C+");
