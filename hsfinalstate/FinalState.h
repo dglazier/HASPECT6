@@ -108,12 +108,16 @@ namespace HS{
       Bool_t IsCorrect(){return fCorrect;}
 
       void CreateFinalTree(TString tname,TString fname){
+	fFinalTree.reset();
 	fFinalTree=(FiledTree::Recreate(tname,fname));
 	FinalStateOutTree(FinalTree());
       }
       ttree_ptr FinalTree(){return fFinalTree->Tree();}
       virtual TreeData* GetTreeData(){return nullptr;}
       
+      void AddOtherFinalTree(TTree* tree){fOtherFinalTrees.push_back(tree);}
+      std::vector<TTree*>& OtherFinalTrees(){return fOtherFinalTrees;}
+
       void EndAndWrite();
       Long64_t GetUID(){return static_cast<Long64_t>(fUID);}
       
@@ -149,7 +153,6 @@ namespace HS{
       vector<THSParticle*> fVec0;
       vector<THSParticle*> fVecBeams;
       vector<Int_t> fDetTypes;
-      
       
         
       //     DataManager* fData=nullptr;
@@ -200,7 +203,8 @@ namespace HS{
       Bool_t fIsPermutating1=kFALSE;
       
       filed_uptr fFinalTree;
-      
+      std::vector<TTree*> fOtherFinalTrees;
+   
       //Kinematics calculator
       HSKinematics fKine;
       

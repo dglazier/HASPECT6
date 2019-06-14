@@ -29,7 +29,7 @@ namespace HS{
   class TreeParticleData {
 
   public:
-  TreeParticleData(TString tname,TString fname):fTree(FiledTree::Recreate(tname,fname)) {};
+  TreeParticleData(TString tname,TString fname):fTree(FiledTree::Recreate(tname,fname)),fTreeName(tname),fFileName(fname) {};
     TreeParticleData()=default;
     TreeParticleData(const TreeParticleData&)=default;
     TreeParticleData(TreeParticleData&&)=default;
@@ -79,7 +79,12 @@ namespace HS{
     void FillVars() ;
 
     ttree_ptr GetTree(){return fTree->Tree();}
+    filed_uptr GetSavedFiledTree(){
+      return std::move(FiledTree::Read(fTreeName,fFileName));
+    }
+
     void AddFinal(); //Add FinalState::TreeData branches
+    void UseCorrect(Bool_t useit){fUseCorrect=kFALSE;} //Add Signal/Background branch based on FinalState::fCorrect
  
   private:
     
@@ -98,6 +103,11 @@ namespace HS{
     vector<HS::ParticleData> fPData;
     vecPartVars fPVars;
      
+    TString fTreeName;
+    TString fFileName;
+
+    Bool_t fUseCorrect=kTRUE;
+
   };//class TreeParticleData
 
 };//namespace HSFinalState

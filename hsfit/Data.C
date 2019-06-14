@@ -99,7 +99,7 @@ namespace HS{
 
      auto ds=dset_uptr(new  RooDataSet("DataEvents","DataEvents",
 				       rawtree,vars,
-				       fSetup->Cut(),fInWeightName));
+				       fSetup->DataCut(),fInWeightName));
      if(fInWeights.get())
        delete rawtree;
      

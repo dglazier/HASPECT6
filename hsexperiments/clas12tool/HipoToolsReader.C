@@ -151,19 +151,19 @@ void CLAS12::HipoToolsReader::FillGenerated(){
 ///Read event info from header bank (REC::EVENT)
 void CLAS12::HipoToolsReader::SetEventInfo(){
 
-  fEventInfo->fTrigBit=fEvent->head()->getTrigger();
-  fEventInfo->fCJSTTime=fEvent->head()->getStartTime();
-  fEventInfo->fRFTime=fEvent->head()->getRFTime();
-  fEventInfo->fBeamHel=fEvent->head()->getHelicity();
-  fEventInfo->fNEvent=fEvent->head()->getEventNumber();
+  fEventInfo->fTrigBit=fEvent->runconfig()->getTrigger();
+  fEventInfo->fCJSTTime=fEvent->event()->getStartTime();
+  fEventInfo->fRFTime=fEvent->event()->getRFTime();
+  fEventInfo->fBeamHel=fEvent->event()->getHelicity();
+  fEventInfo->fNEvent=fEvent->runconfig()->getEvent();
 
   
 }
 //////////////////////////////////////////////////////
 ///Read run info from header bank (REC::EVENT)
 void CLAS12::HipoToolsReader::SetStartRunInfo(){
-  cout<<fEvent->head()->getType()<<" "<<fAddGenerated<<endl;
-  fRunInfo->fNRun=fEvent->head()->getRunNumber();
+  cout<<fEvent->start()->getType()<<" "<<fAddGenerated<<endl;
+  fRunInfo->fNRun=fEvent->runconfig()->getRun();
   if(fAddGenerated)fRunInfo->fType=(1);
   else fRunInfo->fType=(0);
 

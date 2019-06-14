@@ -27,23 +27,29 @@ namespace HS{
        fFitOptions=other.fFitOptions;
        fConstraints=other.fConstraints;   
        fCut=other.fCut;
+       fDataOnlyCut=other.fDataOnlyCut;
+
        fIDBranchName=other.fIDBranchName;
        fOutDir=other.fOutDir;
        for(auto &varStr: other.fVarString)
-    	LoadVariable(varStr);
-      for(auto &catStr: other.fCatString)
-    	LoadCategory(catStr);
-      for(auto &varStr: other.fAuxVarString)
-    	LoadAuxVar(varStr);
-      for(auto &formStr: other.fFormString)
-    	LoadFormula(formStr);
-      for(auto &pdfStr: other.fPDFString)
-    	FactoryPDF(pdfStr);
+	 LoadVariable(varStr);
+       for(auto &catStr: other.fCatString)
+	 LoadCategory(catStr);
+       for(auto &varStr: other.fAuxVarString)
+	 LoadAuxVar(varStr);
+       for(auto &formStr: other.fFormString)
+	 LoadFormula(formStr);
+       for(auto &pdfStr: other.fPDFString)
+	 FactoryPDF(pdfStr);
 
-      //    fWS.Print("v");
-
-      for(auto &specStr: other.fSpecString)
+       for(auto &specStr: other.fSpecString)
     	LoadSpeciesPDF(specStr.first,specStr.second);
+
+      //const parameters
+       for(const auto& pdf:other.fConstPDFPars)
+	 SetConstPDFPars(pdf.first,pdf.second);
+       for(const auto& par:other.fConstPars)
+	 SetConstPar(par.first,par.second);
       
     }
 
@@ -60,19 +66,22 @@ namespace HS{
       }
       for(auto &catStr: other.fCatString)
     	LoadCategory(catStr);
-     for(auto &varStr: other.fAuxVarString)
+      for(auto &varStr: other.fAuxVarString)
     	LoadAuxVar(varStr);
-     // for(auto &parStr: other.fParString)
-     // 	LoadParameter(parStr);
-     for(auto &formStr: other.fFormString)
+      for(auto &formStr: other.fFormString)
     	LoadFormula(formStr);
-     for(auto &pdfStr: other.fPDFString)
+      for(auto &pdfStr: other.fPDFString)
     	FactoryPDF(pdfStr);
       for(auto &specStr: other.fSpecString)
     	LoadSpeciesPDF(specStr.first,specStr.second);
       
+      //const parameters
+      for(const auto& pdf:other.fConstPDFPars)
+	SetConstPDFPars(pdf.first,pdf.second);
+      for(const auto& par:other.fConstPars)
+	SetConstPar(par.first,par.second);
   
-        return *this;
+      return *this;
     }
  
     ////////////////////////////////////////////////////////////

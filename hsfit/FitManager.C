@@ -26,7 +26,7 @@ namespace HS{
     void FitManager::Run(){
       
       CreateCurrSetup();
-      
+     
       //get dataset fFiti
       fCurrDataSet=std::move(Data().Get(fFiti));
 
