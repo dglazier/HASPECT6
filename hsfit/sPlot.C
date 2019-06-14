@@ -113,14 +113,15 @@ namespace HS{
 	}
       }
       
+      //Open tree file
       auto ftree=FiledTree::Read(Data().ParentTreeName(),
       				 Data().ParentName());
-      
+      //create a copy in a new file to append the weights to
+      //Keep it in file as large trees can use too much memory
       fWeightedFiledTree=(FiledTree::CloneFull(ftree->Tree(),SetUp().GetOutDir()+"DataWeightedTree.root"));
+      //delete original
       ftree.reset();
-
-      //fWeightedTree.reset(fWeightedFileTree->Tree().get());//read tree into memory
-      //      fWeightedTree->SetDirectory(0);
+      //Add weights to tree
       fWeights->AddToTree(fWeightedFiledTree->Tree().get());
     }
 

@@ -18,7 +18,9 @@
 
   ////////////////////////////Make Bins
   RF.Bins().LoadBinVar("Eg",4,3,4);
-   
+  //Optionally apply additional filter to binned files data via
+  //  RF.Bins().AddCut("M1>9");
+  
   ///////////////////////////Load Data
   RF.LoadData("MyModel","Data.root");
 

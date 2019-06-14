@@ -75,9 +75,10 @@ namespace HS{
       
       const TString Cut() const {return fCut;}
       void AddCut(TString cut){if(fCut.Sizeof()>1){fCut+="&&";}fCut+=cut;};
-      //void SetCut(TString cut){fCut=cut;}
+     
       void SetDataOnlyCut(TString cut) {fDataOnlyCut=cut;}
       const TString DataCut() const {
+	//in case you want to cut on variable not in simualted data
 	if(fCut.Sizeof()>1&&fDataOnlyCut.Sizeof()>1)
 	  return fCut+"&&"+fDataOnlyCut;
 	else 	if(fCut.Sizeof()>1) return fCut;
@@ -125,20 +126,20 @@ namespace HS{
       
       void DefaultFitOptions(){
 	AddFitOption(RooFit::SumW2Error(kTRUE));
-	AddFitOption(RooFit::NumCPU(1));
+	//AddFitOption(RooFit::NumCPU(1));
 	AddFitOption(RooFit::Save(kTRUE));
 	AddFitOption(RooFit::Warnings(kFALSE));
 	//AddFitOption(RooFit::Minos(kFALSE));
 	//AddFitOption(RooFit::Minimizer("Minuit2"));
       }
       void RandomisePars();
+
       void SetConstPar(TString par,Bool_t co=kTRUE){
-	fPars.Print("v");
 	(dynamic_cast<RooRealVar*>(fPars.find(par)))->setConstant(co);
 	fConstPars[par]=co;
       }
-     void SetConstPDFPars(TString pdf,Bool_t co=kTRUE){
-       (dynamic_cast<RooAbsPdf*>(fPDFs.find(pdf)))->getParameters(DataVars())->setAttribAll("Constant",co);
+      void SetConstPDFPars(TString pdf,Bool_t co=kTRUE){
+	(dynamic_cast<RooAbsPdf*>(fPDFs.find(pdf)))->getParameters(DataVars())->setAttribAll("Constant",co);
 	fConstPDFPars[pdf]=co;
       }
 

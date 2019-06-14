@@ -23,8 +23,9 @@ namespace HS{
   class Bins : public TNamed{
 
  
-  protected:
-    
+  private :
+    void RunBinTree(TTree* tree,Int_t BMin,Int_t BMax);
+
     VecString_t fBinNames;//names of individual bins
     VecString_t fFileNames;//names of individual files
     VecAxis_t fVarAxis;//bin limits for variables
@@ -39,7 +40,8 @@ namespace HS{
     TString fOutDir="./";
     TString fDataName="Data";
     TString fBinnedTreeName;
-
+    TString fSelection;
+    
     vector<BinTree*> fTrees;//!
   
   public:
@@ -65,8 +67,7 @@ namespace HS{
     Int_t GetParti(Int_t ia,TString name){for(Int_t ib=0;ib<fVarAxis[ia].GetNbins();ib++){if(name==fPartName[ia][ib]) return ib;} return 0;} //find the bin index for a binpart name
     void InitialiseBins();
     void Save(TString filename);
-    void RunBinTree(TTree* tree);
-    void RunBinTree(TTree* tree,Int_t BMin,Int_t BMax);
+    void RunBinTree(TTree* tree,TString selection="");
     // void MakeBinTree(TTree* tree,TString name,TString filename){InitialiseBinTree(name,filename);RunBinTree(tree);Save();}
     //TTree* GetBinTree(){return fBinTree;}
     // TTree* GetBinnedTree(TTree* tree,Int_t bin);

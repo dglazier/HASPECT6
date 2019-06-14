@@ -45,7 +45,7 @@ namespace HS{
 
       TTree* GetWeightedTree(){return fWeightedFiledTree->Tree().get();};
       void DeleteWeightedTree(){fWeightedFiledTree.reset();};
-     // void WriteThis() override;
+      
     protected:
       void WeightedTree();
     private:

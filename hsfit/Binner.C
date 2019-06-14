@@ -67,7 +67,7 @@ namespace HS{
       //now split the tree into bins and save in subdirs of fOutDir
       fBins.SetOutDir(fOutDir);
       fBins.SetDataName(name);
-      fBins.RunBinTree(tree);
+      fBins.RunBinTree(tree,fSelection);
       fBins.Save(fOutDir+name+"BinsConfig.root");
       fNameToFiles[name]=fBins.GetFileNames();
       fNameToTree[name]=tree->GetName();
