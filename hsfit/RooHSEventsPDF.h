@@ -72,6 +72,7 @@ namespace HS{
       //TString fWgtsName;
       
       TString fCut; //cut for applying to event tree
+      TString fInWeightCut; //additional cut for applying to event tree
  
       vector< RooArgSet* > fVarSet;//set of variables for which integral defined
       vector< RooRealProxy* > fProxSet; //double observbles
@@ -118,6 +119,10 @@ namespace HS{
       }
       void SetInWeights(TString wst){
 	if(wst==TString()) return;
+	if(!wst.Contains(",")){
+	  fInWeightCut=wst;
+	  return;
+	}
 	HS::WeightsConfig wcon(wst);
 	fWgtsConf.Copy(wcon);
       }

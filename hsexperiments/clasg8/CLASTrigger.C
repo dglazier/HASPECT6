@@ -21,8 +21,8 @@ void CLASTrigger::SubtractStartTimeBeam(THSParticle* part,THSParticle* beam){
   SetStartTime();
   //  Float_t offset=0;
   Float_t offset=20*(!IsSim());
-  // Float_t startime=fStartTime-(part->Vertex().Z()+offset)/TMath::C()*1E9/100;
-  Float_t startime=fStartTime;
+ Float_t startime=fStartTime-(part->Vertex().Z()+offset)/TMath::C()*1E9/100;
+ // Float_t startime=fStartTime;
   beam->ShiftTime(-startime);
 }
 void CLASTrigger::SubtractStartTime(THSParticle* part){

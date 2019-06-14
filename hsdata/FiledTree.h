@@ -56,18 +56,18 @@ namespace HS{
     const ttree_ptr Tree() const {return fTree;}
     void Fill(){Tree()->Fill();}
 
-    static filed_uptr Recreate(TString tname,TString fname);
-    static filed_uptr Create(TString tname,TString fname);
-    static filed_uptr Read(TString tname,TString fname);
-    static filed_uptr Update(TString tname,TString fname);
-    static filed_uptr CloneEmpty(TTree* tree,TString fname);
-    static filed_uptr CloneFull(TTree* tree,TString fname);
-    static filed_uptr CloneEmpty(ttree_ptr tree,TString fname);
-    static filed_uptr CloneFull(ttree_ptr tree,TString fname);
-    static filed_uptr RecreateCopyFull(TTree* tree,TString fname);
-    static filed_uptr RecreateCopyFull(ttree_ptr tree,TString fname);
+    static filed_uptr Recreate(const TString tname,const TString fname);
+    static filed_uptr Create(const TString tname,const TString fname);
+    static filed_uptr Read(const TString tname,const TString fname);
+    static filed_uptr Update(const TString tname,const TString fname);
+    static filed_uptr CloneEmpty(TTree* tree,const TString fname);
+    static filed_uptr CloneFull(TTree* tree,const TString fname);
+    static filed_uptr CloneEmpty(ttree_ptr tree,const TString fname);
+    static filed_uptr CloneFull(ttree_ptr tree,const TString fname);
+    static filed_uptr RecreateCopyFull(TTree* tree,const TString fname,const TString selection="",const Long64_t nentries = TTree::kMaxEntries);
+    static filed_uptr RecreateCopyFull(ttree_ptr tree,const TString fname,const TString selection="",const Long64_t nentries = TTree::kMaxEntries);
 
-    void SetMode(Mode_t m){fMode=m;}
+    void SetMode(const Mode_t m){fMode=m;}
     Mode_t Mode(){return fMode;}
     
   protected :

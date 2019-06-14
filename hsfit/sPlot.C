@@ -114,23 +114,27 @@ namespace HS{
       }
       
       auto ftree=FiledTree::Read(Data().ParentTreeName(),
-				 Data().ParentName());
-      fWeightedTree.reset(ftree->Tree()->CloneTree());//read tree into memory
-      fWeightedTree->SetDirectory(0);
-      fWeights->AddToTree(fWeightedTree.get());
+      				 Data().ParentName());
+      
+      fWeightedFiledTree=(FiledTree::CloneFull(ftree->Tree(),SetUp().GetOutDir()+"DataWeightedTree.root"));
+      ftree.reset();
+
+      //fWeightedTree.reset(fWeightedFileTree->Tree().get());//read tree into memory
+      //      fWeightedTree->SetDirectory(0);
+      fWeights->AddToTree(fWeightedFiledTree->Tree().get());
     }
 
     void sPlot::DrawWeighted(TString var,TString wname,TString cut, TString opt){
-      if(!fWeightedTree.get())
+      if(!fWeightedFiledTree.get())
 	WeightedTree();
 
-      if(!fWeightedTree.get())
+      if(!fWeightedFiledTree.get())
 	return;
 
  
       if(cut==TString()) cut="1";
       
-      fWeightedTree->Draw(var,wname+"*("+cut+")",opt);
+      fWeightedFiledTree->Tree()->Draw(var,wname+"*("+cut+")",opt);
 
     }
     // void sPlot::WriteThis(){

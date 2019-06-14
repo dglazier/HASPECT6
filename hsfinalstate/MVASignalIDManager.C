@@ -49,8 +49,8 @@ void MVASignalIDManager::ConfigureResults(TString mvaName,FinalState* fs,vecName
   }
   cout<<"MVASIGNALID "<<fs->FinalTree()->GetName()<<" "<<mvaName<<endl;
   //store the classifier response in output tree
-  fs->FinalTree()->Branch(mvaName,&fResult,mvaName+"/F");
+  fs->FinalTree()->Branch(mvaName,&fResult,mvaName+"/D");
   auto othertrees=fs->OtherFinalTrees();
   for(auto* tree:othertrees)
-    if(tree)tree->Branch(mvaName,&fResult,mvaName+"/F");
+    if(tree)tree->Branch(mvaName,&fResult,mvaName+"/D");
 }

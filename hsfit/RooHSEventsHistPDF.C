@@ -196,7 +196,8 @@ void RooHSEventsHistPDF::CreateHistPdf(){
     fTreeEntry=itr;
     Double_t tvar=fvecReal[fTreeEntry*fNvars+0];
     his1->Fill(tvar,GetIntegralWeight(itr));
-  }
+   }
+
   //Could be problems if weights result in -ve bins...
   for(Int_t ix=0;ix<his1->GetEntries();ix++)
     if(his1->GetBinContent(ix)<0){

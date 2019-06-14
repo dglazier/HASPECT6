@@ -70,7 +70,7 @@ filed_uptr FiledTree::Create(TString tname,TString fname){
 filed_uptr FiledTree::CloneEmpty(TTree* tree,TString fname){
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
-  f->CreateFile(fname,"create");
+  f->CreateFile(fname,"recreate");
   f->SetTree(tree->CloneTree(0));
   f->SetMode(Mode_t::copyempty);
   f->SetTreeDirectory();
@@ -80,7 +80,7 @@ filed_uptr FiledTree::CloneEmpty(TTree* tree,TString fname){
 filed_uptr FiledTree::CloneFull(TTree* tree,TString fname){
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
-  f->CreateFile(fname,"create");
+  f->CreateFile(fname,"recreate");
   f->SetTree(tree->CloneTree(-1,"fast"));
   f->SetMode(Mode_t::copyfull);
   f->SetTreeDirectory();
@@ -90,7 +90,7 @@ filed_uptr FiledTree::CloneFull(TTree* tree,TString fname){
 filed_uptr FiledTree::CloneEmpty(ttree_ptr tree,TString fname){
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
-  f->CreateFile(fname,"create");
+  f->CreateFile(fname,"recreate");
   f->SetTree(tree->CloneTree(0));
   f->SetMode(Mode_t::copyempty);
   f->SetTreeDirectory();
@@ -100,29 +100,29 @@ filed_uptr FiledTree::CloneEmpty(ttree_ptr tree,TString fname){
 filed_uptr FiledTree::CloneFull(ttree_ptr tree,TString fname){
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
-  f->CreateFile(fname,"create");
+  f->CreateFile(fname,"recreate");
   f->SetTree(tree->CloneTree(-1,"fast"));
   f->SetMode(Mode_t::copyfull);
   f->SetTreeDirectory();
   saveDir->cd();
   return f;
 }
-filed_uptr FiledTree::RecreateCopyFull(ttree_ptr tree,TString fname){
+filed_uptr FiledTree::RecreateCopyFull(ttree_ptr tree,const TString fname,const TString selection,const Long64_t nentries){
   //using copy tree allows use of tentrylists to filter
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"recreate");
-  f->SetTree(tree->CopyTree(""));
+  f->SetTree(tree->CopyTree(selection,"",nentries));
   f->SetMode(Mode_t::copyfull);
   f->SetTreeDirectory();
   saveDir->cd();
   return f;
 }
-filed_uptr FiledTree::RecreateCopyFull(TTree* tree,TString fname){
+filed_uptr FiledTree::RecreateCopyFull(TTree* tree,const TString fname,const TString selection,const Long64_t nentries ){
   auto saveDir=gDirectory;
   filed_uptr f{new FiledTree()};
   f->CreateFile(fname,"recreate");
-  f->SetTree(tree->CopyTree(""));
+  f->SetTree(tree->CopyTree(selection,"",nentries));
   f->SetMode(Mode_t::copyfull);
   f->SetTreeDirectory();
   saveDir->cd();

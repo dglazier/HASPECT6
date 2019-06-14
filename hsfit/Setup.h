@@ -76,6 +76,15 @@ namespace HS{
       const TString Cut() const {return fCut;}
       void AddCut(TString cut){if(fCut.Sizeof()>1){fCut+="&&";}fCut+=cut;};
       //void SetCut(TString cut){fCut=cut;}
+      void SetDataOnlyCut(TString cut) {fDataOnlyCut=cut;}
+      const TString DataCut() const {
+	if(fCut.Sizeof()>1&&fDataOnlyCut.Sizeof()>1)
+	  return fCut+"&&"+fDataOnlyCut;
+	else 	if(fCut.Sizeof()>1) return fCut;
+	else 	if(fDataOnlyCut.Sizeof()>1) return fDataOnlyCut;
+	else return TString();
+      }
+
  
       const TString GetIDBranchName() const {return fIDBranchName;}
       void SetIDBranchName(TString name){fIDBranchName=name;}
@@ -123,6 +132,15 @@ namespace HS{
 	//AddFitOption(RooFit::Minimizer("Minuit2"));
       }
       void RandomisePars();
+      void SetConstPar(TString par,Bool_t co=kTRUE){
+	fPars.Print("v");
+	(dynamic_cast<RooRealVar*>(fPars.find(par)))->setConstant(co);
+	fConstPars[par]=co;
+      }
+     void SetConstPDFPars(TString pdf,Bool_t co=kTRUE){
+       (dynamic_cast<RooAbsPdf*>(fPDFs.find(pdf)))->getParameters(DataVars())->setAttribAll("Constant",co);
+	fConstPDFPars[pdf]=co;
+      }
 
       void SaveSnapShot(TString name){fWS.saveSnapshot(name,RooArgSet(fYields,fParameters),kTRUE);};
       void LoadSnapShot(TString name){fWS.loadSnapshot(name);}
@@ -155,6 +173,7 @@ namespace HS{
       TString fCut;
       TString fIDBranchName="UID";
       TString fOutDir;
+      TString fDataOnlyCut;
 
       strings_t fVarString;
       strings_t fCatString;
@@ -162,6 +181,10 @@ namespace HS{
       strings_t fFormString;
       strings_t fAuxVarString;
       strings_t fPDFString;
+
+      std::map<TString,Bool_t> fConstPars;
+      std::map<TString,Bool_t> fConstPDFPars;
+
       std::vector<std::pair<TString,Float_t> > fSpecString;
       std::map<TString,TString> fPDFInWeights;
       TString fYld="Yld_";//yield variable prepend

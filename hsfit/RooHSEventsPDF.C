@@ -45,6 +45,7 @@ RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) : 
     fCheckInt=other.fCheckInt;
     fUseWeightsGen=other.fUseWeightsGen;
     fCut=other.fCut;
+    fInWeightCut=other.fInWeightCut;
     fIsValid=other.fIsValid;
     fUseEvWeights=other.fUseEvWeights;
     
@@ -327,7 +328,16 @@ Bool_t RooHSEventsPDF::CheckChange() const{
 Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   if(!tree->GetEntries())return kFALSE;
   Info("RooHSEventsPDF::SetEvTree"," with name %s and cut %s",tree->GetName(),cut.Data());
-  fCut=cut;
+
+  //Set the cut
+  //Note weight cut can be set with WEIGHT@expr in factory constructor
+  if(cut==TString())
+    fCut=fInWeightCut;
+  else if (fInWeightCut==TString())	
+    fCut=cut;
+  else
+    fCut=cut+"&&"+fInWeightCut;
+
   ProcInfo_t info;
   fEvTree=tree;
 
