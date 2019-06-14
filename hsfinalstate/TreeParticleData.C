@@ -36,15 +36,19 @@ void HS::TreeParticleData::SetBranches() {
   }
   
    // tree->Print();
-   AddSigBck(); //Add branches for signal and background weights
+   if(fUseCorrect) AddSigBck(); //Add branches for signal and background weights
    tree->Branch("UID",&fUID,"UID/D");
+
+   //Add tree to finalstate list
+   fFinalState->AddOtherFinalTree(fTree->Tree().get());
+
 }
 //////////////////////////////////////////////////////////////////////////
 ///Add signal and background flags (for HSMVA)
 void HS::TreeParticleData::AddSigBck(){
-  fTree->Tree()->Branch("Signal",&fSigWeight,"Sig/F");
+  fTree->Tree()->Branch("Signal",&fSigWeight,"Signal/F");
   fNSig=0;	
-  fTree->Tree()->Branch("Background",&fBckWeight,"Bck/F");
+  fTree->Tree()->Branch("Background",&fBckWeight,"Background/F");
   fNBck=0;	
   
 }

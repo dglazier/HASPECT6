@@ -70,6 +70,7 @@ namespace HS{
     TString OutDir(){return fOutDir;};
 
     void AddFinal(); //Add FinalState::TreeData branches
+    void UseCorrect(Bool_t useit); //Add Signal/Background branch based on FinalState::fCorrect
     
   private:
     

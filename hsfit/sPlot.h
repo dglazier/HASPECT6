@@ -43,14 +43,16 @@ namespace HS{
       weights_uptr MergeWeights();
       void DrawWeighted(TString var,TString wname,TString cut="1",TString opt="");
 
-      TTree* GetWeightedTree(){return fWeightedTree.get();};
-     // void WriteThis() override;
+      TTree* GetWeightedTree(){return fWeightedFiledTree->Tree().get();};
+      void DeleteWeightedTree(){fWeightedFiledTree.reset();};
+      
     protected:
       void WeightedTree();
     private:
       splot_uptr fSPlot; //!sPlot object
       weights_ptr fWeights;//!
       tree_uptr fWeightedTree;//!
+      filed_uptr fWeightedFiledTree;//!
 
       ClassDefOverride(HS::FIT::sPlot,1);
     };

@@ -264,7 +264,7 @@ namespace HS{
      
      RooStats::SequentialProposal sp(fNorm);
      SetProposalFunction(sp);
-     //fKeepStart=kTRUE; //start values from previous
+     fKeepStart=kTRUE; //start values from previous
      MakeChain();
      
       

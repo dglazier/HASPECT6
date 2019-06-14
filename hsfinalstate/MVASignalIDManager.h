@@ -48,7 +48,7 @@ namespace HS{
     vecMVASignalID fMVASignalIDs;
     mapStringVecNames fPartVars;
     TString fInDir;
-    Float_t fResult;
+    Double_t fResult=0;
     Float_t fCutVal=FLT_MIN;
   };//class MVASignalIDManager
 
