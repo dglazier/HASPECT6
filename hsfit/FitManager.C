@@ -105,6 +105,7 @@ namespace HS{
 	auto pdf=dynamic_cast<RooHSEventsPDF*>( &pdfs[ip]);
 
 	if(pdf){
+	  //  pdf->SetConstInt();
 	  if(fBinner.FileNames(pdf->GetName()).size()==0)
 	    continue;
 	  auto filetree=FiledTree::

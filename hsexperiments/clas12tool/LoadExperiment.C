@@ -23,9 +23,10 @@ void LoadExperiment(){
   }
   //Add CLAS12TOOL paths.
   TString C12TOOL=gSystem->Getenv("CLAS12TOOL");
+  cout<<C12TOOL<<" "<<endl;
   if(C12TOOL!=TString("")) {
     TString USE_HIPO4=gSystem->Getenv("USE_HIPO4");
-    
+   
     TString LIB=C12TOOL+"/lib/";
     gSystem->Load(LIB+"liblz4");
     if(USE_HIPO4!=TString()){
@@ -33,8 +34,10 @@ void LoadExperiment(){
       gSystem->Load(LIB+"libClas12Banks4");
     }
     else{
+      cout<<"ADD CLAS12 3 "<<endl;
+      gInterpreter->AddIncludePath(C12TOOL+"/Clas12Banks3");
       gSystem->Load(LIB+"libHipo3");
-    gSystem->Load(LIB+"libClas12Banks3");
+      gSystem->Load(LIB+"libClas12Banks3");
     }
     
   }

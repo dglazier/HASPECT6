@@ -116,12 +116,12 @@ namespace HS{
       
       void DefaultFitOptions(){
 	AddFitOption(RooFit::SumW2Error(kTRUE));
-	AddFitOption(RooFit::NumCPU(1));
+	//	AddFitOption(RooFit::NumCPU(1));
 	AddFitOption(RooFit::Save(kTRUE));
 	AddFitOption(RooFit::Warnings(kFALSE));
+	//AddFitOption(RooFit::NumCPU(4,1));
 	//AddFitOption(RooFit::Minos(kFALSE));
-	//AddFitOption(RooFit::Minimizer("Minuit2"));
-      }
+    }
       void RandomisePars();
 
       void SaveSnapShot(TString name){fWS.saveSnapshot(name,RooArgSet(fYields,fParameters),kTRUE);};
@@ -129,6 +129,10 @@ namespace HS{
 
       RooStats::ModelConfig*  GetModelConfig();
       TString GetPDFInWeights(TString name) {return fPDFInWeights[name];}
+
+      //Sepcial PDF factories
+      RooAbsPdf* ComponentsPDF(TString opt);
+      
     protected:
       
     private:
@@ -151,7 +155,7 @@ namespace HS{
 
       RooAbsPdf* fModel=nullptr; //!owned by workspace
  
-      RooWorkspace fWS;
+      RooWorkspace fWS={"HSWS"};
       TString fCut;
       TString fIDBranchName="UID";
       TString fOutDir;

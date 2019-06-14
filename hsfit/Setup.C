@@ -1,6 +1,7 @@
 #include "Setup.h"
 #include "Weights.h"
 #include "RooHSEventsPDF.h"
+#include "RooComponentsPDF.h"
 #include <RooGenericPdf.h>
 #include <RooAbsData.h>
 #include <RooDataSet.h>
@@ -22,7 +23,7 @@ namespace HS{
     
     Setup::Setup(const Setup& other):TNamed(other.fName,other.fName){
       //   cout<<"****************************COPY "<<fIDBranchName<<" "<<fVars.getSize()<< " "<< other.fFormString.size()<<endl;
-       fWS={"HSWS"};
+      //       fWS={"HSWS"};
        fFitOptions=other.fFitOptions;
        fConstraints=other.fConstraints;   
        fCut=other.fCut;
@@ -52,7 +53,7 @@ namespace HS{
       fCut=other.fCut;
       fIDBranchName=other.fIDBranchName;
       fOutDir=other.fOutDir;
-      fWS={"HSWS"};
+      //fWS={"HSWS"};
       
       for(auto &varStr: other.fVarString){
     	LoadVariable(varStr);
@@ -88,8 +89,8 @@ namespace HS{
       fFitVars.push_back(var);      
     }
     ////////////////////////////////////////////////////////////
-    /// Load a fit variable e.g s.LoadVariable("X[-1,1]");
-    /// Fit a variable in your tree called X between -1 and 1
+    /// Load a fit variable e.g s.LoadParameter("X[-1,1]");
+    /// Add a fit parameter X between -1 and 1
     void Setup::LoadParameter(TString opt){
       cout<<"Setup::LoadParameter "<<opt<<endl;
       auto var=dynamic_cast<RooRealVar*>(fWS.factory(opt));
@@ -104,7 +105,6 @@ namespace HS{
     /// Load a formulaVar e.g s.LoadFormula("name=@v1[1,0,2]+@v2[]");
     /// Fit a variable in your tree called X between -1 and 1
     void Setup::LoadFormula(TString formu){
-	cout<<"  Setup::LoadFormula    "<<formu <<endl;
       fFormString.push_back(formu);
       //get formula name
       TString name=formu(0,formu.First("="));
@@ -123,11 +123,11 @@ namespace HS{
       //get rid of @
       formu.ReplaceAll("@", "");
 
-      cout<<"Setup::LoadFormula "<<formu<<endl;
-     
+      
       RooArgList rooPars;
       for(auto& par:pars)
-	rooPars.add(*fWS.var(par));
+	if(fWS.var(par))rooPars.add(*fWS.var(par));
+	else if(fWS.function(par))rooPars.add(*fWS.function(par));
 
       RooFormulaVar fovar(name,formu,rooPars) ;
 
@@ -163,18 +163,28 @@ namespace HS{
 	if(fCut.Sizeof()>1)fCut+="&&";
 	fCut+=Form("%s>=%lf&&%s<=%lf",varreal->GetName(),varreal->getMin(),varreal->GetName(),varreal->getMax());   
       }
-     fAuxVarString.push_back(opt);
-     }
+      fAuxVarString.push_back(opt);
+    }
+    ////////////////////////////////////////////////////////////
+    /// Use RooFit Workspace factory to define PDFs
+    /// In addition handle special "new" PDF types
     void Setup::FactoryPDF(TString opt){
       fPDFString.push_back(opt);
       if(opt.Contains("WEIGHTS@")){
 	TString wopt=opt(opt.First("@")+1,opt.Sizeof()-opt.First("@"));
 	opt=opt(0,opt.First("@"));
-	//auto wgtcon=WeightsConfig{wopt};
 
-	//create PDF as normal
-	auto pdf=fWS.factory(opt);
 
+	RooAbsArg* pdf=nullptr;
+	//Checck for special non-RooFit PDFs
+	if(opt.Contains("RooComponentsPDF")){
+	  pdf=ComponentsPDF(opt);
+	}
+	else	//create PDF as normal
+	  pdf=fWS.factory(opt);
+	
+
+	///////////////////////////////////
 	//check if EventsPDF
 	auto *evPdf=dynamic_cast<RooHSEventsPDF*>(pdf);
 	if(evPdf){
@@ -186,7 +196,13 @@ namespace HS{
 	}
       }
       else{
-	fWS.factory(opt);
+	RooAbsArg* pdf=nullptr;
+	//Check for special non-RooFit PDFs
+	if(opt.Contains("RooComponentsPDF")){
+	  pdf=ComponentsPDF(opt);
+	}
+	else	//create PDF as normal
+	  pdf=fWS.factory(opt);
       }
 
     }
@@ -203,7 +219,70 @@ namespace HS{
       fYields.add(*(fWS.factory(fYld+opt+Form("[%f,0,1E12]",Scale0))));//default yields limits
       fSpecString.push_back(std::make_pair<TString,Float_t>(std::move(opt),std::move(Scale0)));
     }
-    
+    //////////////////////////////////////////////////////////
+    ///Special ComponentsPDF factory
+    RooAbsPdf* Setup::ComponentsPDF(TString opt){
+      opt.ReplaceAll("RooComponentsPDF::","");
+      TString pdfName=opt(0,opt.First("("));
+
+      cout<<"ComponentsPDF "<<pdfName<<endl;
+      //Get baseline
+      TString	sbaseLine=opt(opt.First("(")+1,opt.First(",")-opt.First("(")-1);
+      Double_t baseLine=sbaseLine.Atof();
+      //make observable list
+      TString sobs=opt(opt.First("{")+1,opt.First("}")-opt.First("{")-1);
+      auto obsStrings=sobs.Tokenize(",");
+      RooArgList obsList("RooComponentsPDF::ComponentObservables");
+      auto varsAndCats=FitVarsAndCats();
+      cout<<"Observable String "<<sobs<<endl;
+      for(Int_t i=0;i<obsStrings->GetEntries();i++ ){
+	cout<<"      "<<obsStrings->At(i)->GetName()<<endl;
+	obsList.add(*varsAndCats.find(obsStrings->At(i)->GetName()));
+      }
+      delete obsStrings;
+      
+      obsList.Print("v");
+      
+      //make component list
+      TString scomps=opt(opt.First("<")+1,opt.First(">")-opt.First("<")-1);
+      scomps.ReplaceAll("{","");
+      scomps.ReplaceAll("}","");
+      auto compStrings=scomps.Tokenize(":");
+      vector<RooArgList> compsLists;
+      Int_t ic=0;
+      cout<<"Components String "<<scomps<<endl;
+      for(Int_t i=0;i<compStrings->GetEntries();i++ ){
+	cout<<"      "<<compStrings->At(i)->GetName()<<endl;
+	RooArgList termList(Form("RooComponentsPDF::Term%d",ic++));
+	TString term = compStrings->At(i)->GetName();
+	auto termStrings=term.Tokenize("*");
+	for( Int_t j=0;j<termStrings->GetEntries();j++ ){
+	cout<<"                 "<<termStrings->At(j)->GetName()<<endl;
+	  
+	  TString sarg = termStrings->At(j)->GetName();
+	  TString vname =sarg;
+	  if(sarg.Contains("=")){//look for formula
+	    LoadFormula(sarg);//Load formula
+	    vname=sarg(0,sarg.First("=")); //get the var name
+	  }
+	  else  if(sarg.Contains("[")){//look for new parameter
+	    LoadParameter(sarg);
+	    vname=sarg(0,sarg.First("[")); //get the par name
+	  }
+	  if( dynamic_cast<RooRealVar*>(fWS.var(vname))) termList.add(*fWS.var(vname));
+	  else if( dynamic_cast<RooCategory*>(fWS.cat(vname))) termList.add(*fWS.cat(vname));
+	  else if ( dynamic_cast<RooFormulaVar*>(fWS.function(vname))) termList.add(*fWS.function(vname));
+	}
+	termList.Print("v");
+	compsLists.push_back(termList);//add this term to the components list
+	delete termStrings;
+      }
+      delete compStrings;
+      //create pdf and import to workspace
+      auto pdf=new RooComponentsPDF(pdfName,pdfName,baseLine,obsList,compsLists,*((RooRealVar*)varsAndCats.find("Phi")));
+      fWS.import(*pdf);
+      return pdf;
+    }
     //////////////////////////////////////////////////////////
     ///Create the PDF sum for Extended ML fit
     void Setup::TotalPDF(){

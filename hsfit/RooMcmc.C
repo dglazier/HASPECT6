@@ -269,6 +269,8 @@ namespace HS{
      
       
    }
+
+    
     void RooMcmcUniform2Seq::Run(Setup &setup,RooAbsData &fitdata){
      fSetup=&setup;
      fData=&fitdata;

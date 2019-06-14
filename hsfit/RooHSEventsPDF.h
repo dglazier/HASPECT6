@@ -7,6 +7,7 @@
 #include "RooCategoryProxy.h"
 #include "Weights.h" 
 #include "TTree.h" 
+#include "TH1F.h" 
 #include "TVector.h" 
 #include "TChain.h" 
 #include "TEntryList.h"
@@ -17,6 +18,9 @@
 
 namespace HS{
   namespace FIT{
+    
+    Bool_t RooHSEventsPDF_IsPlotting=kFALSE;
+
     
     class RooHSEventsPDF : public RooAbsPdf {
     public:
@@ -39,6 +43,7 @@ namespace HS{
       Double_t fConstInt=1;
       Int_t fLastLength;
       Float_t *fLast=nullptr; //[fLastLength]
+      mutable vector<TH1F> fHistIntegrals;
       vector<Float_t> fEvWeights; //read in weights saved in vector
       vector<Float_t> fvecReal;
       vector<Float_t> fvecRealGen;
@@ -85,17 +90,23 @@ namespace HS{
       Double_t fMaxValue=0; //max value of function for accept/reject
       Long64_t fGeni=0; //index for tree generation
       TString fgenStr="gen";
-
+      mutable Int_t fIntCounter=0;
+      Bool_t fIsPlotting=kFALSE;
+      
       void LoadInWeights();
+      virtual void HistIntegrals(const char* rangeName) const;
+      void SetLowHighVals(Long64_t& ilow,Long64_t& ihigh) const;
+
+      virtual  Double_t evaluateData() const {return 0;}
  
     public:
  
-      virtual Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,const char* rangeName) const;
-      virtual Double_t analyticalIntegral(Int_t code,const char* rangeName) const;
+      Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,const char* rangeName) const override;
+      Double_t analyticalIntegral(Int_t code,const char* rangeName) const override;
 
-      virtual void generateEvent(Int_t code);
-      virtual Int_t getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK) const;
-      virtual void initGenerator(Int_t code);
+      void generateEvent(Int_t code) override;
+      Int_t getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK) const override;
+      void initGenerator(Int_t code) override;
       virtual void initIntegrator();
 
       //require an evaluateMC class to return same as evaluate but with
@@ -103,13 +114,24 @@ namespace HS{
       //but use of RooProxy variables complicates it
       virtual Double_t evaluateMC(const vector<Float_t> *vars,const  vector<Int_t> *cats) const {return 0.;};
 
-
+      //Users may override this evaluate or define evaluateData()
+      //This allows for correct acceptance correction for 1D plotting
+      Double_t evaluate() const override{
+	if(!HS::FIT::RooHSEventsPDF_IsPlotting)return evaluateData();
+	if(fHistIntegrals.size()!=0){
+	  if(fProxSet.size()==1)
+	    return fHistIntegrals[0].Interpolate(*fProxSet[0]); 
+	}
+	return evaluateData();
+      }
+       
+      
       Bool_t CheckChange() const; //Have any fit parameters changed since last integral?
       Bool_t CheckRange(const char* rangeName) const; //only integrate EvTree over specifed variable range
 
       void SetNInt(Long64_t n){fNInt=n;}
       // virtual Bool_t SetEvTree(TChain* tree,TString cut,Long64_t ngen=0);
-      Bool_t SetEvTree(TTree* tree,TString cut,Long64_t ngen=0);
+      virtual Bool_t SetEvTree(TTree* tree,TString cut,Long64_t ngen=0);
       /* void SetInWeights(TString species, TString weightfile,TString wobj){ */
       /* 	fWgtsConf.reset(new HS::WeightsConfig(species,weightfile,wobj)); */
       /* } */
@@ -151,8 +173,8 @@ namespace HS{
       void SetNextRange(Int_t ir);
       RooHSEventsPDF* GetParent(){return fParent;}
       Bool_t IsValid(){return fIsValid;}
-
-      ClassDef(RooHSEventsPDF,1); // Yor description goes here...
+      void Plotting(Bool_t plotting=kTRUE){fIsPlotting=plotting;}
+      ClassDefOverride(RooHSEventsPDF,1); // Yor description goes here...
     };//Class RooHSEventsPDF
   } //namespace FIT
 }//namespace HS

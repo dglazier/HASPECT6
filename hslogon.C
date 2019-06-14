@@ -159,6 +159,7 @@ void CleanAll(){
   hsCleanFinal();
   hsCleanHSMVA();
   hsCleanData();
+  hsCleanHSFit();
 
 }
 void HSmva(){
