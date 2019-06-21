@@ -1,5 +1,5 @@
 //Run with 
-//root --hsfit FitHSSimple.C
+//root --hsfit FitHSSimpleBins.C
 {
 
   sPlot RF;
@@ -24,8 +24,9 @@
   ///////////////////////////Load Data
   RF.LoadData("MyModel","Data.root");
 
-  RF.RunAll();
-
+  //  RF.RunAll();
+  Here::Go();
+  // Farm::Go(&RF,false); 
 
   
  

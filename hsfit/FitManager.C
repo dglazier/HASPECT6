@@ -161,7 +161,16 @@ namespace HS{
       auto file=TFile::Open(fSetup.GetOutDir()+"HSFit.root","recreate");
       if(!fMinimiser.get()) SetMinimiser(new HS::FIT::Minuit2());
       file->WriteObject(this,"HSFit");
-      file->WriteObject(fMinimiser.get(),fMinimiserType);      
+      file->WriteObject(fMinimiser.get(),fMinimiserType);
+
+      if(fCompiledMacros.size()){
+	TList* macList=new TList();
+	//	macList->SetName("HS_COMPILEDMACROS");
+	macList->SetOwner();
+	for(auto& macro : fCompiledMacros)
+	  macList->Add(new TObjString(macro));
+	file->WriteObject(macList,"HS_COMPILEDMACROS");
+      }
       delete file;
     }
     void FitManager::RedirectOutput(TString log){

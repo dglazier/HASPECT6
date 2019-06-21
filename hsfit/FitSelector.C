@@ -68,8 +68,11 @@ namespace HS{
 
       //Get the fitmanager
       fFitfile=TFile::Open(outdirstr+"HSFit.root");
+      
       fFitManager=dynamic_cast<FitManager*>( fFitfile->Get("HSFit")->Clone() );
-      if(fFitManager->GetMinimiserType()!=TString()) fFitManager->SetMinimiser(std::move(dynamic_cast<Minimiser*>( fFitfile->Get(fFitManager->GetMinimiserType())->Clone() )));
+
+      if(fFitManager->GetMinimiserType()!=TString())
+	fFitManager->SetMinimiser(std::move(dynamic_cast<Minimiser*>( fFitfile->Get(fFitManager->GetMinimiserType())->Clone() )));
   
       delete fFitfile; //close file to stop memeory resident issue!
       

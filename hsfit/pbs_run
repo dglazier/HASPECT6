@@ -1,0 +1,23 @@
+#!/bin/tcsh
+#PBS -N HASPECT_FIT
+#PBS -m abe 
+#PBS -l walltime=100:00:00
+#PBS -V
+#Make a directory to work in
+
+#mkdir -p /SENSIBLE/DIR/$HS_JOBNAME$HS_JOBNUMBER
+#cd /SENSISBLE/DIR/$HS_JOBNAME$HS_JOBNUMBER
+mkdir -p /work/$HS_JOBNAME$HS_JOBNUMBER
+cd /work/$HS_JOBNAME$HS_JOBNUMBER
+
+
+echo ' analysing bin ' $HS_JOBNUMBER
+echo $HOST
+
+#set env variables
+echo $HS_RUNMAC
+cp $HS_RUNMAC hsrun.C
+
+root -l -b -q  --hsfit hsrun.C
+
+rm -r /work/$HS_JOBNAME$HS_JOBNUMBER

@@ -130,6 +130,11 @@ namespace HS{
       }
       void RedirectOutput(TString log="");
       void SetRedirectOutput(){fRedirect=kTRUE;}
+
+      void SetCompiledMacros(strings_t macs){
+	fCompiledMacros=macs;
+      }
+      strings_t GetCompiledMacros(){return fCompiledMacros;}
       
      protected:
       std::unique_ptr<Setup> fCurrSetup={}; //!
@@ -152,7 +157,7 @@ namespace HS{
       std::vector<plotresult_uptr> fPlots;//!
       RooFitResult* fResult=nullptr;//!
 
-
+      strings_t fCompiledMacros;
   
       Bool_t fRedirect=kFALSE;
 

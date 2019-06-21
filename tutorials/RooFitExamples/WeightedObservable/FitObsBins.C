@@ -1,12 +1,12 @@
 //Run with 
 //root --hsfit FitObsBins.C
 {
- 
-  Loader::Compile("PhiAsymmetryPDF.cxx");
-  
   //get the current directory where the data is (PROOF needs full path)
   TString pwd = TString(gSystem->Getenv("PWD"))+"/";
+
+  Loader::Compile(pwd+"PhiAsymmetryPDF.cxx");
   
+   
   FitManager RF;
   RF.SetUp().SetOutDir(pwd+"outObs/");
   ///////////////////////////////Load Variables
@@ -24,12 +24,12 @@
   RF.SetUp().LoadSpeciesPDF("SigAsym",1);
 
   ////////////////////////////Make Bins
-  // RF.Bins().LoadBinVar("Eg",4,3,4);
+  RF.Bins().LoadBinVar("Eg",4,3,4);
    
   ///////////////////////////Load Data
   //RF.Data().BootStrap(2);
   RF.LoadData("MyModel",pwd+"Data.root");
-  RF.LoadSimulated("MyModel","MC.root","SigAsym");
+  RF.LoadSimulated("MyModel",pwd+"MC.root","SigAsym");
   
   //////////////////////////Load Weight
   RF.Data().LoadWeights("Signal",pwd+"outsPlot/Tweights.root");
@@ -45,5 +45,6 @@
   Here::Go(&RF);
   //OR run with PROOF-LITE on N=4 cores (you can change the 4)
   // Proof::Go(&RF,4);
- 
+  //OR run with FARM
+  // Farm::Go(&RF,false);
 }
