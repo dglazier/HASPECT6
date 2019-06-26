@@ -12,7 +12,7 @@ namespace HS{
       /// e.g. setenv HS_FARMRUN $PWD/pbs_run
       /// e.g. setenv HS_FARMSUB qsub
       /// e.g. setenv HS_RUNMAC FitMac.C  
-      void Farm::Go(FitManager* fm,Bool_t toFarm){
+      void Farm::Go(FitManager* fm,Int_t maxJobs){
 
 	if(!fm) return;
 	fm->SetCompiledMacros(gCompilesList);
@@ -45,14 +45,23 @@ namespace HS{
 	//create a farm job for each toy requested    
 	gSystem->Setenv("HS_LAUNCH",TString(gSystem->Getenv("PWD")));
 	gSystem->Setenv("HS_OUTDIR",fm->SetUp().GetOutDir());
-	gSystem->Setenv("HS_JOBNAME",fm->GetName());
 	
 	for(Int_t i=0;i<Njobs;i++){
 	  TString JobNumber=Form("%d",i);
 	  cout<<"sending JobNumber "<<JobNumber<< endl;
 	  gSystem->Setenv("HS_JOBNUMBER",JobNumber);
-	  if(toFarm)
+	  gSystem->Setenv("HS_JOBNAME",fm->GetCurrName());
+	  if(maxJobs>0){
+		TString njobsstring = gSystem->GetFromPipe("qstat | grep ${USER} | wc -l");
+		Int_t njobs = njobsstring.Atoi();
+		while(njobs>maxJobs){
+			cout << "More than " << maxJobs << " running. Wait 10s." << endl;
+			gSystem->Sleep(10000);
+			njobsstring = gSystem->GetFromPipe("qstat | grep ${USER} | wc -l");
+			njobs = njobsstring.Atoi();
+		}
 	    gSystem->Exec(farmsub+" "+farmrun);
+	  }
 	  else
 	    gSystem->Exec(farmrun);
 
