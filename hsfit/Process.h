@@ -78,7 +78,7 @@ namespace HS{
 	 Go(fm.get(),toFarm);
 	}
 	
-       static void Go(FitManager* fm,Bool_t toFarm);
+       static void Go(FitManager* fm,Int_t maxJobs);
 	
       }; //class Proof
 
