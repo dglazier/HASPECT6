@@ -6,6 +6,7 @@
 #include "RooCategoryProxy.h"
 #include "RooAbsReal.h"
 #include "RooRealVar.h"
+#include "RooCategory.h"
 #include "RooAbsCategory.h"
 #include "RooFormulaVar.h"
 #include <vector>
@@ -16,11 +17,12 @@ namespace HS{
     class RooComponentsPDF : public HS::FIT::RooHSEventsPDF {
      
       using vecUPtrReal = std::vector<unique_ptr<RooRealProxy>>;
+      using vecUPtrCat = std::vector<unique_ptr<RooCategoryProxy>>;
       using vecComponents = std::vector<vecUPtrReal>;
  
     public:
       RooComponentsPDF() {} ; 
-      RooComponentsPDF(const char *name, const char *title,Double_t base,const RooArgList& obsList,const vector<RooArgList> compList,RooAbsReal& _Phi);
+      RooComponentsPDF(const char *name, const char *title,Double_t base,const RooArgList& obsList,const vector<RooArgList> compList);
       RooComponentsPDF(const RooComponentsPDF& other, const char* name=0) ;
       TObject* clone(const char* newname) const override { return new RooComponentsPDF(*this,newname); }
       inline virtual ~RooComponentsPDF() { }
@@ -42,17 +44,21 @@ namespace HS{
       
     private:
 
-      RooRealProxy Phi ;
       RooListProxy fActualObs;
+      RooListProxy fActualCats;
       RooListProxy fActualComps;
       
       vecComponents fComponents;
       vecUPtrReal fObservables;
+      vecUPtrCat fCategories;
 
       vector<vector<RooRealProxy*>> fDependentTermProxy;
       vector<vector<RooRealVar*>> fDependentTermParams;
       vector<vector<RooRealProxy*>> fIndependentTermProxy;
+
+      
       vector<RooRealVar*> fIntegrateObs;
+      vector<RooCategory*> fIntegrateCats;
       RooArgSet fIntegrateSet;
       
       mutable vector<Float_t> fCacheCompDepIntegral;
@@ -63,6 +69,7 @@ namespace HS{
  
       Double_t fBaseLine=0;
       UInt_t fNObs=0;
+      UInt_t fNCats=0;
       UInt_t fNComps=0;
       ClassDefOverride(RooComponentsPDF,1);
     };

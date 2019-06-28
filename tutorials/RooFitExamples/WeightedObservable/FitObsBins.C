@@ -18,17 +18,19 @@
 
   ///////////////////////////////Make additional cut on an AuxVar
   //RF.SetUp().AddCut("AUX>2"); //Additional cut based on vars or aux vars
-
+ 
   /////////////////////////////Make Model Signal
   RF.SetUp().FactoryPDF("PhiAsymmetryPDF::SigAsym( Phi,Pol,PolState,A[0,-1,1],B[0,-1,1] )");
   RF.SetUp().LoadSpeciesPDF("SigAsym",1);
 
+  ////////////////////////////Make Bootstrap
+  // RF.Data().BootStrap(400);
   ////////////////////////////Make Bins
   RF.Bins().LoadBinVar("Eg",4,3,4);
    
   ///////////////////////////Load Data
   //RF.Data().BootStrap(2);
-  RF.LoadData("MyModel",pwd+"Data.root");
+  RF.LoadData("MyModel",pwd+"Data10M.root");
   RF.LoadSimulated("MyModel",pwd+"MC.root","SigAsym");
   
   //////////////////////////Load Weight
@@ -37,7 +39,7 @@
 
   //use Minuit2(5) to run 5 fits and take the best likelihood
   RF.SetMinimiser(new Minuit2());
-
+ 
   //Or try an mcmc minimser 1000-># of points, 200->burnin 200 ~ 1/step size
   //RF.SetMinimiser(new RooMcmcUniform2Seq(1000,200,200));
   

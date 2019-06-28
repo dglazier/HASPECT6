@@ -32,7 +32,7 @@ namespace HS{
 
       //Look for Special case of RooHSEventsPDFs
       FillEventsPDFs();
-      
+   
       //Add fit constraints
       fCurrSetup->AddFitOption(RooFit::ExternalConstraints
 			       (fCurrSetup->Constraints()));
@@ -40,8 +40,7 @@ namespace HS{
       if(fCurrSetup->Yields().getSize()==1){//special case only 1 yield)
 	Double_t yld=fCurrDataSet->sumEntries();
 	SetAllValLimits(fCurrSetup->Yields(),
-			yld,yld-6*sqrt(yld),yld+6*sqrt(yld));
-		
+			yld,0,1.2*yld);
       }
       else
 	SetAllValLimits(fCurrSetup->Yields(),

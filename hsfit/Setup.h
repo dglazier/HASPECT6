@@ -58,6 +58,7 @@ namespace HS{
       void LoadAuxVar(TString opt);
       void LoadFormula(TString formu);
       void LoadParameter(TString opt);
+      void LoadFunctionVar(TString opt);
       void LoadSpeciesPDF(TString opt,Float_t Scale0=1);
       void TotalPDF();
       
@@ -152,7 +153,8 @@ namespace HS{
 
       RooAbsPdf* ComponentsPDF(TString opt);
     protected:
-      
+      void LoadParameterOnTheFly(TString opt);
+
     private:
  
       //note fWS owns all of these vector pointers
@@ -162,6 +164,7 @@ namespace HS{
       RooArgSet fVars;
       RooArgSet fCats; //only categories
       RooArgSet fPars;//!
+      RooArgSet fFuncVars;//!
       RooArgList fFormulas;//! CANT WRITE formulas ArgSet!
       RooArgSet fVarsAndCats;
       RooArgSet fParsAndYields;
@@ -185,6 +188,7 @@ namespace HS{
       strings_t fFormString;
       strings_t fAuxVarString;
       strings_t fPDFString;
+      strings_t fFuncVarString;
 
       std::map<TString,Bool_t> fConstPars;
       std::map<TString,Bool_t> fConstPDFPars;

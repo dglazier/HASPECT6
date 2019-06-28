@@ -179,6 +179,7 @@ namespace HS{
       RooHSEventsPDF* GetParent(){return fParent;}
       Bool_t IsValid(){return fIsValid;}
       void Plotting(Bool_t plotting=kTRUE){fIsPlotting=plotting;}
+      void SetHistIntegrals(vector<TH1F> &hists){fHistIntegrals=hists;}
       ClassDefOverride(RooHSEventsPDF,1); // Yor description goes here...
     };//Class RooHSEventsPDF
   } //namespace FIT

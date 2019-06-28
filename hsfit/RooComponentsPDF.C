@@ -10,15 +10,34 @@
 
 namespace HS{
   namespace FIT{
-    RooComponentsPDF::RooComponentsPDF(const char *name, const char *title,Double_t base,const RooArgList& obsList,const vector<RooArgList> compList,RooAbsReal& _Phi) :  HS::FIT::RooHSEventsPDF(name,title), fBaseLine(base)
+    RooComponentsPDF::RooComponentsPDF(const char *name, const char *title,Double_t base,const RooArgList& obsList,const vector<RooArgList> compList)
+      :  HS::FIT::RooHSEventsPDF(name,title), fBaseLine(base)
       
     {
 
-      fNObs=obsList.getSize();
-      for(UInt_t i=0;i<fNObs;i++){
-	unique_ptr<RooRealProxy> temp{new RooRealProxy(obsList[i].GetName(),obsList[i].GetName(),this,static_cast<RooAbsReal&>(obsList[i]))};
-	fActualObs.add((RooAbsReal&)obsList[i]);
-	fObservables.push_back(std::move(temp));
+      fNObs=0;
+      fNCats=0;
+      for(Int_t i=0;i<obsList.getSize();i++){
+	//case real variable
+	if(dynamic_cast<RooRealVar*>(&obsList[i])){
+	unique_ptr<RooRealProxy> tempR{new RooRealProxy(obsList[i].GetName(),obsList[i].GetName(),this,static_cast<RooAbsReal&>(obsList[i]))};
+	  cout<<"adding obs "<<obsList[i].GetName()<<" "<<dynamic_cast<RooRealVar*>(&obsList[i])<<" "<<dynamic_cast<RooCategory*>(&obsList[i])<<endl;
+	  fNObs++;
+	  fActualObs.add((RooAbsReal&)obsList[i]);
+	  fObservables.push_back(std::move(tempR));
+	  continue;
+	}
+	//case category
+	if(dynamic_cast<RooCategory*>(&obsList[i])){
+	unique_ptr<RooCategoryProxy> tempC{new RooCategoryProxy(obsList[i].GetName(),obsList[i].GetName(),this,static_cast<RooAbsCategory&>(obsList[i]))};
+	  cout<<"adding cat "<<obsList[i].GetName()<<endl;
+	  fNCats++;
+	  fActualCats.add((RooAbsCategory&)obsList[i]);
+	  fCategories.push_back(std::move(tempC));
+	  continue;
+	}
+	
+	
       }
 
       fNComps=compList.size();
@@ -37,9 +56,7 @@ namespace HS{
       }
       MakeSets();
 
-      for(UInt_t i=0;i<fNObs;i++)
-	fObservables[i]->SetName(obsList[i].GetName());
-
+   
       initIntegrator();
 
     }
@@ -48,6 +65,7 @@ namespace HS{
       HS::FIT::RooHSEventsPDF(other,name),
       fBaseLine(other.fBaseLine),
       fActualComps("AllComponents",this,other.fActualComps),
+      fActualCats("AllCategories",this,other.fActualCats),
       fActualObs("AllObservables",this,other.fActualObs)
     {
       Int_t counter=0;
@@ -55,6 +73,10 @@ namespace HS{
       for(UInt_t i=0;i<other.fObservables.size();i++){
 	unique_ptr<RooRealProxy> temp{new RooRealProxy(other.fObservables[i]->GetName(),this,*(other.fObservables[i]))};
 	fObservables.push_back(std::move(temp));
+      }
+      for(UInt_t i=0;i<other.fCategories.size();i++){
+	unique_ptr<RooCategoryProxy> temp{new RooCategoryProxy(other.fCategories[i]->GetName(),this,*(other.fCategories[i]))};
+	fCategories.push_back(std::move(temp));
       }
       
       for(auto& comp: other.fComponents){
@@ -67,12 +89,11 @@ namespace HS{
       }
 
       fNObs=other.fNObs;
+      fNCats=other.fNCats;
       fNComps=other.fNComps;
       
       MakeSets();
-      for(UInt_t i=0;i<fNObs;i++)
-      	fObservables[i]->SetName(other.fObservables[i]->GetName());
-
+    
       
       initIntegrator();
 
@@ -81,12 +102,21 @@ namespace HS{
 
     } 
     void RooComponentsPDF::MakeSets(){
-
+      //roorealvars
       for(auto &obs: fObservables){
+
       	fProxSet.push_back(obs.get());
 	//for linking tree events to integral calculation
 	fIntegrateObs.push_back(dynamic_cast<RooRealVar*>(fIntegrateSet.addClone(obs->arg())));
       }
+      //roocategories
+      for(auto &obs: fCategories){
+ 	
+     	fCatSet.push_back(obs.get());
+	//for linking tree events to integral calculation
+	fIntegrateCats.push_back(dynamic_cast<RooCategory*>(fIntegrateSet.addClone(obs->arg())));
+      }
+ 
       
       for(auto &comp: fComponents)
 	for(auto &term: comp){
@@ -99,12 +129,10 @@ namespace HS{
 	  while(RooAbsArg* arg=dynamic_cast<RooAbsArg*>(iter())){
 	    //if new variable and not observable
 	    //include it as parameter
-	    //auto *rarg=dynamic_cast<RooRealVar*>(arg);	    
-	    if(!fActualObs.contains(*arg)&&!fParameters.contains(*arg)){
+	   	    
+	    if(!fActualObs.contains(*arg)&&!fActualCats.contains(*arg)&&!fParameters.contains(*arg)){
 	      fParameters.add(*arg);
-	      //fParSet.push_back(); //par set just used to check change
 	    }
-	    //	    if(!fActualObs.contains(*arg)&&!fParameters.contains(*arg))fParameters.add(dynamic_cast<RooRealVar*>(arg));
 	  }
 	}
       InitSets();
@@ -114,15 +142,15 @@ namespace HS{
 
     Double_t RooComponentsPDF::evaluateData() const 
     {
-      //   if(fComponents[0][0].get()->arg().isValueDirty()||fComponents[0][1].get()->arg().isValueDirty()) cout<<"EVALMC "<<fComponents[0][0].get()->arg().isValueDirty()<<" "<<fComponents[0][1].get()->arg().isValueDirty()<<endl;;
       Double_t val=fBaseLine;
-      for(auto &comp: fComponents){
+       for(auto &comp: fComponents){
 	Double_t product=1;
 	for(auto &term: comp){
 	  product*= *term.get(); //take the product of all the terms for this component
 	}
 	val+=product; //add them to total
       }
+     
       return val;
     }
 
@@ -134,6 +162,7 @@ namespace HS{
 	  unconstTerm->recursiveRedirectServers(fIntegrateSet);
 	}
       }
+      cout<<"RooComponentsPDF::HistIntegral"<<endl;
       RooHSEventsPDF::HistIntegrals(rangeName);
 
       //point the terms back to the data events rather than integral events
@@ -150,7 +179,9 @@ namespace HS{
       //read in observable value for this event
       for(Int_t ii=0;ii<fNvars;ii++)
 	fIntegrateObs[ii]->setVal(fvecReal[fTreeEntry*fNvars+ii]);
-
+      for(Int_t ii=0;ii<fNcats;ii++){
+	fIntegrateCats[ii]->setIndex(fvecCat[fTreeEntry*fNcats+ii]);
+      }
       return evaluateData();
     }
   
@@ -167,8 +198,7 @@ namespace HS{
       //The final integral for each component is the product of these
       //three super terms
       
-      cout<<"RooComponentsPDF::initIntegrator"<<endl;
-      //Initiliase components cache
+        //Initiliase components cache
       //fDependentTerm.resize(fNComps);
       fDependentTermProxy.resize(fNComps);
       fDependentTermParams.resize(fNComps);
@@ -181,30 +211,22 @@ namespace HS{
       UInt_t icomp=0;
       for(auto &comp: fComponents){
 	fCacheCompDepIntegral[icomp]=1;
-	//fDependentTerm[icomp].resize(comp.size());
-	//fDependentTermProxy[icomp].resize(comp.size());
-	//fIndependentTerm[icomp].resize(comp.size());
-	//fIndependentTermProxy[icomp].resize(comp.size());
-	
-	//fParameterTerm[icomp].resize(comp.size());
 	UInt_t iterm=0;
 	Double_t product=1;
 	for(auto &term: comp){
-	  //Identify which terms are dependent on fit observables (VarSet)
+	  //Identify which terms are dependent on fit observables and cats(VarSet)
 	  auto  arg=fActualComps.find(term->GetName());
 	  auto deps=arg->getDependents(VarSet(0));
+	
 	  if(deps->getSize()){
-	    //  fDependentTerm[icomp][iterm]=1;
+	   
 	    fDependentTermProxy[icomp].push_back(term.get());
 	    //Identify which terms are dependent on fit parameters (ParSet)
 	    auto parDeps=arg->getDependents(fParameters);
 	    if(parDeps->getSize()){
-	      //fParameterTerm[icomp][iterm]=1;
+	     
 	      TIter iter=parDeps->createIterator();
 	      while(RooAbsArg* arg=dynamic_cast<RooAbsArg*>(iter())){
-		//if new variable 
-		//include it as parameter
-		//		if(std::find(fDependentTermParams[icomp].begin(), fDependentTermParams[icomp].end(), arg) == vec.end()) fDependentTermParams[icomp].add(arg);
 		auto *rarg=dynamic_cast<RooRealVar*>(arg);	    
 		if(!(vecContains(rarg,fDependentTermParams[icomp]))){
 		  fDependentTermParams[icomp].push_back(rarg);
@@ -212,36 +234,23 @@ namespace HS{
 		  fPrevParVals[icomp].push_back(initf);
 		}
 	      }
-	      //fDependentTermParams[icomp].add(fParameters);
-	      // fDependentTermProxy.push_back(term);
 	    }
 	    else{
-	      //fIndependentTermProxy.push_back(term);
-	      // fParameterTerm[icomp][iterm]=0;
 	    }
 	    
 	  }
 	  else{
+
 	    fIndependentTermProxy[icomp].push_back(term.get());
-	    //fDependentTerm[icomp][iterm]=0;
-	    //fParameterTerm[icomp][iterm]=0;
 	  }
 	  
 	  iterm++;
 	}
-	//	cout<<"DEPENDENT TERM PARAMETERS "<<endl;
-	//	for(auto &param: fDependentTermParams[icomp])
-	// param->Print();
 	
 	icomp++;
 	
       }	  
-      //Identify which terms are dependent on fit observables (VarSet)
-      
-      //Identify which terms ONLY dependent on fit observbales
-      
-      //Identify which terms depend on fit parameters but not observables
-    }
+     }
     
     
     
@@ -249,37 +258,26 @@ namespace HS{
     
     Double_t RooComponentsPDF::analyticalIntegral(Int_t code,const char* rangeName) const
     {
-      // return RooHSEventsPDF::analyticalIntegral(code,rangeName);
-      //  cout<<" RooComponentsPDF::analyticalIntegral"<<fDependentTermProxy.size()<<" "<< fIndependentTermProxy.size()<<endl;
-      //  cout<<"Analystic "<<fIntCounter++<<" "<<fEvTree<<endl;
+      if(code!=1) return RooHSEventsPDF::analyticalIntegral(code,rangeName);
       //Check which dependent terms need recalculation
       //This will be 1) if they are dependent on parameters
       //           2) one or more of the parameters have changed
       Bool_t needRecalc=kFALSE;
       fRecalcComponent.clear();
       for(UInt_t icomp=0;icomp<fNComps;icomp++){
-	//	for(UInt_t iterm=0;iterm<fComponents[icomp].size();iterm++){
-	  
 	  if(fDependentTermProxy[icomp].size()) {
-	   
-	    for(auto &var:fDependentTermProxy[icomp]){
-	      if(var->arg().isValueDirty()){
-		//	var->arg().printDirty();
-		//cout<<"Dirty var "<<var.GetName()<<endl;
-	      }
-	      //else {cout<<"NotDirty"<<endl;var->arg().Print("v");}
-	    }
+	    
 	    UInt_t ipar=0;
-	    for(auto &par:fDependentTermParams[icomp]){
+	    for(auto par:fDependentTermParams[icomp]){
 	      Float_t previous=fPrevParVals[icomp][ipar];
 	      Float_t pval=par->getVal();
+	     
 	      if(pval!=previous){ //trigger recalc
 		needRecalc=kTRUE;
-	        cout<<"Dirty Par "<<par->GetName()<<" "<<par->getVal()<<" compared to  "<<previous<<endl;
 		fPrevParVals[icomp][ipar]=pval;
 		if(!vecContains(icomp,fRecalcComponent)) fRecalcComponent.push_back(icomp);
 	      }
-	      else cout<<"Clean Par "<<par->GetName()<<" "<<par->getVal()<<endl;
+	      // else cout<<"Clean Par "<<par->GetName()<<" "<<par->getVal()<<endl;
 	      //Store parameter values to check for a change
 	      ipar++;
 	    }
@@ -290,35 +288,19 @@ namespace HS{
       if(needRecalc)RecalcComponentIntegrals(code,rangeName);
 
       Double_t integral=fBaseLine;
+      //Double_t integral=fNTreeEntries;
       for(UInt_t icomp=0;icomp<fNComps;icomp++)
 	integral+=componentIntegral(icomp);
-
-      cout<<"INTEGRAL "<<integral<<endl;
-      //calculate total integral
+       //calculate total integral
       return integral;
     }
 
     void RooComponentsPDF::RecalcComponentIntegrals(Int_t code,const char* rangeName) const{
       Long64_t ilow,ihigh=0;
-      // if(fParent){
-      // 	ilow=fParent->GetIntRangeLow();
-      // 	ihigh=fParent->GetIntRangeHigh();
-      // }
-      // else{
-      // 	ilow=GetIntRangeLow();
-      // 	ihigh=GetIntRangeHigh();
-      // }
-      
-      // if(ihigh==0&&fNInt>-1) ihigh=fNInt;
-      // else if(ihigh==0) ihigh=fNTreeEntries; 
-      
-      // if(ihigh>fNTreeEntries) ihigh=fNTreeEntries;
       SetLowHighVals(ilow,ihigh);
-      cout<<"RooComponentsPDF::RecalcComponentIntegrals "<<ilow<<" "<<ihigh<<endl;
-      //point the terms to the integral events rather than data events
+         //point the terms to the integral events rather than data events
       for(const auto& icomp:fRecalcComponent){
 	for(const auto &term:fDependentTermProxy[icomp]){
-	  cout<<icomp<<" "<<term->GetName()<<endl;
 	  auto unconstTerm=const_cast<RooAbsReal*>(&term->arg());
 	  unconstTerm->recursiveRedirectServers(fIntegrateSet);
 	}
@@ -326,14 +308,16 @@ namespace HS{
 
       //Loop over events and recalcaulte partial integrals
       //that depend on parameters that have changed
-   
+      Long64_t accepted=0;   
       for(Long64_t ie=ilow;ie<ihigh;ie++){
 	fTreeEntry=ie;
 	if(!CheckRange(TString(rangeName).Data())) continue;
-
+	accepted++;
 	//read in observable value for this event
 	for(Int_t ii=0;ii<fNvars;ii++)
 	  fIntegrateObs[ii]->setVal(fvecReal[fTreeEntry*fNvars+ii]);
+	for(Int_t ii=0;ii<fNcats;ii++)
+	  fIntegrateCats[ii]->setIndex(fvecCat[fTreeEntry*fNcats+ii]);
 
 	//calculate the partial integrals
 	for(const auto& icomp:fRecalcComponent){
@@ -346,9 +330,8 @@ namespace HS{
       }
       //Normalise to number of events
       for(const auto& icomp:fRecalcComponent){
-	fCacheCompDepIntegral[icomp]=fCacheCompDepIntegral[icomp]/(ihigh-ilow);
-	cout<<"RECALCULATED "<<icomp <<" "<<fCacheCompDepIntegral[icomp]<<endl;
-      }
+	fCacheCompDepIntegral[icomp]=fCacheCompDepIntegral[icomp]/accepted;
+     }
      //point the terms back to the data events rather than integral events
       for(const auto& icomp:fRecalcComponent){
 	for(const auto &term:fDependentTermProxy[icomp]){
@@ -363,16 +346,10 @@ namespace HS{
       //calculate integral of this component
       //First take product of terms independent of observables;
       Double_t product=1;
-      cout<<"RooComponentsPDF::componentIntegral "<<icomp<<" "<<fCacheCompDepIntegral[icomp]<<endl;
       product*=fCacheCompDepIntegral[icomp];
       for(auto& term:fIndependentTermProxy[icomp]){
 	product*= *term;
       }
-      //      Now take product with observable dependent parts
-      // for(auto& compIntegral:fCacheCompDepIntegral){
-      // 	product*=compIntegral;
-      // }
-      cout<<"RooComponentsPDF::componentIntegral product "<<product<<endl;
       return product; 
     }
 

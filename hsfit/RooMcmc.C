@@ -55,7 +55,9 @@ namespace HS{
       RooAbsReal* nll = prodPdf->createNLL(*fData, Constrain(*constrainedParams),ConditionalObservables(fConditionalObs));
       //RooAbsReal* nll = prodPdf->createNLL(*fData); 
       delete constrainedParams;
- 
+
+      nll->constOptimizeTestStatistic(RooAbsArg::Activate,false) ;
+      
       // add in sumw/sumw2 term
       if(fData->isNonPoissonWeighted()&&fCorrectForWeights){
       	Double_t SumW=SumWeights();
@@ -259,8 +261,8 @@ namespace HS{
      SetData(fitdata);
      SetModel(setup.GetModelConfig());
      SetupBasicUsage();
-     cout<<"Paramters of interest "<<endl;
-     fPOI.Print("v");
+     //cout<<"Paramters of interest "<<endl;
+     // fPOI.Print("v");
      
      RooStats::SequentialProposal sp(fNorm);
      SetProposalFunction(sp);

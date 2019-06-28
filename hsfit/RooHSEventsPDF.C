@@ -23,7 +23,7 @@ using namespace HS::FIT;
 
 RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) :  RooAbsPdf(other,name) 
   {
-    cout<<"RooHSEventsPDF::RooHSEventsPDF "<<other.fNTreeEntries<< other.fvecReal.size()<<endl;
+    cout<<"RooHSEventsPDF::RooHSEventsPDF "<<other.fNTreeEntries<< " "<<other.fvecReal.size()<<endl;
     fIsClone=kTRUE;
     fParent=const_cast<RooHSEventsPDF*>(&other);
   
@@ -52,6 +52,7 @@ RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) : 
     fWgtsConf=other.fWgtsConf;
 									     
     fEvWeights=other.fEvWeights;
+    fHistIntegrals=other.fHistIntegrals;
     //fWgtSpecies=other.fWgtSpecies;
     //fWgtsFile=other.fWgtsFile;
     //fWgtsName=other.fWgtsName;
@@ -207,7 +208,7 @@ Int_t RooHSEventsPDF::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analV
   if(!fEvTree&&!fForceConstInt) return 0; //no MC events to integrate over
 
   // cout<<"RooHSEventsPDF::getAnalyticalIntegral "<<fProxSet.size()<<" "<<RooHSEventsPDF_IsPlotting<<endl;
-  if(fProxSet.size()==1){//special case 1 variable
+  if(fProxSet.size()==1&&fCatSet.size()==0){//special case 1 variable
     //if(RooHSEventsPDF_IsPlotting) {return 0;}
     if (matchArgs(allVars,analVars,VarSet(0))){
       // allVars.Print();analVars.Print();
@@ -251,17 +252,17 @@ Double_t RooHSEventsPDF::analyticalIntegral(Int_t code,const char* rangeName) co
   //only recalculate if a par changes when all variables included (ie code=1)
   if(code==1)
     if(!CheckChange()) return fLast[0];
-
-
-  
-   if(code==1){
+ 
+  if(code==1){
+    Long64_t accepted=0;
     for(Long64_t ie=ilow;ie<ihigh;ie++){
       fTreeEntry=ie;
       // fEvTree->GetEntry(ie);
       if(!CheckRange(TString(rangeName).Data())) continue;
+      accepted++;
       integral+=evaluateMC(&fvecReal,&fvecCat)*GetIntegralWeight(ie);
     }
-    integral/=(ihigh-ilow);
+    integral/=accepted;
   }
    else{
      if(fHistIntegrals.size()==0)
@@ -305,7 +306,6 @@ Double_t RooHSEventsPDF::analyticalIntegral(Int_t code,const char* rangeName) co
   // Set Last[0] so we can just return that if no parameter changes
    fLast[0]=integral;
 
-
   return fLast[0];
 }
 void RooHSEventsPDF::HistIntegrals(const char* rangeName) const{
@@ -314,21 +314,27 @@ void RooHSEventsPDF::HistIntegrals(const char* rangeName) const{
   Long64_t ilow=0;
   Long64_t ihigh=0;
   SetLowHighVals(ilow,ihigh);
-
+  cout<<"RooHSEventsPDF::HistIntegrals"<<endl;
   for(Int_t i=0;i<fNvars;i++){
     auto  arg=dynamic_cast<const RooRealVar*>(&fProxSet[i]->arg());
     if(arg)
       fHistIntegrals.push_back(TH1F(arg->GetName(),arg->GetName(),arg->getBins(),arg->getMin(),arg->getMax()));
   }
-
+  Long64_t accepted=0;
   for(Int_t ie=ilow;ie<ihigh;ie++){
     fTreeEntry=ie;
-    if(!CheckRange(TString(rangeName).Data())) continue;
+    if(!CheckRange(TString(rangeName).Data())){continue;}
+    accepted++;
     Double_t value=evaluateMC(&fvecReal,&fvecCat)*GetIntegralWeight(ie);
     for(Int_t vindex=0;vindex<fNvars;vindex++)
-      fHistIntegrals[vindex].Fill(fvecReal[fTreeEntry*fNvars+vindex],value/(ihigh-ilow)/fHistIntegrals[vindex].GetBinWidth(1));
+      fHistIntegrals[vindex].Fill(fvecReal[fTreeEntry*fNvars+vindex],value/fHistIntegrals[vindex].GetBinWidth(1));
   }
-
+  //normalise to number of accepted events
+  for(Int_t vindex=0;vindex<fNvars;vindex++)
+    fHistIntegrals[vindex].Scale(1./accepted);
+  
+  fParent->SetHistIntegrals(fHistIntegrals);
+  
 }
 
 void RooHSEventsPDF::SetLowHighVals(Long64_t& ilow,Long64_t& ihigh) const{
@@ -352,11 +358,11 @@ void RooHSEventsPDF::SetLowHighVals(Long64_t& ilow,Long64_t& ihigh) const{
 }
 
 Bool_t RooHSEventsPDF::CheckRange(const char* rangeName) const{
-  bool brange=TString(rangeName)==TString("");
-  if(brange) return kTRUE;
+  //bool brange=TString(rangeName)==TString("");
+  //if(brange) return kTRUE;
   for(UInt_t i=0;i<fProxSet.size();i++){
     RooRealVar* var=((RooRealVar*)(&(fProxSet[i]->arg())));
-    if(!var->inRange(fvecReal[fTreeEntry*fNvars+i],TString(rangeName).Data())) return kFALSE;
+    if(!var->inRange(fvecReal[fTreeEntry*fNvars+i],TString(rangeName).Data())){return kFALSE;}
   }
   return kTRUE;
 
@@ -498,7 +504,7 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
       fvecReal[iEvent*ProxSize+ip]=MCVar[ip];
       //Read the generated values if exist if not
       //use mcvar again, this duplicates data so should
-      //be better optimised
+      //be better optimised15552
       if(!fGotGenVar[ip]) fvecRealGen[iEvent*ProxSize+ip]=MCVar[ip];
       else fvecRealGen[iEvent*ProxSize+ip]=GenVar[ip];
     }

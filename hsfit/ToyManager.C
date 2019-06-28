@@ -35,6 +35,7 @@ namespace HS{
       auto *model=fCurrSetup->Model();
 
       auto fitvars=fCurrSetup->FitVarsAndCats();
+  
       RooRandom::randomGenerator()->SetSeed(0);//random seed
 
       // Long64_t nexp=RooRandom::randomGenerator()->Poisson(model->expectedEvents(fitpars));

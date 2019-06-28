@@ -35,13 +35,17 @@ namespace HS{
       
       std::random_shuffle(vrandom.begin(),vrandom.end());
 
+      TString newFileName=tree->GetDirectory()->GetName();
       Int_t iTree=0;
+      TDirectory* saveDir=gDirectory;
+      TFile* branchFile=TFile::Open(TString(gSystem->DirName(newFileName))+"BootBranch.root","recreate");
       TBranch* iBranch=tree->Branch("Boot",&iTree);
+      iBranch->SetFile(branchFile);
+      
       for(Long64_t ir=0;ir<Nentries;ir++){
 	iTree=vrandom[ir]%fNBoots;
 	iBranch->Fill();
       }
-      TString newFileName=tree->GetDirectory()->GetName();
       //     newFileName.ReplaceAll(".root",Form("Boot%d.root",i));
       HS::Bins bins;
       bins.AddAxis("Boot",fNBoots,0,fNBoots);
@@ -50,7 +54,8 @@ namespace HS{
       bins.RunBinTree(tree);
       auto addFileNames=bins.GetFileNames();
       fFileNames.insert(fFileNames.end(), addFileNames.begin(), addFileNames.end());
-    }
+      saveDir->cd();
+   }
    //  void BootStrapper::DivideData(TTree* tree){
       
    //    Long64_t Nentries=tree->GetEntries();
