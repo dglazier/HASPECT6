@@ -1,3 +1,5 @@
+// First run fitFormula3Pol.C
+//root --hsfit TestComponentsPol.C
 {
 
 
@@ -14,7 +16,9 @@
   RF.SetUp().LoadParameter("A[0,-1,1]");
   RF.SetUp().LoadParameter("B[0,-1,1]");
 
-
+  //1 + A*COS2 + B*SIN2 (first argument = the 1 )
+  //Note : seperates different products
+  //     ; seperates different terms in the produt
   RF.SetUp().FactoryPDF("RooComponentsPDF::COS2SIN2(1,{Phi,Pol},=A;COS2:B;SIN2)");
 
   RF.SetUp().LoadSpeciesPDF("COS2SIN2");

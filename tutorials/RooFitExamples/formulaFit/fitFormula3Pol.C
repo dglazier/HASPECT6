@@ -1,6 +1,7 @@
 // To generate the flat data you need to rerun this macro with :
 // toys.SetUp().SetOutDir(pwd+"ToysAccPolFlat/");
 // toys.SetUp().LoadFormula("A=(@a[0,-1,1]*@a[])");
+// RF.LoadSimulated("ToyData","ToysAccFlat/Toy0.root","SigAsym");
 //Run with 
 //root --hsfit fitFormula3Pol.C
 {
@@ -19,6 +20,7 @@
   toys.SetUp().LoadCategory("Pol[p=1,m=-1]"); 
 
   //define paramter (A) depending on other parameters (a1)
+  //  toys.SetUp().LoadFormula("A=(@a[0,-1,1]*@a[])");// A=a^2
   toys.SetUp().LoadFormula("A=(@a[0.5,-1,1]*@a[])");// A=a^2
 
   //define function pdf
@@ -46,7 +48,7 @@
   RF.SetUp().LoadSpeciesPDF("aCOS2",1);
    
   RF.LoadData("ToyData",pwd+"ToysAccPol/Toy0.root");
-  RF.LoadSimulated("ToyData","ToysAccFlat/Toy0.root","SigAsym");
+  //RF.LoadSimulated("ToyData","ToysAccFlat/Toy0.root","SigAsym");
 
   //And fit the sample data with MCMC
   gBenchmark->Start("fit ");
