@@ -26,7 +26,7 @@ void LoadFit(TString Selection=""){
   }
 
   //Now finalsstate classes
-  vector<TString > FITClasses={"FiledTree","Bins","Weights","RooHSEventsPDF","RooHSEventsHistPDF","RooComponentsPDF","Setup","Data","Binner","Minimiser","HSMetropolisHastings","RooMcmc","PlotResults","BootStrapper","FitManager","sPlot","ToyManager","FitSelector","Process"};
+  vector<TString > FITClasses={"FiledTree","Bins","Weights","RooHSEventsPDF","RooHSEventsHistPDF","RooComponentsPDF","Setup","Data","Binner","Minimiser","HSSequentialProposal","HSMetropolisHastings","RooMcmc","PlotResults","BootStrapper","FitManager","sPlot","ToyManager","FitSelector","Process"};
 
   for(auto const& name : FITClasses){
     if(Selection!=TString())

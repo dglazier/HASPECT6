@@ -111,14 +111,16 @@ namespace HS{
    
       while (icount <fNumIters) {
 	totcount++;
-	snapcount++;
 	// reset error handling flag
 	hadEvalError = false;
 	// print a dot every 1% of the chain construction
+	if (totcount%100 == 0){
+	  cout<<"snap "<<snapcount<<" "<<totcount<<endl;
+
+	}
 	if (icount%100 == 0&&havePrinted==0){
 	  ooccoutP((TObject*)0, Generation) << " "<<icount<<"/"<<fNumIters;
 	  havePrinted=1;
-	  snapcount=0;
 	}
 	if (icount%100 == 1) havePrinted=0;
 	
@@ -175,6 +177,8 @@ namespace HS{
 	  RooStats::SetParameters(&xPrime, &x);
 	  xL = xPrimeL;
 	  icount++;
+	  snapcount++;
+
 	} else {
 	  // stay at the current point
 	  weight++;
@@ -202,11 +206,6 @@ namespace HS{
 	return kTRUE;
       }
 	
-      // Int_t i=0;
-      // RooRealVar* var=nullptr;
-      // while((var=fFunction->getParameter(i++)))
-      // 	if(par->numEvalErrors())
-      // 	  return kTRUE;
       return kFALSE;
 	    
     }

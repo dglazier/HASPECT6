@@ -40,6 +40,7 @@ Weights::~Weights(){
   if(fWTree) delete fWTree;
   if(fIDTree) delete fIDTree; 
   if(fFile) {delete fFile;}
+  if(fBranchFile) delete fBranchFile;
 }
 
 void Weights::SetSpecies(TString name){
@@ -213,7 +214,8 @@ void Weights::PrintWeight(){
 
 void Weights::BuildIndex(){
   // cout<<"Weights::BuildIndex "<<fIDTree->BuildIndex(TString("(Long64_t)WID"))<<endl;
-  fIDTree->BuildIndex(TString("(Long64_t)WID"));
+  fIDTree->BuildIndex(TString("WID"));
+  //  fIDTree->BuildIndex(TString("(Long64_t)WID"));
   TTreeIndex *index = (TTreeIndex*)fIDTree->GetTreeIndex();
   fIDi=index->GetIndex();//entry numbers
   fIDv=index->GetIndexValues();//id values
@@ -328,6 +330,42 @@ void Weights::LoadSaved(TString fname,TString wname){
   wfile->Close();
   delete wfile;wfile=nullptr;
 }
+void Weights::LoadSavedDisc(TString fname,TString wname){
+  TDirectory* savedir=gDirectory;
+  TFile* wfile=new TFile(fname);
+  if(!wfile) return;
+  
+  Weights* file_wts=(Weights*)wfile->Get(wname);//read into memory
+  if(!file_wts) return;
+  fName=file_wts->GetName();
+  fTitle=file_wts->GetTitle();
+
+  savedir->cd();
+  TTree* tempTree=0;
+  tempTree=(TTree*)wfile->Get(wname+"_W");
+  fWTree=tempTree;
+  //  delete tempTree;
+  //fWTree->SetDirectory(0);
+  fSpecies=file_wts->GetSpecies();
+  fWVals.ResizeTo(fSpecies.size());
+  for(UInt_t i=0;i<fSpecies.size();i++)
+    fWTree->SetBranchAddress(GetSpeciesName(i),&fWVals[i]); 
+
+  fIDName=file_wts->GetIDName();
+  tempTree=(TTree*)wfile->Get(wname+"_ID");
+  fIDTree=tempTree;
+  // fIDTree=(TTree*)file_wts->GetIDTree()->Clone();
+  //delete tempTree;
+  //fIDTree->SetDirectory(0);
+  fIDTree->SetBranchAddress("WID",&fID);
+ 
+  fCurrEntry=0;
+  fIsSorted=kFALSE;
+  fN=fWTree->GetEntries();
+  // delete file_wts;file_wts=nullptr;  
+  //wfile->Close();
+  //delete wfile;wfile=nullptr;
+}
 
 ////////////////////////////////////////////////////////////
 ///Given a tree selection weight events that pass with wgt
@@ -425,11 +463,14 @@ filed_uptr  Weights::DFAddToTree(TString wname,TString outfname,TString tname,TS
 // }
 void Weights::AddToTree(TTree* tree){
   vector<TBranch*> branches;
+  tree->SetBranchStatus("*",0);
+  tree->SetBranchStatus(fIDName,1);
 
   const UInt_t Nsp=fSpecies.size();
   for(UInt_t i=0;i<Nsp;i++)
     branches.push_back(tree->Branch(GetSpeciesName(i),&fWVals[i]));
  
+
   auto id_leaf=tree->GetLeaf(fIDName);
   if(!id_leaf) {
     cout<<" ERROR Weights::AddToTree weights idname not found in tree : " <<fIDName<<endl;
@@ -452,5 +493,43 @@ void Weights::AddToTree(TTree* tree){
  
   tree->ResetBranchAddresses();
 
+}
+void Weights::AddToTreeDisc(TTree* tree,TString fileName){
+  TDirectory* saveDir=gDirectory;
+  fBranchFile=TFile::Open(fileName,"recreate");
+
+  vector<TBranch*> branches;
+  tree->SetBranchStatus("*",0);
+  tree->SetBranchStatus(fIDName,1);
+
+  const UInt_t Nsp=fSpecies.size();
+  for(UInt_t i=0;i<Nsp;i++){
+    TBranch* branch=tree->Branch(GetSpeciesName(i),&fWVals[i]);
+    branch->SetFile(fBranchFile);
+    branches.push_back(branch);
+  }
+
+  auto id_leaf=tree->GetLeaf(fIDName);
+  if(!id_leaf) {
+    cout<<" ERROR Weights::AddToTree weights idname not found in tree : " <<fIDName<<endl;
+    tree->Print();
+  }
+  
+  auto Nentries=tree->GetEntries();
+  for(Long64_t ient=0;ient<Nentries;ient++){
+    tree->GetEntry(ient);
+ 
+    GetEntryBinarySearch((Long64_t)id_leaf->GetValue());
+ 
+    if(!GotEntry())
+      for(UInt_t ivec=0;ivec<Nsp;ivec++)
+	fWVals[ivec]=0;
+ 
+    for(auto* br: branches)
+      br->Fill();
+  }
+ 
+  tree->ResetBranchAddresses();
+  saveDir->cd();
 }
 

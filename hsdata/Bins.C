@@ -144,7 +144,7 @@ void HS::Bins::RunBinTree(TTree* tree,Int_t BMin,Int_t BMax){
   for(Int_t ib=BMin;ib<BMax;ib++){
     gSystem->MakeDirectory(fOutDir+"/"+GetBinName(ib));
     fFileNames.push_back(fOutDir+"/"+GetBinName(ib)+"/Tree"+fDataName+".root");
-    fTrees[ib-BMin]=new BinTree(Nhere,fOutDir+"/"+GetBinName(ib)+"/Tree"+fDataName,tree);	
+    fTrees[ib-BMin]=new BinTree(Nhere,fOutDir+"/"+GetBinName(ib)+"/Tree"+fDataName,tree,fOmitBranches);	
   }
 
   saveDir->cd();
@@ -153,8 +153,6 @@ void HS::Bins::RunBinTree(TTree* tree,Int_t BMin,Int_t BMax){
 
  
   //Turn on any branches needed to evaluate selection
-
-  
   auto leaves=tree->GetListOfLeaves();
   auto branches=tree->GetListOfBranches();
   vector<TString> on_branches;
@@ -289,11 +287,20 @@ Int_t HS::Bins::FindBin(TVectorD vals){
 ///Duplicates a tree but keeps its branches/memory etc seperate
 ///This allows us to make many copies without memory issues
 ///CloneTree give trouble with memory, when lots of copies
-HS::BinTree::BinTree(Int_t nbins,TString name,TTree* tree0){
+HS::BinTree::BinTree(Int_t nbins,TString name,TTree* tree0,vector<TString> omit){
   std::cout<<"Constructing Bin Tree "<<name<<std::endl;
   fName=name;
   fFile=TFile::Open(fName+".root","recreate");
-  fTree=tree0->CloneTree(0);
+  vector<TString> turnOn;
+  for( auto& bname : omit ){//turn off omitted branches
+    if(tree0->GetBranchStatus(bname)) turnOn.push_back(bname);
+    tree0->SetBranchStatus(bname,0);
+  }
+  fTree=tree0->CloneTree(0);	
+  for(auto&  bname : turnOn ){ //turn back on omitted branches now tree is made
+    tree0->SetBranchStatus(bname,1);
+  }
+  
   fTree->SetName(tree0->GetName());
   fTree->SetDirectory(fFile);
   fTree->SetAutoSave(1E12); //We do our won autosave as this one changes basket size greatly increasing memory when large number of bins
@@ -309,12 +316,12 @@ void HS::BinTree::Save(){
   std::cout<<"BinTree::Save() "<<fName<<std::endl;
   if(!fTree) return;
   fFile->cd();
+  /// fTree->FlushBaskets();
   fTree->Write();
-  //fTree->SetDirectory(0);
-  //fTree->ResetBranchAddresses();
-  //delete fTree;
+  fTree->SetDirectory(0);
+  fTree->ResetBranchAddresses();
+  delete fTree;
   // fFile->Close();
-  //fTree=nullptr;
   delete fFile;fFile=nullptr;
   fTree=nullptr;
 }

@@ -68,17 +68,20 @@ namespace HS{
     void SetFile(TString filename);
     void Save();
     void LoadSaved(TString fname,TString wname);
+    void LoadSavedDisc(TString fname,TString wname);
     void WeightBySelection(TTree* tree,TCut cut,Double_t wgt);
     void WeightBySelection(TTree* tree,TCut cut,TString wgt);
 
     void AddToTree(TTree* tree);
-    
+    void AddToTreeDisc(TTree* tree,TString fileName);
+
     filed_uptr DFAddToTree(TString wname,TString outfname,TString tname,TString infname);
   private:
     TTree *fWTree=nullptr;  //! not saved tree of weights, branchname = species
     TTree *fIDTree=nullptr;  //! not saved tree of ids, branchname = species
     TList* fWeightList=nullptr; //list of weight bins which have been merged to make this
     TFile* fFile=nullptr;
+    TFile* fBranchFile=nullptr;
     TVectorD fWVals;
     Long64_t fID;
     Long64_t fCurrEntry;
@@ -90,7 +93,7 @@ namespace HS{
     Bool_t fGotEntry;
     Bool_t fIsSorted;
     
-    ClassDef(Weights, 1);  // Writeble Weight map  class
+    ClassDef(Weights, 2);  // Writeble Weight map  class
   };
 
   class WeightsConfig{

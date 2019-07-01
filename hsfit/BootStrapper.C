@@ -51,6 +51,7 @@ namespace HS{
       bins.AddAxis("Boot",fNBoots,0,fNBoots);
       bins.SetOutDir(gSystem->DirName(newFileName));
       bins.SetDataName("Data");
+      bins.AddOmitBranches("Boot");//Don't copy to binned tree
       bins.RunBinTree(tree);
       auto addFileNames=bins.GetFileNames();
       fFileNames.insert(fFileNames.end(), addFileNames.begin(), addFileNames.end());
