@@ -111,6 +111,7 @@ namespace HS{
    
       while (icount <fNumIters) {
 	totcount++;
+	cout<<"        METHAST "<<totcount<<endl;
 	// reset error handling flag
 	hadEvalError = false;
 	// print a dot every 1% of the chain construction

@@ -68,6 +68,9 @@ namespace HS{
       fActualCats("AllCategories",this,other.fActualCats),
       fActualObs("AllObservables",this,other.fActualObs)
     {
+
+      fWeightedBaseLine=other.fWeightedBaseLine;
+
       Int_t counter=0;
       
       for(UInt_t i=0;i<other.fObservables.size();i++){
@@ -258,7 +261,14 @@ namespace HS{
     
     Double_t RooComponentsPDF::analyticalIntegral(Int_t code,const char* rangeName) const
     {
+
+      // cout<<"RooComponentsPDF::analyticalIntegral"<<endl;
       if(code!=1) return RooHSEventsPDF::analyticalIntegral(code,rangeName);
+
+      //Check baseline caclulated
+      if(fWeightedBaseLine==0&&fBaseLine!=0&&fUseEvWeights)
+	CalcWeightedBaseLine(rangeName);
+
       //Check which dependent terms need recalculation
       //This will be 1) if they are dependent on parameters
       //           2) one or more of the parameters have changed
@@ -287,14 +297,37 @@ namespace HS{
       ///////////////////////////////
       if(needRecalc)RecalcComponentIntegrals(code,rangeName);
 
-      Double_t integral=fBaseLine;
+      Double_t integral=fWeightedBaseLine;
       //Double_t integral=fNTreeEntries;
       for(UInt_t icomp=0;icomp<fNComps;icomp++)
 	integral+=componentIntegral(icomp);
        //calculate total integral
+      // cout<<"integral "<<integral<<endl;
       return integral;
     }
-
+    void RooComponentsPDF::CalcWeightedBaseLine(const char* rangeName) const{
+     Long64_t ilow,ihigh=0;
+      SetLowHighVals(ilow,ihigh);
+         //point the terms to the integral events rather than data events
+      for(const auto& icomp:fRecalcComponent){
+	for(const auto &term:fDependentTermProxy[icomp]){
+	  auto unconstTerm=const_cast<RooAbsReal*>(&term->arg());
+	  unconstTerm->recursiveRedirectServers(fIntegrateSet);
+	}
+      }
+      fWeightedBaseLine=0;
+      //Loop over events and recalcaulte partial integrals
+      //that depend on parameters that have changed
+      Long64_t accepted=0;   
+      for(Long64_t ie=ilow;ie<ihigh;ie++){
+	fTreeEntry=ie;
+	if(!CheckRange(TString(rangeName).Data())) continue;
+	accepted++;
+	fWeightedBaseLine+=GetIntegralWeight(ie);
+      }
+      fWeightedBaseLine/=accepted;//normalise to number of events to prevent huge integrals
+      cout<<"RooComponentsPDF::CalcWeightedBaseLine "<<fWeightedBaseLine<<endl;
+    }
     void RooComponentsPDF::RecalcComponentIntegrals(Int_t code,const char* rangeName) const{
       Long64_t ilow,ihigh=0;
       SetLowHighVals(ilow,ihigh);
@@ -325,6 +358,7 @@ namespace HS{
 	  for(const auto &term:fDependentTermProxy[icomp]){
 	    product*= *term;
 	  }
+	  product*=GetIntegralWeight(ie);
 	  fCacheCompDepIntegral[icomp]+=product;
 	}
       }

@@ -33,7 +33,8 @@ namespace HS{
 
       Bool_t SetEvTree(TTree* tree,TString cut,Long64_t ngen=0) override;
       void HistIntegrals(const char* rangeName) const override;
-      
+      void CalcWeightedBaseLine(const char* rangeName) const;
+
     protected:
   
       Double_t evaluateData() const override ;
@@ -68,6 +69,7 @@ namespace HS{
       RooArgSet fParameters;
  
       Double_t fBaseLine=0;
+      mutable Double_t fWeightedBaseLine=0;
       UInt_t fNObs=0;
       UInt_t fNCats=0;
       UInt_t fNComps=0;

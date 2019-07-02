@@ -148,10 +148,11 @@ namespace HS{
       strings_t pars;
       strings_t ranges;
       ReadFormula(formu,pars,ranges);
-      for(UInt_t i=0;i<pars.size();i++)
+      for(UInt_t i=0;i<pars.size();i++){
+	cout<<pars[i]<<" "<<ranges[i]<<endl;
 	if(ranges[i]!=TString("[]")) LoadParameterOnTheFly(pars[i]+ranges[i]);
-
-
+      }
+      cout<<formu<<endl;
       //get rid of [range]
       for(auto& range:ranges)
 	formu.ReplaceAll(range, "");
@@ -159,7 +160,8 @@ namespace HS{
       formu=formu(formu.First("=")+1,formu.Sizeof());
       //get rid of @
       formu.ReplaceAll("@", "");
-
+     cout<<formu<<endl;
+ 
       
       RooArgList rooPars;
       for(auto& par:pars)
@@ -167,8 +169,11 @@ namespace HS{
 	else if(fWS.function(par))rooPars.add(*fWS.function(par));
 	else if(fWS.cat(par))rooPars.add(*fWS.cat(par));
 	else Error("Setup::LoadFormula"," unknown parameter");
+      rooPars.Print();
       RooFormulaVar fovar(name,formu,rooPars) ;
 
+      fovar.Print();
+      cout<<"Going to import"<<endl;
       fWS.import(fovar);
       if(fWS.function(name))
 	fFormulas.add(*fWS.function(name));
@@ -227,8 +232,10 @@ namespace HS{
     void Setup::FactoryPDF(TString opt){
       fPDFString.push_back(opt);
       if(opt.Contains("WEIGHTS@")){
-	TString wopt=opt(opt.First("@")+1,opt.Sizeof()-opt.First("@"));
-	opt=opt(0,opt.First("@"));
+	opt.ReplaceAll("WEIGHTS@","$"); //$ should be a safe character!!!!
+
+	TString wopt=opt(opt.First("$")+1,opt.Sizeof()-opt.First("$"));
+	opt=opt(0,opt.First("$"));
 
 
 	RooAbsArg* pdf=nullptr;
@@ -246,10 +253,10 @@ namespace HS{
 	if(evPdf){
 	  // evPdf->SetInWeights(wgtcon);
 	  fPDFInWeights[evPdf->GetName()]=wopt;
-	}
-	else{
-	  cout<<"WARNING Setup::FactoryPDF trying to give weights to non RooHSEventsPDF "<< opt<<" "<<wopt<<endl;
-	}
+	}	
+	else{	
+	  cout<<	"WARNING Setup::FactoryPDF trying to give weights to non RooHSEventsPDF "<< opt<<" "<<wopt<<endl;
+	}	
       }
       else{
 	RooAbsArg* pdf=nullptr;
@@ -464,17 +471,24 @@ namespace HS{
       
       svars.clear();
       sranges.clear();
+      Bool_t addIt=kTRUE;
+
       for(Int_t i=0;i<forma.Sizeof();i++){
 	if(TString(forma[i])=="@"){
 	  Int_t j=i;
 	  for(;j<forma.Sizeof();j++){
 	    if(TString(forma[j])=="["){
-	      svars.push_back(forma(i+1,j-i-1));
+	      TString varname=forma(i+1,j-i-1);
+	      if(std::find(svars.begin(),svars.end(),varname)==svars.end()){
+		svars.push_back(varname);
+		addIt=kTRUE;
+	      }
+	      else addIt=kFALSE;
 	      i=j;
 	      continue;
 	    }
 	    if(TString(forma[j])=="]"){
-	      sranges.push_back(forma(i,j-i+1));
+	      if(addIt)sranges.push_back(forma(i,j-i+1));
 	      i=j;
 	      break;
 	    }
@@ -482,8 +496,9 @@ namespace HS{
 	  }
 	}
       }
-    }
+    
 
+    }
 
     
   }//namespace FIT

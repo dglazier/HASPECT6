@@ -203,7 +203,10 @@ void RooHSEventsPDF::generateEvent(Int_t code){
 }
 Int_t RooHSEventsPDF::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,const char* rangeName) const
 {
-  // cout<<"RooHSEventsPDF::getAnalyticalIntegral "<<fEvTree<<" "<<fvecReal.size()<<endl;
+  cout<<"RooHSEventsPDF::getAnalyticalIntegral "<<fEvTree<<" "<<fvecReal.size()<<" "<<fProxSet.size()<<endl;
+  for(auto& prox:fProxSet)
+    cout<<prox->GetName()<<endl;
+
   if(fForceNumInt) return 0; //might be good to check numerical integral sometimes
   if(!fEvTree&&!fForceConstInt) return 0; //no MC events to integrate over
 
