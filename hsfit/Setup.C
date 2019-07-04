@@ -308,7 +308,7 @@ namespace HS{
       
       //make component list
       //TString scomps=opt(opt.First("<")+1,opt.First(">")-opt.First("<")-1);
-      TString scomps=opt(opt.First("=")+1,opt.Sizeof()-opt.First("=")-3);
+      TString scomps=opt(opt.First("=")+1,opt.Last(')')-opt.First("=")-1);
       cout<<opt<<" "<<opt.First("=")<<" "<<opt.Sizeof()<<" "<<opt.Sizeof()-opt.First("=")<<" "<<scomps.Sizeof()<<endl;
       
       scomps.ReplaceAll("{","");

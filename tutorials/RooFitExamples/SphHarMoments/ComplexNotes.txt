@@ -1,0 +1,92 @@
+//Complex
+RooAbsReal getReal();
+RooAbsReal getImag();
+
+
+//Complex parameter
+  REIM
+    RooRealVar re;
+    RooRealVar im;
+    double abs();
+    double phase();
+
+MPH
+    RooRealVar Abs;
+    RooRealVar Phase;
+    double re();
+    double im();
+
+//Complex Function
+RooAbsReal Re;
+RooAbsReal Im;
+
+
+//Complex Product
+Real
+Imag
+
+
+C1 = CM1(cosPhi1 + i*sinPhi1)
+
+C1*C2  = RE(ReC1*ReC2-ImC1*ImC2) +Im(ReC1*ImC2+ImC1*ReC2)
+       = CM1*CM2(cos(Phi1+Phi2)+ i sin(Phi1+Phi2))
+RE(C1*C2) = (ReC1*ReC2-ImC1*ImC2) OR CM1*CM2*cos(Phi1+Phi2)
+IM(C1*C2) = (ReC1*ImC2+ImC1*ReC2) OR CM1*CM2*sin(Phi1+Phi2)
+
+
+C1*C1^* = (ReC1*ReC1+ImC1*ImC1)
+C1*C2^* = (ReC1*ReC2 + ImC1*ImC2) + i (-ReC1*ImC2 + ImC1*ReC2)
+C2*C1^* = (ReC2*ReC1 + ImC2*ImC1) + i (+ImC2*ReC1 - ReC2*ImC1)
+So
+C1*C2^* + C2*C1^* = 2(ReC1*ReC2 + ImC1*ImC2)
+
+S=Sr+iSi
+(S*Y0 + D*Y2)^2 = (S*S^*)*(Y0*Y0^*) + (S*D^*)*(Y0*Y2^*)
+                + (D*D^*)*(Y2*Y2^*) + (D*S^*)*(Y2*Y0^*)
+		=  (Sr*Sr+Si+Si)*(Y0r*Y0r+Y0i*Y0i)
+		+  (Dr*Dr+Di*Di)*(Y2r*Y2r+Y2i*Y2i)
+	{	+  [(Sr*Dr+Si*Di)+i(SiDr-SrDi)]*[(Y0r*Y2r+Y0i*Y2i)+i(Y0i*Y2r-Y0r*Y2i)]
+		+  [(Dr*Sr+Di*Si)-i(SiDr-SrDi)]*[(Y2r*Y0r+Y2i*Y0i)-i(Y0i*Y2r-Y0r*Y2i)] }
+with
+A=(Sr*Dr+Si*Di) B= (SiDr-SrDi) X = (Y0r*Y2r+Y0i*Y2i) Y = (Y0i*Y2r-Y0r*Y2i)
+
+{} =   (A+iB)*(X+iY) + (A-iB)(X-iY)
+   = AX-BY +i(BX+AY) + AX - BY - i(BX+AY)
+   = 2(AX-BY)
+So
+(S*Y0 + D*Y2)^2 = (Sr*Sr+Si*Si)*(Y0r*Y0r+Y0i*Y0i)   = (Sr*Sr*Y0r*Y0r + Sr*Sr*Y0i*Y0i + Si*Si*Y0r*Y0r + Si*Si*Y0i*Y0i)
+      		+ (Dr*Dr+Di*Di)*(Y2r*Y2r+Y2i*Y2i)     =Sr*Sr*(Y0r*Y0r + Y0i*Y0i) + Si*Si*(Y0r*Y0r + Y0i*Y0i)
+      		+ (Sr*Dr+Si*Di)*(Y0r*Y2r+Y0i*Y2i)  or = (Sr*Sr+Si*Si)*Y0r*Y0r + (Sr*Sr+Si*Si)*Y0i*Y0i
+		- (Si*Dr-Sr*Di)*(Y0i*Y2r-Y0r*Y2i)
+
+Load Formula =>
+RooComplexFunc:RooComplexSphHarmonic Y11("Y11");
+Y11.getReal();
+Y11.getImag();
+
+Load Parameter =>
+RooComplexVar y11("y11");
+y11.getReal()
+
+
+RooComplexProduct y11prod("y11Y11")
+y11prod.getReal()->getVal()
+y11prod.getImag()->getVal()
+
+RooComplexProduct BilinearExpansion
+	C1*C2^* + C2*C1^* = 2(ReC1*ReC2 + ImC1*ImC2)
+
+RooSphHarmonicProduct   e.g. (Y0r*Y2r+Y0i*Y2i)
+
+
+RooComponentsPDF
+
+vector<vector<int&>> recurs;
+
+     for(auto &comp: fComponents){
+	Double_t product=1;
+	for(auto &term: comp){
+	   for( )
+		if( recurs[icomp][iterm] )expre[icomp][iterm]=recurs[icomp][iterm];
+		else expre[icomp][iterm]=*term.get();
+  	}

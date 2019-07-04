@@ -43,6 +43,11 @@ namespace HS{
       }
     void Binner::SplitData(TString tname,TString fname,TString name){
       if(fBins.GetNAxis()==0){ //no splits required
+
+	//PROOF needs full paths so enforce it here
+	if(!fname.BeginsWith("/"))
+	  fname = TString(gSystem->Getenv("PWD"))+"/"+fname;
+
 	fNameToFiles[name]={{fname}};
 	fNameToTree[name]=tname;
 	fBinNames={{""}};

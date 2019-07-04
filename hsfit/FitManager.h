@@ -40,7 +40,7 @@ namespace HS{
       Setup &SetUp() {return fSetup;};
       const Setup &ConstSetUp() {return fSetup;};
 
-      //Not the default name and title are given by the bin and bootstrap
+      //Note the default name and title are given by the bin and bootstrap
       //combination, Data GetGroup and GetItemName are BootStrap related
       //Default name= binname
       virtual TString GetCurrName(){return Bins().BinName(GetDataBin(fFiti));}

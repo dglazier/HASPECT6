@@ -19,7 +19,7 @@ void LoadFitProof(Int_t Nworkers=1,TString Selection=""){
 
   //Now finalsstate classes
   vector<TString > DATAClasses={"FiledTree","Bins","Weights"};
-  vector<TString > FITClasses= {"RooHSEventsPDF","RooHSEventsHistPDF","Setup","Data","Binner","Minimiser","HSMetropolisHastings","RooMcmc","PlotResults","BootStrapper","FitManager","ToyManager","sPlot","FitSelector","Process"};
+  vector<TString > FITClasses= {"RooHSEventsPDF","RooHSEventsHistPDF","RooComponentsPDF","Setup","Data","Binner","Minimiser","HSMetropolisHastings","RooMcmc","PlotResults","BootStrapper","FitManager","ToyManager","sPlot","FitSelector","Process"};
 
 
   if(!TString(gInterpreter->GetIncludePath()).Contains(fitpath)){

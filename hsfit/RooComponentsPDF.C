@@ -149,6 +149,7 @@ namespace HS{
        for(auto &comp: fComponents){
 	Double_t product=1;
 	for(auto &term: comp){
+	  
 	  product*= *term.get(); //take the product of all the terms for this component
 	}
 	val+=product; //add them to total
@@ -262,12 +263,14 @@ namespace HS{
     Double_t RooComponentsPDF::analyticalIntegral(Int_t code,const char* rangeName) const
     {
 
-      // cout<<"RooComponentsPDF::analyticalIntegral"<<endl;
+      //   cout<<"RooComponentsPDF::analyticalIntegral"<<endl;
       if(code!=1) return RooHSEventsPDF::analyticalIntegral(code,rangeName);
 
       //Check baseline caclulated
       if(fWeightedBaseLine==0&&fBaseLine!=0&&fUseEvWeights)
 	CalcWeightedBaseLine(rangeName);
+      else
+	fWeightedBaseLine=fBaseLine;
 
       //Check which dependent terms need recalculation
       //This will be 1) if they are dependent on parameters
@@ -302,8 +305,8 @@ namespace HS{
       for(UInt_t icomp=0;icomp<fNComps;icomp++)
 	integral+=componentIntegral(icomp);
        //calculate total integral
-      // cout<<"integral "<<integral<<endl;
-      return integral;
+      cout<<"***************************************integral "<<integral<<" "<<fWeightedBaseLine<<endl;
+       return integral;
     }
     void RooComponentsPDF::CalcWeightedBaseLine(const char* rangeName) const{
      Long64_t ilow,ihigh=0;
@@ -365,7 +368,7 @@ namespace HS{
       //Normalise to number of events
       for(const auto& icomp:fRecalcComponent){
 	fCacheCompDepIntegral[icomp]=fCacheCompDepIntegral[icomp]/accepted;
-     }
+    }
      //point the terms back to the data events rather than integral events
       for(const auto& icomp:fRecalcComponent){
 	for(const auto &term:fDependentTermProxy[icomp]){
@@ -381,10 +384,10 @@ namespace HS{
       //First take product of terms independent of observables;
       Double_t product=1;
       product*=fCacheCompDepIntegral[icomp];
-      for(auto& term:fIndependentTermProxy[icomp]){
+        for(auto& term:fIndependentTermProxy[icomp]){
 	product*= *term;
       }
-      return product; 
+     return product; 
     }
 
     Bool_t RooComponentsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){

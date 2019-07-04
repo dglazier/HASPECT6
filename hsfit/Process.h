@@ -96,6 +96,7 @@ namespace HS{
 	  }
 	}
 	static void CompileHere(TList*  macList){
+	  if(!macList)return;
 	  for(Int_t i=0;i<macList->GetEntries();i++){
 	    TString macro = macList->At(i)->GetName();
 	    std::cout<<"Will load "<<macro<<std::endl;
