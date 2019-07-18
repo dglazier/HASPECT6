@@ -85,7 +85,7 @@ namespace HS{
      if(fInWeights.get()){//if weights add branches and vars
        //create a copy in a new file to append the weights to
        //Keep it in file as large trees can use too much memory
-       auto weightedFileTree=FiledTree::CloneFull(rawtree,fSetup->GetOutDir()+fSetup->GetName()+"/DataInWeightedTree.root");
+       auto weightedFileTree=FiledTree::CloneFull(rawtree,fSetup->GetOutDir()+GetDataBin(iset)+"/DataInWeightedTree.root");
        //auto weightedFileTree=FiledTree::RecreateCopyFull(rawtree,fSetup->GetOutDir()+"DataInWeightedTree.root");
        fFiledTrees[iset].reset();
        fFiledTrees[iset]=std::move(weightedFileTree);

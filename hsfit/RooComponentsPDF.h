@@ -28,7 +28,6 @@ namespace HS{
       inline virtual ~RooComponentsPDF() { }
 
       
-      void initIntegrator() override;
       Double_t analyticalIntegral(Int_t code,const char* rangeName) const override;
 
       Bool_t SetEvTree(TTree* tree,TString cut,Long64_t ngen=0) override;
@@ -42,7 +41,8 @@ namespace HS{
       void MakeSets();
       void RecalcComponentIntegrals(Int_t code,const char* rangeName) const;
       Double_t componentIntegral(Int_t icomp) const;
-      
+      void initIntegrator() override;
+ 
     private:
 
       RooListProxy fActualObs;
@@ -62,8 +62,8 @@ namespace HS{
       vector<RooCategory*> fIntegrateCats;
       RooArgSet fIntegrateSet;
       
-      mutable vector<Float_t> fCacheCompDepIntegral;
-      mutable vector<vector<Float_t>> fPrevParVals;
+      mutable vector<Double_t> fCacheCompDepIntegral;
+      mutable vector<vector<Double_t>> fPrevParVals;
       mutable vector<UInt_t> fRecalcComponent;
       
       RooArgSet fParameters;
