@@ -85,6 +85,7 @@ namespace HS{
       // for(auto& branch: branches){
       // 	delete branch;
       // }
+      delete tree;
       delete fGenData; fGenData=nullptr;
      }
     ///////////////////////////////////////////////////////////////
@@ -128,7 +129,7 @@ namespace HS{
       
       std::shared_ptr<ToyManager> toy{new ToyManager(N,fit,fit.SetUp().GetOutDir(),resultFile)};
 
-        return std::move(toy);
+      return std::move(toy);
     }
 
     void ToyManager::LoadResult(){
@@ -159,7 +160,7 @@ namespace HS{
     }
     //////////////////////////////////////////////////////////////////////
     void ToyManager::Summarise(Int_t ibin){
-     
+      cout<<"Summarise "<<Minimiser::ResultTreeName() <<endl;
       TChain resChain(Minimiser::ResultTreeName());
       resChain.Add(SetUp().GetOutDir()+Bins().BinName(ibin)+"/Results*.root");
       std::unique_ptr<TFile> resFile{TFile::Open(SetUp().GetOutDir()+Bins().BinName(ibin)+"/ToySummary.root","update")};

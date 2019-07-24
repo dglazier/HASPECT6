@@ -2,6 +2,7 @@
 #include "HSMetropolisHastings.h"
 #include <TIterator.h>
 #include <TLeaf.h>
+#include <TTreeIndex.h>
 #include <RooStats/UniformProposal.h>
 #include <RooStats/SequentialProposal.h>
 #include <RooStats/ProposalHelper.h>
@@ -86,16 +87,15 @@ namespace HS{
       fChain= mh.ConstructChain(); //mh is still owner and will delete
       
       fChainData=fChain->GetAsDataSet(EventRange(0, fChain->Size()));
-      cout<<"make tree"<<endl;
-      if(fChainData){
+       if(fChainData){
  	fTreeMCMC=RooStats::GetAsTTree("MCMCTree","MCMCTree",*fChainData);
 	delete fChainData;
       }  
-      cout<<"make burned in data"<<endl;
       if(fChain->Size()>fNumBurnInSteps)
 	fChainData=fChain->GetAsDataSet(EventRange(fNumBurnInSteps, fChain->Size()));
 
  
+      nll->constOptimizeTestStatistic(RooAbsArg::DeActivate,false) ;
       if (useDefaultPropFunc) delete fPropFunc;
       if (usePriorPdf) delete prodPdf;
       delete nll;
@@ -106,26 +106,52 @@ namespace HS{
     
     void RooMcmc::Result(){
 
-      cout<<"RooMcmc::Result()"<<endl;
-      RooArgList saveFloatFinalList(*fChainData->get()) ;
-       
-      for(Int_t i=0;i<fParams->getSize();i++){
-  
-	RooRealVar* var=dynamic_cast<RooRealVar*>(saveFloatFinalList.at(i));
-	cout<<var->GetName()<<" "<<fChainData->mean(*var)<<" +- "<<fChainData->sigma(*var)<<endl;
-	((RooRealVar*)fParams->find(var->GetName()))->setVal(fChainData->mean(*var));
-	((RooRealVar*)fParams->find(var->GetName()))->setError(fChainData->sigma(*var));
-      }
-      fChainData->covarianceMatrix()->Print();
-
       //Add entry branch to mcmc tree for easy cutting on BurnIn
       //fMCMCtree contains all events
       Long64_t entry=0;
       auto entryBranch=fTreeMCMC->Branch("entry",&entry,"entry/L");
       for(entry=0;entry<fTreeMCMC->GetEntries();entry++)
 	entryBranch->Fill();
-
+      
+      //Add any formulas
+      //Need to get a copy of variables first or setting
+      //the means as parameter values does not seem to work...
+      RooArgList saveFloatFinalList(*fChainData->get()) ;
       AddFormulaToMCMCTree();
+
+ 
+      //set paramters to mean values of post burn in distributions
+      //     RooArgList saveFloatFinalList(*fChainData->get()) ;
+      for(Int_t i=0;i<fParams->getSize();i++){
+
+	RooRealVar* var=dynamic_cast<RooRealVar*>(saveFloatFinalList.at(i));
+	//	cout<<var->GetName()<<" "<<var->getVal()<<" "<<fChainData->mean(*var)<<" +- "<<fChainData->sigma(*var)<<endl;
+	auto var2=dynamic_cast<RooRealVar*>(fParams->find(var->GetName()));
+	var2->setVal(fChainData->mean(*var));
+	var2->setError(fChainData->sigma(*var));
+      }
+      fChainData->covarianceMatrix()->Print();
+
+  
+      //look for the best likelihood
+
+      //It is not recommended to use the best likelihood
+      //code is lef here as an example
+      // fTreeMCMC->BuildIndex(TString("1E6*nll_MarkovChain_local_"));
+      // TTreeIndex *tindex = (TTreeIndex*)fTreeMCMC->GetTreeIndex();
+
+      // auto index=tindex->GetIndex();
+      // auto values=tindex->GetIndexValues();
+      //  for(Int_t i=0;i<fParams->getSize();i++){
+      //   RooArgList saveFloatMaxLikeList(*fChainData->get(index[0])) ;
+
+      // 	RooRealVar* var=dynamic_cast<RooRealVar*>(saveFloatMaxLikeList.at(i));
+      // 	Double_t val=var->getVal();
+      // 	auto var2=dynamic_cast<RooRealVar*>(fParams->find(var->GetName()));
+      // 	var2->setVal(val);
+      // }
+      
+     
     }
     void RooMcmc::AddFormulaToMCMCTree(){
 
@@ -144,6 +170,7 @@ namespace HS{
 
       Long64_t Nmcmc=fTreeMCMC->GetEntries();
       Int_t Nleaf=fTreeMCMC->GetListOfLeaves()->GetEntries();
+      // auto snapshot=fParams->snapshot();
       for(Int_t entry=0;entry<Nmcmc;entry++){
 	
 	fTreeMCMC->GetEntry(entry);
@@ -166,7 +193,7 @@ namespace HS{
 
 	}
       }  
- 
+      // fParams=dynamic_cast<RooArgSet*>(snapshot); //set parameter values back to orignal
     }
     ///////////////////////////////////////////////
     Double_t  RooMcmc::SumWeights(){
@@ -237,6 +264,7 @@ namespace HS{
       
       fTreeMCMC->Write();
       //save paramters and chi2s in  dataset (for easy merging)
+      //RooArgSet saveArgs(*fParams);
       RooArgSet saveArgs(fSetup->Parameters());
       saveArgs.add(fSetup->Yields());
       

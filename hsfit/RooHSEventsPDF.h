@@ -99,7 +99,8 @@ namespace HS{
       void SetLowHighVals(Long64_t& ilow,Long64_t& ihigh) const;
 
       virtual  Double_t evaluateData() const {return 0;}
- 
+      virtual void initIntegrator();
+
     public:
  
       Int_t getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars,const char* rangeName) const override;
@@ -108,8 +109,7 @@ namespace HS{
       void generateEvent(Int_t code) override;
       Int_t getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK) const override;
       void initGenerator(Int_t code) override;
-      virtual void initIntegrator();
-
+   
       //require an evaluateMC class to return same as evaluate but with
       //variables from fEvTree, it would be nicer to just use evaluate
       //but use of RooProxy variables complicates it

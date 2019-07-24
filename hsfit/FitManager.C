@@ -46,7 +46,7 @@ namespace HS{
 	SetAllValLimits(fCurrSetup->Yields(),
 			fCurrDataSet->sumEntries()/2,0,fCurrDataSet->sumEntries()*1.2);
       //create extended max likelihood pdf
-
+      fCurrSetup->Parameters().Print("v");
       fCurrSetup->TotalPDF();
       FitTo();
     }
@@ -58,6 +58,10 @@ namespace HS{
       //If not it will use the string from Factory() etc,
       fCurrSetup->ParsAndYields().assignFast(fSetup.ParsAndYields());
 
+      //Look to see if taking previous fit results as initial pars
+      if(fUsePrevResult){
+	LoadPrevResult(fPrevResultDir,fPrevResultMini);
+      }
     }
     /////////////////////////////////////////////////////////////
     void FitManager::RunAll(){
@@ -78,7 +82,7 @@ namespace HS{
       
       ///////////////////////////
       //Plot best fit and return
-      PlotDataModel();
+      // PlotDataModel();
 
     }
     void FitManager::RunOne(Int_t ifit){
@@ -155,6 +159,36 @@ namespace HS{
       auto file=TFile::Open(dir+"/HSSetup.root");
       fSetup=*(dynamic_cast<HS::FIT::Setup*>(file->Get("HSSetup")));
       delete file;
+    }
+    //Read in paarameters from previous fit
+    void FitManager::InitPrevResult(TString resultDir,TString resultMinimiser){
+      fUsePrevResult=kTRUE;
+      
+      if(resultDir==TString()) fPrevResultDir=fSetup.GetOutDir(); //use current
+      else fPrevResultDir=resultDir;
+
+      if(resultMinimiser==TString())fPrevResultMini=fMinimiser->GetName();
+      else fPrevResultMini=resultMinimiser;
+      
+    }
+    
+    void FitManager::LoadPrevResult(TString resultDir,TString resultMinimiser){
+   
+      TString resultFile=resultDir+"/"+fCurrSetup->GetName()+"/Results"+fCurrSetup->GetTitle()+resultMinimiser+".root";
+	   
+      cout<<"LOAD  "<<resultFile<<endl;
+      //      TString resultFile=resultDir+Bins().BinName(GetDataBin(GetFiti()))+"/"+resultFileName;
+      std::unique_ptr<TFile> fitFile{TFile::Open(resultFile)};
+      std::unique_ptr<RooDataSet> result{dynamic_cast<RooDataSet*>( fitFile->Get(Minimiser::FinalParName()))};
+      //Set the values of the paramteres to those in the given result
+      if(result.get()){
+	auto newPars = fCurrSetup->ParsAndYields();
+	auto* resAll = result->get(); //get all result info
+	auto* resPars=resAll->selectCommon(newPars); //just select pars and yieds
+	newPars.assignFast(*resPars); //set values to results
+	cout<<"FitManager::LoadResult setting values from fit results "<<resultFile<<" : "<<endl;
+	newPars.Print("v");
+      }
     }
     void FitManager::WriteThis(){
       auto file=TFile::Open(fSetup.GetOutDir()+"HSFit.root","recreate");

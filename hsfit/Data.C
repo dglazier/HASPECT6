@@ -71,7 +71,10 @@ namespace HS{
     }
  
     dset_uptr DataEvents::Get(const UInt_t iset) {
-  
+
+      if(fFileNames.size()<=iset)
+	return dset_uptr();
+      
       cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" tree "<<fTreeName<<" weights "<<fInWeights.get()<<" "<<fInWeightName<<endl;
       
       fFiledTrees[iset]=FiledTree::Read(fTreeName,fFileNames[iset]); //will be delted at end of function

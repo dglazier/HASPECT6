@@ -23,7 +23,7 @@ using namespace HS::FIT;
 
 RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) :  RooAbsPdf(other,name) 
   {
-    cout<<"RooHSEventsPDF::RooHSEventsPDF "<<other.fNTreeEntries<< " "<<other.fvecReal.size()<<endl;
+    cout<<"RooHSEventsPDF::RooHSEventsPDF "<<GetName()<<other.fNTreeEntries<< " "<<other.fvecReal.size()<<endl;
     fIsClone=kTRUE;
     fParent=const_cast<RooHSEventsPDF*>(&other);
   
@@ -71,11 +71,14 @@ RooHSEventsPDF::~RooHSEventsPDF(){
     }
    if(fEntryList) delete fEntryList;
    if(fLast) delete fLast;
-    if(fEvTree) delete fEvTree;
+   if(fEvTree) delete fEvTree;
    
     if(fWeights){
       fWeights->Save();
       delete fWeights;
+    }
+    if(fInWeights){
+      delete fInWeights;
     }
      for(UInt_t i=0;i<fVarSet.size();i++)
       delete fVarSet[i];
@@ -238,7 +241,7 @@ Int_t RooHSEventsPDF::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analV
 
 Double_t RooHSEventsPDF::analyticalIntegral(Int_t code,const char* rangeName) const
 {
-  //cout<<"Analystic "<<fIntCounter++<<" "<<fEvTree<<" "<<code<<endl;
+  // cout<<"Analystic "<<fIntCounter++<<" "<<fEvTree<<" "<<code<<endl;
   if(code==1&&fForceConstInt&&!fEvTree) {fLast[0]=1;return fLast[0];}
   //sort number of events first in case forced
   Long64_t NEv=0;
@@ -391,7 +394,7 @@ Bool_t RooHSEventsPDF::CheckChange() const{
 Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   if(!tree->GetEntries())return kFALSE;
   Info("RooHSEventsPDF::SetEvTree"," with name %s and cut %s",tree->GetName(),cut.Data());
-
+  cout<<"RooHSEventsPDF::SetEvTree "<<GetName()<<endl;
   //Set the cut
   //Note weight cut can be set with WEIGHT@expr in factory constructor
   if(cut==TString())
@@ -477,7 +480,7 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   }
   fEvTree->GetEntry(0);
  
-  //Loop over tree, extracting values into vector
+ //Loop over tree, extracting values into vector
   UInt_t ProxSize=fNvars;
   UInt_t CatSize=fNcats;
   fNTreeEntries=fEvTree->GetEntries();
@@ -485,7 +488,6 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   fvecRealGen.resize(fNTreeEntries*ProxSize);
   fvecCat.resize(fNTreeEntries*CatSize);
   fvecCatGen.resize(fNTreeEntries*CatSize);
-
  //Get entries that pass cut
   //A little subtle but this must be done before SetMakeClass or it
   //doesn't find any entries
@@ -495,6 +497,8 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   Long64_t entryNumber=0;
   Long64_t localEntry=0;
   fNTreeEntries=elist->GetN();
+
+  cout<<"RooHSEventsPDF::SetEvTree "<<GetName()<<" "<<fNTreeEntries<<endl;
 
   for(Long64_t iEvent=0;iEvent<fNTreeEntries;iEvent++){
     entryNumber = fEvTree->GetEntryNumber(iEvent);
@@ -702,7 +706,7 @@ Bool_t RooHSEventsPDF::AddProtoData(const RooDataSet* data){
   for(Long64_t id=0;id<fNTreeEntries;id++){
     dataVars=data->get(vrandom[idata]);
     for(UInt_t ip=0;ip<protoDataForVar.size();ip++){
-      Float_t val=dataVars->getRealValue(fProxSet[protoDataForVar[ip]]->GetName());
+      Double_t val=dataVars->getRealValue(fProxSet[protoDataForVar[ip]]->GetName());
       fvecReal[id*fNvars+protoDataForVar[ip]]=val;
       fvecRealGen[id*fNvars+protoDataForVar[ip]]=val;
     }  
@@ -730,7 +734,7 @@ void RooHSEventsPDF::ResetTree(){
 
 void RooHSEventsPDF::SetNextRange(Int_t ir){
   Long64_t Nentries=fNTreeEntries;
-  Int_t range=((Float_t)Nentries)/fNRanges;
+  Int_t range=((Double_t)Nentries)/fNRanges;
 
   fIntRangeLow=ir*range;
   fIntRangeHigh=(ir+1)*range;

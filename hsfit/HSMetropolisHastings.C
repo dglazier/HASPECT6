@@ -111,7 +111,7 @@ namespace HS{
    
       while (icount <fNumIters) {
 	totcount++;
-	cout<<"        METHAST "<<totcount<<endl;
+	//	cout<<"        METHAST "<<totcount<<endl;
 	// reset error handling flag
 	hadEvalError = false;
 	// print a dot every 1% of the chain construction
@@ -126,10 +126,19 @@ namespace HS{
 	if (icount%100 == 1) havePrinted=0;
 	
 	fPropFunc->Propose(xPrime, x);
-
-
 	RooStats::SetParameters(&xPrime, &fParameters);
+
+
+	// cout<<"********************************************MSMC "<<endl;
+
+	// fParameters.Print("v");
+	// cout<<"********************************************X' "<<endl;
+	// xPrime.Print("v");
+	// cout<<"********************************************X "<<endl;
+	// x.Print("v");
+
 	xPrimeL = fFunction->getVal();
+	//	cout<<"********************************************L"<<xPrimeL<<endl;
 
 
 	// check if log-likelihood for xprime had an error status
@@ -148,7 +157,7 @@ namespace HS{
 	  if (fSign == kPositive)
             a = xL - xPrimeL;
 	  else
-            a = xPrimeL - xL;
+            a = xPrimeL - xL;//**DO this one
 	}
 	else
 	  a = xPrimeL / xL;
@@ -156,6 +165,7 @@ namespace HS{
 
 
 	if (!hadEvalError && !fPropFunc->IsSymmetric(xPrime, x)) {
+	  //Sequential proposal has density 1 so this does nothing
 	  Double_t xPrimePD = fPropFunc->GetProposalDensity(xPrime, x);
 	  Double_t xPD      = fPropFunc->GetProposalDensity(x, xPrime);
 	  if (fType == kRegular)
@@ -168,11 +178,13 @@ namespace HS{
 	//	x.Print("v");xPrime.Print("v");
 	if (!hadEvalError && ShouldTakeStep(a)) {
 	  // go to the proposed point xPrime
-
+	  //cout<<"TOOK STEP "<<endl;
 	  // add the current point with the current weight
+	  // ? dglazier should this not have xPrimeL the current val
 	  if (weight != 0.0)
-            chain->Add(x, CalcNLL(xL), (Double_t)weight);
-
+            chain->Add(x, CalcNLL(xPrimeL), (Double_t)weight);
+	  //chain->Add(x, CalcNLL(xL), (Double_t)weight);
+	    
 	  // reset the weight and go to xPrime
 	  weight = 1;
 	  RooStats::SetParameters(&xPrime, &x);

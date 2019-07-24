@@ -117,19 +117,18 @@ namespace HS{
     /// Load a fit variable e.g s.LoadParameter("X[-1,1]");
     /// Add a fit parameter X between -1 and 1
     void Setup::LoadParameterOnTheFly(TString opt){
-      cout<<"Setup::LoadParameterOnTheFly "<<opt<<endl;
       auto var=dynamic_cast<RooRealVar*>(fWS.factory(opt));
       if(!var) {
 	cout<<"Setup::LoadParameter "<<opt<<" failed"<<endl;
 	return;
       }
-      fPars.add(*var);      
+      if(!fParameters.contains(*var))
+	fParameters.add(*var);      
     }
      ////////////////////////////////////////////////////////////
     /// Load a fit RooAbsReal class e.g s.LoadFunctionVar("RooRealSphHarmonic::leg2(CTh[0,-1,1],Phi[0,-3.141,3.141],2,1)"));
     /// Add a fit parameter X between -1 and 1
     void Setup::LoadFunctionVar(TString opt){
-      cout<<"Setup::LoadFunctionVar "<<opt<<endl;
       auto var=dynamic_cast<RooAbsReal*>(fWS.factory(opt));
       if(!var) {
 	cout<<"Setup::LoadFunctionVar "<<opt<<" failed"<<endl;
@@ -149,10 +148,8 @@ namespace HS{
       strings_t ranges;
       ReadFormula(formu,pars,ranges);
       for(UInt_t i=0;i<pars.size();i++){
-	cout<<pars[i]<<" "<<ranges[i]<<endl;
 	if(ranges[i]!=TString("[]")) LoadParameterOnTheFly(pars[i]+ranges[i]);
       }
-      cout<<formu<<endl;
       //get rid of [range]
       for(auto& range:ranges)
 	formu.ReplaceAll(range, "");
@@ -160,21 +157,17 @@ namespace HS{
       formu=formu(formu.First("=")+1,formu.Sizeof());
       //get rid of @
       formu.ReplaceAll("@", "");
-     cout<<formu<<endl;
- 
-      
-      RooArgList rooPars;
+       RooArgList rooPars;
       for(auto& par:pars)
 	if(fWS.var(par))rooPars.add(*fWS.var(par));
 	else if(fWS.function(par))rooPars.add(*fWS.function(par));
 	else if(fWS.cat(par))rooPars.add(*fWS.cat(par));
 	else Error("Setup::LoadFormula"," unknown parameter");
-      rooPars.Print();
+      //rooPars.Print();
       RooFormulaVar fovar(name,formu,rooPars) ;
 
-      fovar.Print();
-      cout<<"Going to import"<<endl;
-      fWS.import(fovar);
+      //  fovar.Print();
+       fWS.import(fovar);
       if(fWS.function(name))
 	fFormulas.add(*fWS.function(name));
       else Fatal("Setup::LoadFormula","Formula didn't compile");
@@ -270,6 +263,29 @@ namespace HS{
 
     }
     ///////////////////////////////////////////////////////////
+    /// Create PDF, parameters formulas and functions from PdfParser
+    void Setup::ParserPDF(TString str, PARSER::PdfParser& parse){
+      //Get the FactoryPDF string and create functions etc
+      auto pdfString=parse.ConstructPDF(str.Data());
+
+      //Load Parameters
+      auto pars = parse.GetParameters();
+      for(auto& par:pars)
+	LoadParameter(par);
+      //LoadFunctionVars
+      auto funs = parse.GetFunctions();
+      for(auto& fun:funs){
+	cout<<"Load Function var "<<fun<<endl;
+	LoadFunctionVar(fun);
+      }
+      //LoadFormulas
+      auto forms = parse.GetFormulas();
+      for(auto& form:forms)
+	LoadFormula(form);
+      
+      FactoryPDF(pdfString);
+    }
+    ///////////////////////////////////////////////////////////
     ///Set this PDF to be included in extended ML fit
     ///This function will create the associated yield paramter
     void Setup::LoadSpeciesPDF(TString opt,Float_t Scale0){
@@ -287,8 +303,8 @@ namespace HS{
     RooAbsPdf* Setup::ComponentsPDF(TString opt){
       opt.ReplaceAll("RooComponentsPDF::","");
       TString pdfName=opt(0,opt.First("("));
-      fWS.Print();
-      cout<<"ComponentsPDF "<<pdfName<<endl;
+      //  fWS.Print();
+      //cout<<"ComponentsPDF "<<pdfName<<endl;
       //Get baseline
       TString	sbaseLine=opt(opt.First("(")+1,opt.First(",")-opt.First("(")-1);
       Double_t baseLine=sbaseLine.Atof();
@@ -297,33 +313,33 @@ namespace HS{
       auto obsStrings=sobs.Tokenize(",");
       RooArgList obsList("RooComponentsPDF::ComponentObservables");
       auto varsAndCats=FitVarsAndCats();
-      cout<<"Observable String "<<sobs<<endl;
+      //cout<<"Observable String "<<sobs<<endl;
       for(Int_t i=0;i<obsStrings->GetEntries();i++ ){
-	cout<<"      "<<obsStrings->At(i)->GetName()<<endl;
+	//cout<<"      "<<obsStrings->At(i)->GetName()<<endl;
 	obsList.add(*varsAndCats.find(obsStrings->At(i)->GetName()));
       }
       delete obsStrings;
       
-      obsList.Print("v");
+      //obsList.Print("v");
       
       //make component list
       //TString scomps=opt(opt.First("<")+1,opt.First(">")-opt.First("<")-1);
       TString scomps=opt(opt.First("=")+1,opt.Last(')')-opt.First("=")-1);
-      cout<<opt<<" "<<opt.First("=")<<" "<<opt.Sizeof()<<" "<<opt.Sizeof()-opt.First("=")<<" "<<scomps.Sizeof()<<endl;
+      //cout<<opt<<" "<<opt.First("=")<<" "<<opt.Sizeof()<<" "<<opt.Sizeof()-opt.First("=")<<" "<<scomps.Sizeof()<<endl;
       
       scomps.ReplaceAll("{","");
       scomps.ReplaceAll("}","");
       auto compStrings=scomps.Tokenize(":");
       vector<RooArgList> compsLists;
       Int_t ic=0;
-      cout<<"Components String "<<scomps<<endl;
+      //cout<<"Components String "<<scomps<<endl;
       for(Int_t i=0;i<compStrings->GetEntries();i++ ){
-	cout<<"      "<<compStrings->At(i)->GetName()<<endl;
+	//cout<<"      "<<compStrings->At(i)->GetName()<<endl;
 	RooArgList termList(Form("RooComponentsPDF::Term%d",ic++));
 	TString term = compStrings->At(i)->GetName();
 	auto termStrings=term.Tokenize(";");
 	for( Int_t j=0;j<termStrings->GetEntries();j++ ){
-	cout<<"                 "<<termStrings->At(j)->GetName()<<endl;
+	  //cout<<"                 "<<termStrings->At(j)->GetName()<<endl;
 	  
 	  TString sarg = termStrings->At(j)->GetName();
 	  TString vname =sarg;
@@ -335,14 +351,17 @@ namespace HS{
 	    LoadParameterOnTheFly(sarg);
 	    vname=sarg(0,sarg.First("[")); //get the par name
 	  }
-	  else cout<<"Will look for "<<vname<<endl;
-	  if( dynamic_cast<RooRealVar*>(fWS.var(vname))){cout<<"GOT PAR "<<endl; termList.add(*fWS.var(vname));}
+	  // else cout<<"Will look for "<<vname<<endl;
+	  if( dynamic_cast<RooRealVar*>(fWS.var(vname))){
+	    //cout<<"GOT PAR "<<endl;
+	    termList.add(*fWS.var(vname));
+	  }
 	  else if( dynamic_cast<RooCategory*>(fWS.cat(vname))) termList.add(*fWS.cat(vname));
 	  else if ( dynamic_cast<RooFormulaVar*>(fWS.function(vname))) termList.add(*fWS.function(vname));
 	  else if ( dynamic_cast<RooAbsReal*>(fWS.function(vname))) termList.add(*fWS.function(vname)); //for function vars
 	  else Fatal("RooAbsPdf* Setup::ComponentsPDF(TString opt)","variable not found");
 	}
-	termList.Print("v");
+	//termList.Print("v");
 	compsLists.push_back(termList);//add this term to the components list
 	delete termStrings;
       }
@@ -384,13 +403,16 @@ namespace HS{
       return fCats;
     }
     RooArgSet& Setup::DataVars(){
-      if(fVars.getSize())
-	return fVars;
+      cout<<"Setup::DataVars() "<<fVars.getSize()<<endl;
+      //if(fVars.getSize())
+      //	return fVars;
+      fVars.removeAll();
       fVars.add(MakeArgSet(fFitVars));
       fVars.add(MakeArgSet(fFitCats));
       fVars.add(MakeArgSet(fAuxVars));
       fWS.factory(fIDBranchName+"[0,9.99999999999999e14]");
       fVars.add(*fWS.var(fIDBranchName));
+      cout<<"Setup::DataVars() "<<fVars.getSize()<<endl;
       return fVars;
     }
    RooArgSet& Setup::FitVarsAndCats(){

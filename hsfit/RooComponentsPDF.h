@@ -25,7 +25,7 @@ namespace HS{
       RooComponentsPDF(const char *name, const char *title,Double_t base,const RooArgList& obsList,const vector<RooArgList> compList);
       RooComponentsPDF(const RooComponentsPDF& other, const char* name=0) ;
       TObject* clone(const char* newname) const override { return new RooComponentsPDF(*this,newname); }
-      inline virtual ~RooComponentsPDF() { }
+      inline virtual ~RooComponentsPDF()=default;
 
       
       Double_t analyticalIntegral(Int_t code,const char* rangeName) const override;
