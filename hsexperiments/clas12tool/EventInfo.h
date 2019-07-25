@@ -17,7 +17,8 @@ namespace HS{
   
       Long_t fVTPTrigBit=0; //clas12 vtp trigger bit
       Long_t fTrigBit=0; //clas12 trigger bit
-      Float_t fCJSTTime=0;//COATJAVA defined starttime
+      Float_t fStartTime=0;//COATJAVA defined starttime
+      Float_t fFTBStartTime=0;//COATJAVA defined starttime
       Float_t fRFTime=0;//RF Time (ns)
       Float_t fBeamPol=0; //helicity polarisation of beam
       Float_t fTarPol=0; //!helicity polarisation of beam

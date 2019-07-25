@@ -52,6 +52,7 @@ namespace HS{
 
 
     Double_t Beta(){return fPath/fTime/2.99792e+08*1E9;}//time ns, path m
+    // Double_t HypBeta(){Double_t pp=fP4.P();return 1;}//pp/sqrt(pp*pp+fPDGMass*fPDGMass);}
     Double_t HypBeta(){Double_t pp=fP4.P();return pp/sqrt(pp*pp+fPDGMass*fPDGMass);}
     Double_t HypTime(){return fPath/HypBeta()/2.99792e+08*1E9  ;} //in ns
     Double_t DeltaTime() override{return fTime-HypTime();};

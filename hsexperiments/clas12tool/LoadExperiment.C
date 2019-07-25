@@ -25,7 +25,7 @@ void LoadExperiment(){
   TString C12TOOL=gSystem->Getenv("CLAS12TOOL");
   if(C12TOOL!=TString("")) {
     TString USE_HIPO4=gSystem->Getenv("USE_HIPO4");
-    
+    cout<<"USE HIPO 4 ? "<<(USE_HIPO4!=TString())<<" "<<USE_HIPO4<<endl;
     TString LIB=C12TOOL+"/lib/";
     gSystem->Load(LIB+"liblz4");
     if(USE_HIPO4!=TString()){
@@ -34,7 +34,7 @@ void LoadExperiment(){
     }
     else{
       gSystem->Load(LIB+"libHipo3");
-    gSystem->Load(LIB+"libClas12Banks3");
+      gSystem->Load(LIB+"libClas12Banks3");
     }
     
   }

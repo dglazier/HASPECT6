@@ -80,8 +80,8 @@ namespace HS{
       void SetTruth(BaseParticle part){fTruthP4=part.P4();fTruthV=part.Vertex();fTruthPDG=part.PDG();};
       void SetTruth(HSLorentzVector part,HSPosition ver,Int_t pdg){fTruthP4=part;fTruthV=ver;fTruthPDG=pdg;};
       void SetDetector(Short_t det){fDetector=det;}
-      void SetTime(Short_t ti){fTime=ti;};
-      void SetMeasMass(Short_t ti){fMeasMass=ti;};
+      void SetTime(Double_t ti){fTime=ti;};
+      void SetMeasMass(Double_t ti){fMeasMass=ti;};
       
       //Getting functions
       HSLorentzVector P4() const {return fP4;}

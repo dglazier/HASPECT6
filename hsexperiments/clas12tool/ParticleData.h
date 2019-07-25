@@ -30,6 +30,7 @@ namespace HS{
     Float_t Phi=0;
     Float_t Vz=0;
     Float_t Time=0;
+    Float_t TimeVer=0;
     Float_t Edep=0;
     Float_t DeltaE=0;
     Float_t PreE=0;
@@ -79,6 +80,7 @@ namespace HS{
     Vz    =  fParticle->Vertex().Z();
 
     Time  =  fParticle->DeltaTime();
+    TimeVer  =  fParticle->DeltaTimeVer();
 
     //All
     Region = c12p->getRegion();

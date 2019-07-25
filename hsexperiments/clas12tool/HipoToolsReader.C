@@ -79,7 +79,7 @@ Bool_t CLAS12::HipoToolsReader::ReadEvent(Long64_t entry){
   
   
   FillParticles();
-  FillGenerated();
+  if(fAddGenerated)FillGenerated();
   
   return kTRUE;
 }
@@ -91,7 +91,6 @@ void CLAS12::HipoToolsReader::FillParticles(){
 
   const Int_t Nin=fEvent->getNParticles();
   fParticles.reserve(Nin);
- 
   //Get the particles for this event
   for(auto& p : fEvent->getDetParticles()){
 
@@ -102,7 +101,7 @@ void CLAS12::HipoToolsReader::FillParticles(){
     //directly import the most used information
     auto pbank=p->par(); //get particle bank, this is only OK in loop!
     fParticle.SetXYZM(pbank->getPx() ,pbank->getPy() ,pbank->getPz() ,0);
-    fParticle.SetVertex(pbank->getVx() ,pbank->getVy() ,pbank->getVz());
+    fParticle.SetVertex(pbank->getVx()/100 ,pbank->getVy()/100 ,pbank->getVz()/100);
     //fParticle.SetStatus(pbank->getStatus());
 
     Short_t pid=pbank->getPid();
@@ -123,6 +122,7 @@ void CLAS12::HipoToolsReader::FillParticles(){
     fParticles.emplace_back(fParticle);
     
   }
+
 }
 
 ///////////////////////////////////////////////////////
@@ -130,7 +130,8 @@ void CLAS12::HipoToolsReader::FillParticles(){
 void CLAS12::HipoToolsReader::FillGenerated(){
 
   auto mcpbank=fEvent->mcparts();
-  const Int_t  Ngen=mcpbank->getSize();
+
+  const Int_t  Ngen=mcpbank->getRows();
 
   fGenerated.clear();
   fGenerated.reserve(Ngen);
@@ -152,7 +153,8 @@ void CLAS12::HipoToolsReader::FillGenerated(){
 void CLAS12::HipoToolsReader::SetEventInfo(){
 
   fEventInfo->fTrigBit=fEvent->runconfig()->getTrigger();
-  fEventInfo->fCJSTTime=fEvent->event()->getStartTime();
+  fEventInfo->fStartTime=fEvent->event()->getStartTime();
+  fEventInfo->fFTBStartTime=fEvent->event()->getFTBStartTime();
   fEventInfo->fRFTime=fEvent->event()->getRFTime();
   fEventInfo->fBeamHel=fEvent->event()->getHelicity();
   fEventInfo->fNEvent=fEvent->runconfig()->getEvent();
@@ -162,7 +164,7 @@ void CLAS12::HipoToolsReader::SetEventInfo(){
 //////////////////////////////////////////////////////
 ///Read run info from header bank (REC::EVENT)
 void CLAS12::HipoToolsReader::SetStartRunInfo(){
-  cout<<fEvent->start()->getType()<<" "<<fAddGenerated<<endl;
+  cout<<fEvent->event()->getType()<<" "<<fAddGenerated<<endl;
   fRunInfo->fNRun=fEvent->runconfig()->getRun();
   if(fAddGenerated)fRunInfo->fType=(1);
   else fRunInfo->fType=(0);
