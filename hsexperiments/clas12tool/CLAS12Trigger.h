@@ -27,7 +27,9 @@ namespace HS{
       void SetSim(){fSTimePeak=124.25;fTimeShiftFT=0;};
       
       void ReadParticles();
-      
+      Float_t FTBStartTime();
+      Float_t FDBStartTime();
+
       Float_t StartTime(Float_t ptime); //calculate event start time
       Float_t StartTime(THSParticle* part); //calculate event start time
       Float_t GetStartTime(){return fStartTime;}
@@ -59,6 +61,8 @@ namespace HS{
       { 
       	return (fEventInfo->fVTPTrigBit & (1<<k)) != 0;
       }
+      HS::CLAS12::EventInfo* EventInfo(){return fEventInfo;}
+      HS::CLAS12::RunInfo* RunInfo(){return fRunInfo;}
 
     private:
       
@@ -69,8 +73,8 @@ namespace HS{
       HS::CLAS12::RunInfo* fRunInfo=nullptr;
       
       Float_t fStartTime=0;
-      Float_t fSTimePeak=124.25;
-      Float_t fTimeShiftFT=0;
+      Float_t fSTimePeak=44.125;
+      Float_t fTimeShiftFT=44.125-43.65;
       //Float_t fStartTime=124.25; //GEMC
       //Float_t fSTimePeak=124.25; //GEMC
       //Float_t fTimeShiftFT=0; // GEMC
@@ -91,6 +95,14 @@ inline Float_t HS::CLAS12::CLAS12Trigger::StartTime(Float_t ptime){
   //Find the nearest rf beam bucket
   fStartTime=fSTimePeak-4.0080160*((Int_t)(std::round(((fSTimePeak-(ptime-rftime))/4.0080160))))+rftime;
   return fStartTime;
+}
+inline Float_t HS::CLAS12::CLAS12Trigger::FDBStartTime(){
+ 
+  return fStartTime=fEventInfo->fStartTime;
+}
+inline Float_t HS::CLAS12::CLAS12Trigger::FTBStartTime(){
+ 
+  return fStartTime=fEventInfo->fFTBStartTime;
 }
 
 inline void  HS::CLAS12::CLAS12Trigger::EventReset(){

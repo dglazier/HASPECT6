@@ -40,8 +40,9 @@ namespace HS{
 inline Short_t HS::CLAS12::CLAS12DeltaTime::Detector(Int_t det,Int_t status) const{
   if(det==clas12::FT) return 0; //FT
   else if(det==clas12::FD){
-    if(isFDToF(status) ) return 1; //FD
-    else return 3;//FDCAL no scintillator
+    // if(isFDToF(status) ) return 1; //FD
+    //  else return 3;//FDCAL no scintillator
+    return 1;
   }
   else if(det==clas12::CD) return 2; //CD
   return 10;

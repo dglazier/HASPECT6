@@ -58,6 +58,7 @@ void hslogon(){
   TString HSUSER=gSystem->Getenv("HSUSER");
   TString HSCODE=gSystem->Getenv("HSCODE");
   TString HSEXP=gSystem->Getenv("HSEXP");
+  TString HSPHYS=gSystem->Getenv("HSPHYS");
  
   if(gSystem->Getenv("HSUSER")){
     gROOT->SetMacroPath(Form("%s:%s",HSUSER.Data(),gROOT->GetMacroPath()));

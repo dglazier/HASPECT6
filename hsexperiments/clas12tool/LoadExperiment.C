@@ -26,7 +26,6 @@ void LoadExperiment(){
   cout<<C12TOOL<<" "<<endl;
   if(C12TOOL!=TString("")) {
     TString USE_HIPO4=gSystem->Getenv("USE_HIPO4");
-   
     TString LIB=C12TOOL+"/lib/";
     gSystem->Load(LIB+"liblz4");
     if(USE_HIPO4!=TString()){
