@@ -103,28 +103,20 @@ void hslogon(){
     if((opt.Contains("--farm"))){
       gISFARM=kTRUE;
       gSystem->Exec(Form("mkdir hscode"));
-      gSystem->Exec(Form("cp %s/CleanAll.csh hscode/.",HSCODE.Data()));
+      // gSystem->Exec(Form("cp %s/CleanAll.csh hscode/.",HSCODE.Data()));
       gSystem->Exec(Form("cp -r %s/hsdata hscode/.",HSCODE.Data()));
-      gSystem->Exec(Form("cp -r %s/. hscode/.",HSEXP.Data()));
+      gSystem->Exec(Form("cp -r %s/hsfit hscode/.",HSCODE.Data()));
+      if(gSystem->Getenv("HSEXP"))
+	gSystem->Exec(Form("cp -r %s/. hscode/.",HSEXP.Data()));
 
-      //make sure hscode clean
-      gSystem->Exec(Form("cd hscode/ ; ./CleanAll.csh ; cd .."));
+      gSystem->Exec(Form("rm hscode/*/*.so"));
+      gSystem->Exec(Form("rm hscode/*/*.d"));
+      gSystem->Exec(Form("rm hscode/*/*.pcm"));
+
 
       gSystem->Setenv("HSCODE","./hscode");
-      gSystem->Setenv("HSEXP","./hscode");
-      if(gSystem->Getenv("RHIPO")){
-	TString RHIPO=gSystem->Getenv("RHIPO");
-	gSystem->Exec(Form("cp %s/THipo.h hscode/.",RHIPO.Data()));
-	gSystem->Exec(Form("cp %s/THipo.C hscode/.",RHIPO.Data()));
-	gSystem->Exec(Form("cp %s/Hipo2Root.C hscode/.",RHIPO.Data()));
-	gSystem->Setenv("RHIPO","./hscode");	
-      }
-      if(gSystem->Getenv("CHIPO")){
-	TString CHIPO=gSystem->Getenv("CHIPO");
-	gSystem->Exec(Form("cp %s/*.h hscode/.",CHIPO.Data()));
-	gSystem->Exec(Form("cp %s/*.cpp hscode/.",CHIPO.Data()));
-	gSystem->Setenv("CHIPO","./hscode");	
-      }
+      if(gSystem->Getenv("HSEXP"))
+	gSystem->Setenv("HSEXP","./hscode");
       gROOT->SetMacroPath(TString("hscode/:")+gROOT->GetMacroPath());
     }
   }
@@ -160,6 +152,7 @@ void CleanAll(){
   hsCleanFinal();
   hsCleanHSMVA();
   hsCleanData();
+  hsCleanHSFit();
 
 }
 void HSmva(){

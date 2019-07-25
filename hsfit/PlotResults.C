@@ -1,4 +1,5 @@
 #include "PlotResults.h"
+#include "RooHSEventsPDF.h"
 #include <RooPlot.h>
 #include <RooMsgService.h>
 #include <TCanvas.h>
@@ -18,7 +19,11 @@ namespace HS{
       auto vars=setup->FitVars();
       auto *model=setup->Model();
       cout<<"model "<<model<<endl;
-      
+      //For RooHSEventsPDF flag plotting so can calc partial integrals
+      //for 1 observable case;
+      RooHSEventsPDF_IsPlotting=kTRUE;
+
+     
       for( auto *var : vars){
 	
 	auto canName=TString(setup->GetName())+ "_" + var->GetName();
@@ -32,10 +37,13 @@ namespace HS{
 	data->plotOn(frame, DataError(RooAbsData::SumW2) ) ; 
 
 	auto pdfs = setup->PDFs();
+
 	for(Int_t ic=0;ic<pdfs.getSize();ic++)
-	  model->plotOn(frame,Components(pdfs[ic]),LineStyle(kDashed),LineColor(ic%8+1),Precision(1E-2)) ;
+	  model->plotOn(frame,Components(pdfs[ic]),LineStyle(kDashed),LineColor(ic%8+1),Precision(1E-2));
+
 	
-	model->plotOn(frame,LineColor(kRed),Precision(4E-2)) ;
+	model->plotOn(frame,LineColor(kRed)) ;
+	//	model->plotOn(frame,LineColor(kRed),Precision(4E-2)) ;
 
 	model->paramOn(frame,
 			Layout(0.1, 0.4, 0.9),
@@ -72,7 +80,13 @@ namespace HS{
 	canvas->Modified();
 	canvas->Update();
 	canvas->Draw();
+
+	
       }
+
+      //Turn off plotting in RooHSEventsPDF
+      RooHSEventsPDF_IsPlotting=kFALSE;
+ 
     }
 
     void PlotResults::Write(){

@@ -70,6 +70,19 @@ namespace HS{
       }; //class Proof
 
 
+     class Farm  {
+
+      public :
+      
+       static void Go(std::shared_ptr<FitManager> fm,Int_t Njobs,Bool_t toFarm){
+	 Go(fm.get(),toFarm);
+	}
+	
+       static void Go(FitManager* fm,Int_t maxJobs);
+	
+      }; //class Proof
+
+
       class Loader {
 
       public :
@@ -77,7 +90,24 @@ namespace HS{
 	  gROOT->ProcessLine(Form(".L %s+",macro.Data()));
 	  if(!std::count(gCompilesList.begin(),gCompilesList.end(),macro))gCompilesList.push_back(macro);
 	}
-
+	static void Compile(std::vector<TString> macList){
+	  for(auto& macro : macList){
+	    Compile(macro);
+	  }
+	}
+	static void CompileHere(TList*  macList){
+	  if(!macList)return;
+	  for(Int_t i=0;i<macList->GetEntries();i++){
+	    TString macro = macList->At(i)->GetName();
+	    std::cout<<"Will load "<<macro<<std::endl;
+	    gSystem->Exec(Form("cp %s .",macro.Data()));
+	    TString hfile=macro;
+	    hfile.ReplaceAll(".C",".h");
+	    hfile.ReplaceAll(".cxx",".h");
+	    gSystem->Exec(Form("cp %s .",hfile.Data()));
+	    Compile(gSystem->BaseName(macro));
+	  }
+	}
 	///	std::vector<TString> GetCompiled(){return gCompilesList;};
 	
       private :

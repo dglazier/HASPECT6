@@ -41,9 +41,9 @@ namespace HS{
     TString fDataName="Data";
     TString fBinnedTreeName;
     TString fSelection;
-    
     vector<BinTree*> fTrees;//!
-  
+    vector<TString> fOmitBranches;
+
   public:
   Bins() : fNaxis(0),fNbins(0) {};
     Bins(TString name,TString filename);
@@ -87,6 +87,7 @@ namespace HS{
     void SetDataName(TString name) {fDataName=name;}
     TString GetBinnedTreeName(){return fBinnedTreeName;}
 
+    void AddOmitBranches(TString name){fOmitBranches.push_back(name);}
     ClassDef(Bins, 1);  // Writeable bins class
   };//Bins
 
@@ -94,7 +95,7 @@ namespace HS{
    
   public:
     BinTree() =default;
-    BinTree(Int_t nbins,TString name,TTree* tree0);
+    BinTree(Int_t nbins,TString name,TTree* tree0,vector<TString> omit);
     virtual  ~BinTree();
     void Reset();
     void Save();

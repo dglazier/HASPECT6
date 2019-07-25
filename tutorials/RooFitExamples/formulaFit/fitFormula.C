@@ -27,7 +27,7 @@
 
   
   //And fit the sample data with MCMC
-  fit->SetMinimiser(new RooMcmcSeq(1000,200,10));
+  // fit->SetMinimiser(new RooMcmcSeq(1000,200,10));
 
 
   fit->SetUp().WS().var("a")->setVal(0);

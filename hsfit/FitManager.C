@@ -32,7 +32,7 @@ namespace HS{
 
       //Look for Special case of RooHSEventsPDFs
       FillEventsPDFs();
-      
+   
       //Add fit constraints
       fCurrSetup->AddFitOption(RooFit::ExternalConstraints
 			       (fCurrSetup->Constraints()));
@@ -40,14 +40,13 @@ namespace HS{
       if(fCurrSetup->Yields().getSize()==1){//special case only 1 yield)
 	Double_t yld=fCurrDataSet->sumEntries();
 	SetAllValLimits(fCurrSetup->Yields(),
-			yld,yld-6*sqrt(yld),yld+6*sqrt(yld));
-		
+			yld,0,1.2*yld);
       }
       else
 	SetAllValLimits(fCurrSetup->Yields(),
 			fCurrDataSet->sumEntries()/2,0,fCurrDataSet->sumEntries()*1.2);
       //create extended max likelihood pdf
-
+      fCurrSetup->Parameters().Print("v");
       fCurrSetup->TotalPDF();
       FitTo();
     }
@@ -59,6 +58,10 @@ namespace HS{
       //If not it will use the string from Factory() etc,
       fCurrSetup->ParsAndYields().assignFast(fSetup.ParsAndYields());
 
+      //Look to see if taking previous fit results as initial pars
+      if(fUsePrevResult){
+	LoadPrevResult(fPrevResultDir,fPrevResultMini);
+      }
     }
     /////////////////////////////////////////////////////////////
     void FitManager::RunAll(){
@@ -79,7 +82,7 @@ namespace HS{
       
       ///////////////////////////
       //Plot best fit and return
-      PlotDataModel();
+      // PlotDataModel();
 
     }
     void FitManager::RunOne(Int_t ifit){
@@ -105,6 +108,7 @@ namespace HS{
 	auto pdf=dynamic_cast<RooHSEventsPDF*>( &pdfs[ip]);
 
 	if(pdf){
+	  //  pdf->SetConstInt();
 	  if(fBinner.FileNames(pdf->GetName()).size()==0)
 	    continue;
 	  auto filetree=FiledTree::
@@ -156,11 +160,50 @@ namespace HS{
       fSetup=*(dynamic_cast<HS::FIT::Setup*>(file->Get("HSSetup")));
       delete file;
     }
+    //Read in paarameters from previous fit
+    void FitManager::InitPrevResult(TString resultDir,TString resultMinimiser){
+      fUsePrevResult=kTRUE;
+      
+      if(resultDir==TString()) fPrevResultDir=fSetup.GetOutDir(); //use current
+      else fPrevResultDir=resultDir;
+
+      if(resultMinimiser==TString())fPrevResultMini=fMinimiser->GetName();
+      else fPrevResultMini=resultMinimiser;
+      
+    }
+    
+    void FitManager::LoadPrevResult(TString resultDir,TString resultMinimiser){
+   
+      TString resultFile=resultDir+"/"+fCurrSetup->GetName()+"/Results"+fCurrSetup->GetTitle()+resultMinimiser+".root";
+	   
+      cout<<"LOAD  "<<resultFile<<endl;
+      //      TString resultFile=resultDir+Bins().BinName(GetDataBin(GetFiti()))+"/"+resultFileName;
+      std::unique_ptr<TFile> fitFile{TFile::Open(resultFile)};
+      std::unique_ptr<RooDataSet> result{dynamic_cast<RooDataSet*>( fitFile->Get(Minimiser::FinalParName()))};
+      //Set the values of the paramteres to those in the given result
+      if(result.get()){
+	auto newPars = fCurrSetup->ParsAndYields();
+	auto* resAll = result->get(); //get all result info
+	auto* resPars=resAll->selectCommon(newPars); //just select pars and yieds
+	newPars.assignFast(*resPars); //set values to results
+	cout<<"FitManager::LoadResult setting values from fit results "<<resultFile<<" : "<<endl;
+	newPars.Print("v");
+      }
+    }
     void FitManager::WriteThis(){
       auto file=TFile::Open(fSetup.GetOutDir()+"HSFit.root","recreate");
       if(!fMinimiser.get()) SetMinimiser(new HS::FIT::Minuit2());
       file->WriteObject(this,"HSFit");
-      file->WriteObject(fMinimiser.get(),fMinimiserType);      
+      file->WriteObject(fMinimiser.get(),fMinimiserType);
+
+      if(fCompiledMacros.size()){
+	TList* macList=new TList();
+	//	macList->SetName("HS_COMPILEDMACROS");
+	macList->SetOwner();
+	for(auto& macro : fCompiledMacros)
+	  macList->Add(new TObjString(macro));
+	file->WriteObject(macList,"HS_COMPILEDMACROS");
+      }
       delete file;
     }
     void FitManager::RedirectOutput(TString log){

@@ -7,6 +7,7 @@
 #ifndef HS_FIT_SETUP_h
 #define HS_FIT_SETUP_h
 
+#include "PdfParser.h"
 
 #include <RooStats/ModelConfig.h>
 #include <RooWorkspace.h>
@@ -53,11 +54,13 @@ namespace HS{
 
 
       void FactoryPDF(TString opt);
-       void LoadVariable(TString opt);
+      void ParserPDF(TString str, PARSER::PdfParser& parse);
+      void LoadVariable(TString opt);
       void LoadCategory(TString opt);
       void LoadAuxVar(TString opt);
       void LoadFormula(TString formu);
       void LoadParameter(TString opt);
+      void LoadFunctionVar(TString opt);
       void LoadSpeciesPDF(TString opt,Float_t Scale0=1);
       void TotalPDF();
       
@@ -78,7 +81,7 @@ namespace HS{
      
       void SetDataOnlyCut(TString cut) {fDataOnlyCut=cut;}
       const TString DataCut() const {
-	//in case you want to cut on variable not in simualted data
+	//in case you want to cut on variable not in simulated data
 	if(fCut.Sizeof()>1&&fDataOnlyCut.Sizeof()>1)
 	  return fCut+"&&"+fDataOnlyCut;
 	else 	if(fCut.Sizeof()>1) return fCut;
@@ -126,7 +129,7 @@ namespace HS{
       
       void DefaultFitOptions(){
 	AddFitOption(RooFit::SumW2Error(kTRUE));
-	//AddFitOption(RooFit::NumCPU(1));
+	//AddFitOption(RooFit::NumCPU(4));
 	AddFitOption(RooFit::Save(kTRUE));
 	AddFitOption(RooFit::Warnings(kFALSE));
 	//AddFitOption(RooFit::Minos(kFALSE));
@@ -134,8 +137,13 @@ namespace HS{
       }
       void RandomisePars();
 
+      void SetParVal(TString par,Double_t val,Bool_t co=kFALSE){
+	(dynamic_cast<RooRealVar*>(fParameters.find(par)))->setVal(val);
+	(dynamic_cast<RooRealVar*>(fParameters.find(par)))->setConstant(co);
+	fConstPars[par]=co;
+      }
       void SetConstPar(TString par,Bool_t co=kTRUE){
-	(dynamic_cast<RooRealVar*>(fPars.find(par)))->setConstant(co);
+	(dynamic_cast<RooRealVar*>(fParameters.find(par)))->setConstant(co);
 	fConstPars[par]=co;
       }
       void SetConstPDFPars(TString pdf,Bool_t co=kTRUE){
@@ -148,8 +156,12 @@ namespace HS{
 
       RooStats::ModelConfig*  GetModelConfig();
       TString GetPDFInWeights(TString name) {return fPDFInWeights[name];}
+
+
+      RooAbsPdf* ComponentsPDF(TString opt);
     protected:
-      
+      void LoadParameterOnTheFly(TString opt);
+
     private:
  
       //note fWS owns all of these vector pointers
@@ -159,6 +171,7 @@ namespace HS{
       RooArgSet fVars;
       RooArgSet fCats; //only categories
       RooArgSet fPars;//!
+      RooArgSet fFuncVars;//!
       RooArgList fFormulas;//! CANT WRITE formulas ArgSet!
       RooArgSet fVarsAndCats;
       RooArgSet fParsAndYields;
@@ -182,6 +195,7 @@ namespace HS{
       strings_t fFormString;
       strings_t fAuxVarString;
       strings_t fPDFString;
+      strings_t fFuncVarString;
 
       std::map<TString,Bool_t> fConstPars;
       std::map<TString,Bool_t> fConstPDFPars;

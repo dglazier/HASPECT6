@@ -40,7 +40,7 @@ namespace HS{
       Setup &SetUp() {return fSetup;};
       const Setup &ConstSetUp() {return fSetup;};
 
-      //Not the default name and title are given by the bin and bootstrap
+      //Note the default name and title are given by the bin and bootstrap
       //combination, Data GetGroup and GetItemName are BootStrap related
       //Default name= binname
       virtual TString GetCurrName(){return Bins().BinName(GetDataBin(fFiti));}
@@ -48,7 +48,7 @@ namespace HS{
       virtual TString GetCurrTitle(){return Data().GetItemName(fFiti);}
       virtual Int_t GetDataBin(Int_t ii){ return Data().GetDataBin(ii);}
       virtual TString GetDataTreeName() {return fData.ParentTreeName();}
-      virtual  strings_t GetDataFileNames() {cout<<"   yep "<<endl;return fData.FileNames();}
+      virtual  strings_t GetDataFileNames() {return fData.FileNames();}
       
       void CopySetup(TObject* obj){fSetup=*(dynamic_cast<Setup*>(obj));}
       void CopyBinner(const Binner* obj){fBinner=*obj;}
@@ -81,9 +81,10 @@ namespace HS{
 	fCurrDataSet.reset();
       }
       
-     
+      void InitPrevResult(TString resultDir="",TString resultMinimiser="");
+      void LoadPrevResult(TString resultDir,TString resultMinimiser);
+
       void LoadData(TString tname,strings_t fnames){
-	cout<<"LoadData  "<<fSetup.GetIDBranchName()<<endl;
 	 fData.Load(fSetup,tname,fnames);
       }
       void LoadData(TString tname,TString fname,TString name="Data"){
@@ -94,7 +95,6 @@ namespace HS{
       }
       void ReloadData(TString fname,TString name="Data"){
 	fBinner.ReloadData(fname,name);
-	cout<<"RELOAD "<<fBinner.TreeName(name)<<endl;
   	LoadData(fBinner.TreeName(name),fBinner.FileNames(name));
  	fData.SetParentName(fname);
  	fData.SetParentTreeName(fBinner.TreeName(name));
@@ -130,6 +130,11 @@ namespace HS{
       }
       void RedirectOutput(TString log="");
       void SetRedirectOutput(){fRedirect=kTRUE;}
+
+      void SetCompiledMacros(strings_t macs){
+	fCompiledMacros=macs;
+      }
+      strings_t GetCompiledMacros(){return fCompiledMacros;}
       
      protected:
       std::unique_ptr<Setup> fCurrSetup={}; //!
@@ -152,12 +157,17 @@ namespace HS{
       std::vector<plotresult_uptr> fPlots;//!
       RooFitResult* fResult=nullptr;//!
 
-
+      strings_t fCompiledMacros;
   
       Bool_t fRedirect=kFALSE;
 
       UInt_t fFiti=0;
+
+      Bool_t fUsePrevResult=kFALSE;
+      TString fPrevResultDir;
+      TString fPrevResultMini;
       
+	
       ClassDef(HS::FIT::FitManager,1);
      };
 
