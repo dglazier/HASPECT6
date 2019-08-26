@@ -47,6 +47,8 @@ Bool_t CLAS12::HipoToolsReader::Init(TString filename,TString name){
 
   //open new hipo file
   fEvent.reset(new clas12::clas12reader(filename.Data()));
+  fEvent->useFTBased(); //use FT PID
+
   return kTRUE;
 }
 
