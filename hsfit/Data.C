@@ -75,7 +75,7 @@ namespace HS{
       if(fFileNames.size()<=iset)
 	return dset_uptr();
       
-      cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" tree "<<fTreeName<<" weights "<<fInWeights.get()<<" "<<fInWeightName<<endl;
+      // cout<<" RooAbsData& DataEvents::Get "<<" "<<fFileNames[iset]<<" tree "<<fTreeName<<" weights "<<fInWeights.get()<<" "<<fInWeightName<<endl;
       
       fFiledTrees[iset]=FiledTree::Read(fTreeName,fFileNames[iset]); //will be delted at end of function
   
@@ -95,14 +95,11 @@ namespace HS{
 
        rawtree= fFiledTrees[iset]->Tree().get() ;	
        //Add weights to tree
-       cout<<"           About to add weights to tree "<<endl;
        fInWeights->AddToTree(rawtree);	
       //fInWeights->AddToTreeDisc(rawtree,fSetup->GetOutDir()+"DataInWeights.root");	
        fWeightVar.reset(new RooRealVar(fInWeightName,fInWeightName,0));
-       fWeightVar->Print();
        vars.add(*fWeightVar.get());
      }
-     cout<< "                now get the data "<<endl;
      //only let datset clone active branches
      TIter iter=vars.createIterator();
      rawtree->SetBranchStatus("*",0);

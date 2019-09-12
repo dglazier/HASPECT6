@@ -21,7 +21,7 @@ namespace HS{
 	//case real variable
 	if(dynamic_cast<RooRealVar*>(&obsList[i])){
 	unique_ptr<RooRealProxy> tempR{new RooRealProxy(obsList[i].GetName(),obsList[i].GetName(),this,static_cast<RooAbsReal&>(obsList[i]))};
-	  cout<<"adding obs "<<obsList[i].GetName()<<" "<<dynamic_cast<RooRealVar*>(&obsList[i])<<" "<<dynamic_cast<RooCategory*>(&obsList[i])<<endl;
+	//cout<<"adding obs "<<obsList[i].GetName()<<" "<<dynamic_cast<RooRealVar*>(&obsList[i])<<" "<<dynamic_cast<RooCategory*>(&obsList[i])<<endl;
 	  fNObs++;
 	  fActualObs.add((RooAbsReal&)obsList[i]);
 	  fObservables.push_back(std::move(tempR));
@@ -30,7 +30,7 @@ namespace HS{
 	//case category
 	if(dynamic_cast<RooCategory*>(&obsList[i])){
 	unique_ptr<RooCategoryProxy> tempC{new RooCategoryProxy(obsList[i].GetName(),obsList[i].GetName(),this,static_cast<RooAbsCategory&>(obsList[i]))};
-	  cout<<"adding cat "<<obsList[i].GetName()<<endl;
+	//cout<<"adding cat "<<obsList[i].GetName()<<endl;
 	  fNCats++;
 	  fActualCats.add((RooAbsCategory&)obsList[i]);
 	  fCategories.push_back(std::move(tempC));
@@ -148,9 +148,10 @@ namespace HS{
        for(auto &comp: fComponents){
 	Double_t product=1;
 	for(auto &term: comp){
-	  
+	  // cout<<"term "<<term->GetName()<<" "<< *term.get()<<endl;
 	  product*= *term.get(); //take the product of all the terms for this component
 	}
+	//	cout<<"product "<<product<<endl;
 	val+=product; //add them to total
       }
      
@@ -299,7 +300,8 @@ namespace HS{
     
       for(UInt_t icomp=0;icomp<fNComps;icomp++)
 	integral+=componentIntegral(icomp);
-
+      // cout<<"                   INTEGRAL "<<integral<<endl;
+      //   exit(0);
       return integral;
     }
     

@@ -1,5 +1,6 @@
 #include "Setup.h"
 #include "Weights.h"
+#include "RooHSComplex.h"
 #include "RooHSEventsPDF.h"
 #include "RooComponentsPDF.h"
 #include <RooGenericPdf.h>
@@ -129,6 +130,8 @@ namespace HS{
     /// Load a fit RooAbsReal class e.g s.LoadFunctionVar("RooRealSphHarmonic::leg2(CTh[0,-1,1],Phi[0,-3.141,3.141],2,1)"));
     /// Add a fit parameter X between -1 and 1
     void Setup::LoadFunctionVar(TString opt){
+      if(std::find(fFuncVarString.begin(),fFuncVarString.end(),opt)!=fFuncVarString.end()) return;
+      cout<<" Setup::LoadFunctionVar "<<opt<<endl;
       auto var=dynamic_cast<RooAbsReal*>(fWS.factory(opt));
       if(!var) {
 	cout<<"Setup::LoadFunctionVar "<<opt<<" failed"<<endl;
@@ -136,7 +139,14 @@ namespace HS{
       }
       fFuncVars.add(*var);      
       fFuncVarString.push_back(opt);
-    }
+
+      if(auto cvar=dynamic_cast<RooHSComplex*>(var) ){
+	//Complex Var need to load real and imaginery parts
+	LoadFunctionVar(cvar->FactoryReal());
+	LoadFunctionVar(cvar->FactoryImag());
+	LoadFunctionVar(cvar->FactoryImagConj());
+      }
+     }
     ////////////////////////////////////////////////////////////
     /// Load a formulaVar e.g s.LoadFormula("name=@v1[1,0,2]+@v2[]");
     /// Fit a variable in your tree called X between -1 and 1
@@ -157,17 +167,18 @@ namespace HS{
       formu=formu(formu.First("=")+1,formu.Sizeof());
       //get rid of @
       formu.ReplaceAll("@", "");
-       RooArgList rooPars;
+      RooArgList rooPars;
       for(auto& par:pars)
 	if(fWS.var(par))rooPars.add(*fWS.var(par));
 	else if(fWS.function(par))rooPars.add(*fWS.function(par));
 	else if(fWS.cat(par))rooPars.add(*fWS.cat(par));
 	else Error("Setup::LoadFormula"," unknown parameter");
-      //rooPars.Print();
+      
+      //      rooPars.Print();
       RooFormulaVar fovar(name,formu,rooPars) ;
 
-      //  fovar.Print();
-       fWS.import(fovar);
+      //fovar.Print();
+      fWS.import(fovar);
       if(fWS.function(name))
 	fFormulas.add(*fWS.function(name));
       else Fatal("Setup::LoadFormula","Formula didn't compile");
@@ -272,17 +283,18 @@ namespace HS{
       auto pars = parse.GetParameters();
       for(auto& par:pars)
 	LoadParameter(par);
-      //LoadFunctionVars
+    //LoadFormulas
+      auto forms = parse.GetFormulas();
+      for(auto& form:forms)
+	LoadFormula(form);
+       //LoadFunctionVars
       auto funs = parse.GetFunctions();
       for(auto& fun:funs){
 	cout<<"Load Function var "<<fun<<endl;
 	LoadFunctionVar(fun);
+	
       }
-      //LoadFormulas
-      auto forms = parse.GetFormulas();
-      for(auto& form:forms)
-	LoadFormula(form);
-      
+       
       FactoryPDF(pdfString);
     }
     ///////////////////////////////////////////////////////////
@@ -334,12 +346,12 @@ namespace HS{
       Int_t ic=0;
       //cout<<"Components String "<<scomps<<endl;
       for(Int_t i=0;i<compStrings->GetEntries();i++ ){
-	//cout<<"      "<<compStrings->At(i)->GetName()<<endl;
+	//	cout<<"      "<<compStrings->At(i)->GetName()<<endl;
 	RooArgList termList(Form("RooComponentsPDF::Term%d",ic++));
 	TString term = compStrings->At(i)->GetName();
 	auto termStrings=term.Tokenize(";");
 	for( Int_t j=0;j<termStrings->GetEntries();j++ ){
-	  //cout<<"                 "<<termStrings->At(j)->GetName()<<endl;
+	  //	  cout<<"                 "<<termStrings->At(j)->GetName()<<endl;
 	  
 	  TString sarg = termStrings->At(j)->GetName();
 	  TString vname =sarg;
@@ -375,19 +387,19 @@ namespace HS{
     ///Create the PDF sum for Extended ML fit
     void Setup::TotalPDF(){
   
-      if(fModel)fModel->Print();
+      //if(fModel)fModel->Print();
 
       //Construct a total PDF whcih is the sum of the species PDFs
       fModel=new RooAddPdf(fName+"TotalPDF","total model",
 			   fPDFs, 
 			   fYields);
-      fModel->Print();
+      //fModel->Print();
       AddFitOption(RooFit::Extended());
     }
     //////////////////////////////////////////////////////////
     Double_t Setup::SumOfYields(){
-      fYields.Print("v");
-      fParsAndYields.Print("v");
+      //fYields.Print("v");
+      //fParsAndYields.Print("v");
       Double_t sum=0;
       TIter iter=fYields.createIterator();
       while(RooRealVar* arg=(RooRealVar*)iter())
@@ -403,16 +415,14 @@ namespace HS{
       return fCats;
     }
     RooArgSet& Setup::DataVars(){
-      cout<<"Setup::DataVars() "<<fVars.getSize()<<endl;
-      //if(fVars.getSize())
-      //	return fVars;
       fVars.removeAll();
       fVars.add(MakeArgSet(fFitVars));
       fVars.add(MakeArgSet(fFitCats));
       fVars.add(MakeArgSet(fAuxVars));
-      fWS.factory(fIDBranchName+"[0,9.99999999999999e14]");
+      if(!fWS.var(fIDBranchName)){
+	fWS.factory(fIDBranchName+"[0,9.99999999999999e14]");
+      }
       fVars.add(*fWS.var(fIDBranchName));
-      cout<<"Setup::DataVars() "<<fVars.getSize()<<endl;
       return fVars;
     }
    RooArgSet& Setup::FitVarsAndCats(){

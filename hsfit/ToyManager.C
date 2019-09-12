@@ -12,11 +12,12 @@ namespace HS{
     void ToyManager::Run(){
 
 
+      LoadResult();
+      
       if(GetCurrToy()==0){
 	InitSummary(); 
       }
-      LoadResult();
- 
+      
       CreateCurrSetup();
 
       //Look for Special case of RooHSEventsPDFs
@@ -41,12 +42,12 @@ namespace HS{
       // Long64_t nexp=RooRandom::randomGenerator()->Poisson(model->expectedEvents(fitpars));
       Long64_t nexp=RooRandom::randomGenerator()->Poisson(fCurrSetup->SumOfYields());
 
-      model->Print("v");
-      fitvars.Print("v");
+      // model->Print("v");
+      //fitvars.Print("v");
       
       fGenData=model->generate(fitvars,nexp);
       fGenData->SetName("ToyData");
-      fGenData->Print();
+      //fGenData->Print();
       
     }
     void ToyManager::SaveResults(){
@@ -93,7 +94,7 @@ namespace HS{
       std::unique_ptr<TFile> resFile{TFile::Open(SetUp().GetOutDir()+GetCurrName()+"/ToySummary.root","recreate")};
       auto initpars=SetUp().ParsAndYields();
       initpars.setName(InitialParsName());
-      initpars.Write();
+      //initpars.Write();//commented out for amplitudes test as crashing?!>
       
     }
     ////////////////////////////////////////////////////////////////
@@ -135,7 +136,7 @@ namespace HS{
     void ToyManager::LoadResult(){
       if(fResultFileName==TString())
 	return;
-      cout<<"LOAD  "<<fResultFileName<<endl;
+      // cout<<"LOAD  "<<fResultFileName<<endl;
       TString resultFile=fResultOutDir+Bins().BinName(GetDataBin(GetFiti()))+"/"+fResultFileName;
       std::unique_ptr<TFile> fitFile{TFile::Open(resultFile)};
       std::unique_ptr<RooDataSet> result{dynamic_cast<RooDataSet*>( fitFile->Get(Minimiser::FinalParName()))};
@@ -145,7 +146,7 @@ namespace HS{
 	auto* resAll = result->get(); //get all result info
 	auto* resPars=resAll->selectCommon(newPars); //just select pars and yieds
 	newPars.assignFast(*resPars); //set values to results
-	cout<<"ToyManager::LoadResult setting values from fit results "<<resultFile<<" : "<<endl;
+       	cout<<"ToyManager::LoadResult setting values from fit results "<<resultFile<<" : "<<endl;
 	newPars.Print("v");
       }
     }
@@ -160,7 +161,7 @@ namespace HS{
     }
     //////////////////////////////////////////////////////////////////////
     void ToyManager::Summarise(Int_t ibin){
-      cout<<"Summarise "<<Minimiser::ResultTreeName() <<endl;
+      cout<<"Summarise "<<Minimiser::ResultTreeName() <<" "<<SetUp().GetOutDir()+Bins().BinName(ibin)<<endl;
       TChain resChain(Minimiser::ResultTreeName());
       resChain.Add(SetUp().GetOutDir()+Bins().BinName(ibin)+"/Results*.root");
       std::unique_ptr<TFile> resFile{TFile::Open(SetUp().GetOutDir()+Bins().BinName(ibin)+"/ToySummary.root","update")};

@@ -46,7 +46,7 @@ namespace HS{
 	SetAllValLimits(fCurrSetup->Yields(),
 			fCurrDataSet->sumEntries()/2,0,fCurrDataSet->sumEntries()*1.2);
       //create extended max likelihood pdf
-      fCurrSetup->Parameters().Print("v");
+      //fCurrSetup->Parameters().Print("v");
       fCurrSetup->TotalPDF();
       FitTo();
     }
@@ -66,7 +66,7 @@ namespace HS{
     /////////////////////////////////////////////////////////////
     void FitManager::RunAll(){
 
-      // PreRun();
+      PreRun();
 
       UInt_t Nf=GetN();
       for(UInt_t i=0;i<Nf;i++){
@@ -82,7 +82,7 @@ namespace HS{
       
       ///////////////////////////
       //Plot best fit and return
-      // PlotDataModel();
+      PlotDataModel();
 
     }
     void FitManager::RunOne(Int_t ifit){
@@ -103,7 +103,6 @@ namespace HS{
 
       auto savedir=gDirectory;
       
-      cout<<" FitManager::FillEventsPDFs "<<pdfs.getSize()<<endl;
       for(Int_t ip=0;ip<pdfs.getSize();ip++){
 	auto pdf=dynamic_cast<RooHSEventsPDF*>( &pdfs[ip]);
 
@@ -176,7 +175,6 @@ namespace HS{
    
       TString resultFile=resultDir+"/"+fCurrSetup->GetName()+"/Results"+fCurrSetup->GetTitle()+resultMinimiser+".root";
 	   
-      cout<<"LOAD  "<<resultFile<<endl;
       //      TString resultFile=resultDir+Bins().BinName(GetDataBin(GetFiti()))+"/"+resultFileName;
       std::unique_ptr<TFile> fitFile{TFile::Open(resultFile)};
       std::unique_ptr<RooDataSet> result{dynamic_cast<RooDataSet*>( fitFile->Get(Minimiser::FinalParName()))};

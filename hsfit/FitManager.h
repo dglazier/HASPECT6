@@ -57,7 +57,7 @@ namespace HS{
       void LoadSetup(TString dir);
 
       virtual void WriteThis();
-      virtual void PreRun(){WriteThis();}
+      virtual void PreRun(){}//WriteThis();}
       
       Binner &Bins(){
 	if(!fBinner.IsSetup())
