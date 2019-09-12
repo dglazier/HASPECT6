@@ -37,6 +37,7 @@ namespace HS{
     Float_t HTCC=0;
     Float_t LTCC=0;
     Float_t TrChi2=0;
+    Float_t EBPid=0;
     Short_t Region=-1;
     Short_t Sector=-1;
     Short_t Status=0;
@@ -87,7 +88,8 @@ namespace HS{
     Edep = c12p->getDetEnergy();
     Sector = c12p->getSector();
     Status = c12p->par()->getStatus();
-   
+    EBPid=c12p->getPid();
+
     //All Charged
     DeltaE = c12p->getDeltaEnergy();
 
