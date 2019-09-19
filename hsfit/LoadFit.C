@@ -26,7 +26,7 @@ void LoadFit(TString Selection=""){
   }
 
   //Now finalsstate classes
-  vector<TString > FITClasses={"FiledTree","Bins","Weights","RooHSComplex","RooHSEventsPDF","RooHSEventsHistPDF","RooComponentsPDF","RooHSSphHarmonic","Setup","Data","Binner","Minimiser","HSSequentialProposal","HSMetropolisHastings","RooMcmc","PlotResults","BootStrapper","FitManager","sPlot","ToyManager","FitSelector","Process","PdfParser","ComponentsPdfParser","PredefinedParsers"};
+  vector<TString > FITClasses={"FiledTree","Bins","Weights","RooHSComplex","RooHSEventsPDF","RooHSEventsHistPDF","RooComponentsPDF","RooHSSphHarmonic","Setup","Data","Binner","Minimiser","HSSequentialProposal","HSMetropolisHastings","RooMcmc","PlotResults","BootStrapper","FitManager","sPlot","ToyManager","FitSelector","Process","PdfParser","ComponentsPdfParser","PredefinedParsers","PDFExpand"};
 
   for(auto const& name : FITClasses){
     if(Selection!=TString())
@@ -37,10 +37,6 @@ void LoadFit(TString Selection=""){
       gROOT->LoadMacro(name+".C+");
   }
 
-
-  //  gROOT->LoadMacro("Setup.C+");
-  //gROOT->LoadMacro("Data.C+");
- 
 
 
 }
