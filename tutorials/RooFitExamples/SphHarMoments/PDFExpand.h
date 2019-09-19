@@ -70,7 +70,7 @@ namespace HS{
 	  
 	  Int_t tau=2;
 	  if(M==0) tau=1;
-	  setup.LoadFunctionVar(Form("RooHSSphHarmonic::Y_%d_%d(%s,%d,%d,%d)",L,M,cth.Data(),L,M,tau));
+	  setup.LoadFunctionVar(Form("RooHSSphHarmonic::Y_%d_%d(%s,%s,%d,%d,%d)",L,M,cth.Data(),phi.Data(),L,M,tau));
 	}
 	
 	setup.LoadFunctionVar(Form("RooHSSphHarmonic%s::Y_%d_%d_%s(%s,%s,Y_%d_%d)",part.Data(),L,M,part.Data(),cth.Data(),phi.Data(),L,M));

@@ -1,6 +1,6 @@
-#ifndef ROO_REALSPHHARMONIC
-#define ROO_REALSPHHARMONIC
+#pragma once
 
+#include "RooHSComplex.h"
 #include <RooAbsReal.h>
 #include <RooRealProxy.h>
 #include <Math/SpecFunc.h>
@@ -11,32 +11,50 @@ namespace HS{
 
 
     
-    class RooHSSphHarmonic : public RooAbsReal {
+    class RooHSSphHarmonic : public RooHSComplex {
     public:
       RooHSSphHarmonic() =default;
       // a Real part of Spherical Harmonic, Y_l^m(costTh,Phi)
-      RooHSSphHarmonic(const char *name, const char *title, RooAbsReal& ctheta, int l, int m=0,Double_t factor=1);
+      RooHSSphHarmonic(const char *name, const char *title, RooAbsReal& ctheta, RooAbsReal& phi, int l, int m=0,Double_t factor=1);
 
       RooHSSphHarmonic(const RooHSSphHarmonic& other, const char* name = 0);
       TObject* clone(const char* newname) const override{ return new RooHSSphHarmonic(*this, newname); }
       virtual ~RooHSSphHarmonic() =default;
 
-
+      //Workspace Factory strings for real and imaginery part
+      //Name Convention Re+"name", Im+"name" required for parsers
+      TString FactoryReal() const final {
+	return TString("RooHSSphHarmonicRe::")
+	  +"Re"+GetName()+Form("(%s,%s,%s)",_ctheta.arg().GetName(),_phi.arg().GetName(),GetName());
+      }
+      TString FactoryImag() const final {
+	return TString("RooHSSphHarmonicIm::")
+	  +"Im"+GetName()+Form("(%s,%s,%s)",_ctheta.arg().GetName(),_phi.arg().GetName(),GetName());
+      }
+      TString FactoryImagConj() const final {
+	return TString("RooHSSphHarmonicIm::")
+	  +"CoIm"+GetName()+Form("(%s,%s,%s,-1)",_ctheta.arg().GetName(),_phi.arg().GetName(),GetName());
+      }
+      
       Int_t L() const{return _L;}
       Int_t M() const{return _M;}
     protected:
       //return magnitude of Spherical Harmonic Moment
       Double_t evaluate() const final;
+
       Bool_t CheckClean() const;
-    private: // allow RooSpHarmonic access...
+      
+    private:
       RooRealProxy _ctheta;
+      RooRealProxy _phi;
       Double_t _N=0;
       mutable Double_t _lastCTheta=1E10;
       mutable Double_t _lastVal=0;
       Int_t _L=0;
       Int_t _M=0;
+      Int_t _absM=0;
       Short_t _MFactor=0;
-
+     
       
       ClassDefOverride(HS::FIT::RooHSSphHarmonic,1);
     };
@@ -45,8 +63,9 @@ namespace HS{
     inline Double_t RooHSSphHarmonic::evaluate() const
     {
       if(CheckClean()) return _lastVal;
- 
-      return _lastVal=_N*ROOT::Math::assoc_legendre(_L,(_M),_lastCTheta);
+      //  cout<<"CHECK SPEH HARMONICE "<<GetName()<<" "<<_L<<" "<<_M<<" absM "<<_absM<<" "<<_N<<" "<<ROOT::Math::assoc_legendre(_L,(_absM),_lastCTheta)<<endl<<endl;;
+      //return _N;
+      return _lastVal=_N*ROOT::Math::assoc_legendre(_L,_absM,_lastCTheta);
     }
     ////////////////////////////////////////////////////////////////////////////////
     
@@ -64,7 +83,8 @@ namespace HS{
     public:
       RooHSSphHarmonicIm() =default;
       // a Imaginery part of Spherical Harmonic, Y_l^m(costTh,Phi)
-      RooHSSphHarmonicIm(const char *name, const char *title, RooAbsReal& ctheta, RooAbsReal& phi, RooAbsReal& sphHar );
+      // RooHSSphHarmonicIm(const char *name, const char *title, RooAbsReal& ctheta, RooAbsReal& phi, RooAbsReal& sphHar );
+      RooHSSphHarmonicIm(const char *name, const char *title,RooAbsReal& ctheta, RooAbsReal& phi, RooAbsReal& sphHar, Int_t conj=1 );
 
       RooHSSphHarmonicIm(const RooHSSphHarmonicIm& other, const char* name = 0);
       TObject* clone(const char* newname) const override { return new RooHSSphHarmonicIm(*this, newname); }
@@ -83,16 +103,20 @@ namespace HS{
       mutable Double_t _lastPhi=-1E10;
       mutable Double_t _lastVal=0;
       Int_t _M=0;
- 
+      Short_t _conj=1;
+      
       ClassDefOverride(HS::FIT::RooHSSphHarmonicIm,1);
     };
     ////////////////////////////////////////////////////////////////////////////////
-    Double_t RooHSSphHarmonicIm::evaluate() const{
+    inline Double_t RooHSSphHarmonicIm::evaluate() const{
       if(!_M)return 0; //M=0 =>real
       if(CheckClean()) return _lastVal;
      
       Double_t angle=_M*_lastPhi; 
-      return _mag*TMath::Sin(angle);
+      //  cout<<" RooHSSphHarmonicIm::evaluate() "<<angle<<" "<<_lastPhi<<endl;
+      /// return _mag;
+      //cout<<" RooHSSphHarmonicIm::evaluate() "<<_conj<<endl;
+      return _lastVal=_conj*_mag*TMath::Sin(angle);
     }
    ////////////////////////////////////////////////////////////////////////////////
     
@@ -135,11 +159,13 @@ namespace HS{
       ClassDefOverride(HS::FIT::RooHSSphHarmonicRe,1);
     };
     ////////////////////////////////////////////////////////////////////////////////
-    Double_t RooHSSphHarmonicRe::evaluate() const{
+    inline Double_t RooHSSphHarmonicRe::evaluate() const{
       if(CheckClean()) return _lastVal;
       
-      Double_t angle=_M*_lastPhi; 
-      return _mag*TMath::Cos(angle);
+      Double_t angle=_M*_lastPhi;
+      //cout<<" RooHSSphHarmonicRe::evaluate() "<<angle<<" "<<_lastPhi<<endl;
+      // return _mag;
+      return _lastVal=_mag*TMath::Cos(angle);
     }
     ////////////////////////////////////////////////////////////////////////////////
     
@@ -156,4 +182,3 @@ namespace HS{
     
   }
 }
-#endif

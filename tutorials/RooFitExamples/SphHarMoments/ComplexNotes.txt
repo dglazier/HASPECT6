@@ -40,6 +40,18 @@ C2*C1^* = (ReC2*ReC1 + ImC2*ImC1) + i (+ImC2*ReC1 - ReC2*ImC1)
 So
 C1*C2^* + C2*C1^* = 2(ReC1*ReC2 + ImC1*ImC2)
 
+So if C1= A1*B1 etc
+A1*B1*(A2^*)*(B2^*) + A2*B2*(A1^*)*(B1^*) = 2(Re(C1)*Re(C2) + Im(C1)*Im(C2)) 
+=A1*(A2^*)*B1*(B2^*) + A2*(A1^*)*B2*(B2^*)  using A12=A1*A2^* etc
+AB12= A12*B12 + A21*B21  with   ReA12=ReA21=(ReA1*ReA2 + ImA1*ImA2) and ImA12=-ImA21=(-ReA1*ImA2 + ImA1*ReA2)
+Re(A12*B12) = ReA12*ReB12-ImA12*ImB12 ; Im(A12*B12) = ReA12*ImB12+ImA12*ReB12 etc
+Re(AB12) =Re(A12*B12) + Re(A21*B21) =  ReA12*ReCB12-ImA12*ImB12 +  ReA21*ReB21-ImA21*ImB21
+         = ReA12*ReCB12-ImA12*ImB12 + ReA12*ReB12 - ImA12B12 = 2*ReA12*ReB12
+Im(AB12) = Im(A12*B12) + Im(A21*B21)= ReA12*ImB12+ImA12*ReB12 + ReA21*ImB21+ImA21*ReB21
+         = ReA12*ImB12 + ImA12*ReB12 - ReA12*ImB12 - ImA12*ReB12
+	 = 0
+Hence A1*B1*(A2^*)*(B2^*) + A2*B2*(A1^*)*(B1^*) = Re(AB12) = 2*ReA12*ReB12 = 2* Re(A1*A2^*) Re(B1*B2^*) = 2*(ReA1*ReA2 + ImA1*ImA2)*(ReB1*ReB2 + ImB1*ImB2)
+
 S=Sr+iSi
 (S*Y0 + D*Y2)^2 = (S*S^*)*(Y0*Y0^*) + (S*D^*)*(Y0*Y2^*)
                 + (D*D^*)*(Y2*Y2^*) + (D*S^*)*(Y2*Y0^*)
@@ -53,11 +65,66 @@ A=(Sr*Dr+Si*Di) B= (SiDr-SrDi) X = (Y0r*Y2r+Y0i*Y2i) Y = (Y0i*Y2r-Y0r*Y2i)
 {} =   (A+iB)*(X+iY) + (A-iB)(X-iY)
    = AX-BY +i(BX+AY) + AX - BY - i(BX+AY)
    = 2(AX-BY)
+///////////////////////////// Note if it was a 3 factor product
+{} =   (A+iB)*(X+iY)*(K+iL) + (A-iB)(X-iY)(K-iL)
+   = [AX-BY +i(BX+AY)](K+iL) + [AX - BY - i(BX+AY)](K-iL)
+   = AXK + iAXL - BYK - iBYL + i(BX+AY)K - (BX+AY)L + AXK - iAXL -BYK +iBYL - i(BX+AY)K - (BX+AY)L
+   = 2((AX - BY)K - (BX+AY)L )
+   = 2(AXK-BYK-BXK-AYL)
 So
 (S*Y0 + D*Y2)^2 = (Sr*Sr+Si*Si)*(Y0r*Y0r+Y0i*Y0i)   = (Sr*Sr*Y0r*Y0r + Sr*Sr*Y0i*Y0i + Si*Si*Y0r*Y0r + Si*Si*Y0i*Y0i)
       		+ (Dr*Dr+Di*Di)*(Y2r*Y2r+Y2i*Y2i)     =Sr*Sr*(Y0r*Y0r + Y0i*Y0i) + Si*Si*(Y0r*Y0r + Y0i*Y0i)
-      		+ (Sr*Dr+Si*Di)*(Y0r*Y2r+Y0i*Y2i)  or = (Sr*Sr+Si*Si)*Y0r*Y0r + (Sr*Sr+Si*Si)*Y0i*Y0i
-		- (Si*Dr-Sr*Di)*(Y0i*Y2r-Y0r*Y2i)
+      		+ 2*(Sr*Dr+Si*Di)*(Y0r*Y2r+Y0i*Y2i)  or = (Sr*Sr+Si*Si)*Y0r*Y0r + (Sr*Sr+Si*Si)*Y0i*Y0i
+		- 2*(Si*Dr-Sr*Di)*(Y0i*Y2r-Y0r*Y2i)
+
+AddComplexParameter( H->(ReH,ImH) )
+
+Sum(L){H_L*Y_L}^2 = Sum(L1)Sum(L2){H_L1*H_L2*Y_L1*Y_L2} = Sum(L){ (Re_H_L*Re_H_L + Im_H_L*Im_H_L)*(Re_Y_L*Re_Y_L + Im_Y_L*Im_Y_L)}                  NL
+           ** =>                                   + Sum(L1)Sum(L2<L1){2*(Re_H_L1*Re_H_L2 + Im_H_L1*Im_H_L2)*(Re_Y_L1*Re_Y_L2 + Im_Y_L1*Im_Y_L2)}  (NL-1)NL/2
+						     
+ * Note Im parts cancel, Re part *2 , using C1*C2^* + C2*C1^* = 2(ReC1*ReC2 + ImC1*ImC2), 
+(Re_Y_L*Re_Y_L + Im_Y_L*Im_Y_L) = Y_L^2 ? i.e. check for product of 2 Spherical Harmonics 
+ sum+="SUM(L,M){H_L_M[]*Y_L_M()}^2" = SUM(L1,M1,L2,M2){H_L1_M1[]*Y_L1_M1()*H_L2_M2[]^* * Y_L2_M2()^*} = Sum(L,M<L){} + 2 * Sum(L1,M1<L1)Sum(L2<L1,M2<L2){}
+
+NEED to  SUM(L,M){H_L_M[]*Y_L_M()}^2 = SUM(L1,M1<L1,L2,M2<L2){H_L1_M1*H_L2_M2^* * Y_L1_M1*Y_L2_M2^* }
+So FIRST NEED complex expansion of H_L1*H_L2^* = (Re_H_L1*Re_H_L2 + Im_H_L1*Im_H_L2)
+or  CSUM(L,M){H_L_M[]*Y_L_M()}^2 = **
+
+//ComPWA
+Sum(n){T_n*p_n*D_n} = Sum(L,i) {T_L_i*p_L_i*D_L} where T_L_i(M)*p_L_i*D_L(theta,phi) i = isobar L= ang momentum
+                    = (T_0_0*p_0_0+T_0_1*p_0_1+...) * D_0 + (T_1_0*p_1_0+...)* D_1 +.............
+
+HS => T_0_0*p_0_0*D_0 +T_0_1*p_0_1*D_0 +...
+
+ Sum(L,i) {T_L_i*p_L_i*D_L}^2 = Sum(L,i){Z_L_i}^2 =  Sum(L,i){Z_L_i*Z_L_i^*} + 2 * Sum(L1,L2<L1,i1,12<i1){Z_L1_i1*Z_L2_i2^*}  with Z_L_i = p_L_i*T_L_i(M)*D_L
+ 	  		      			  =Z_0_0*Z_0_0^* ... + 2 * Z_1_0*Z_0_0^* + ...            and Z_L_i^*=(p_L_i^*)*(T_L_i(M)^*)*(D_L^*)
+						  
+ Z_L1_i1*Z_L2_i2^* + Z_L2_i2*Z_L1_i1^*= 2 * (ReZ_L1_i1*ReZ_L2_i2 + ImZ_L1_i1*ImZ_L2_i2) , using C1*C2^* + C2*C1^* = 2(ReC1*ReC2 + ImC1*ImC2),
+and when Z is product of complex numbers use
+Hence A1*B1*(A2^*)*(B2^*) + A2*B2*(A1^*)*(B1^*) = Re(AB12) = 2*ReA12*ReB12 = 2* Re(A1*A2^*) Re(B1*B2^*) = 2*(ReA1*ReA2 + ImA1*ImA2)*(ReB1*ReB2 + ImB1*ImB2)
+
+********************************************************** Square of a complex product summation
+Sum(L,i){Z_L_i}^2 =   Sum(L,i){F(A_L_i,A_L_i)*F(B_L_i,B_L_i)*F...} + 2*Sum(L1,L2<L1,i1,12<i1){F(A_L1_i1,A_L2_i2)*F(B_L1_i1,B_L2_i2)*F(C_L1_i1,C_L2_i2)*..}
+with F(C1,C2) = (ReC1*ReC2 + ImC1*ImC2) = ComplexSummationSquaredTerm
+**********************************************************
+Sum(L,M[0-L]){Z_L_M}^2 = Sum(L,M[0-L]){F(Z_L_M,Z_L_M)} + 2*Sum(L1,M1[0-L1],L2<L1,M2[0-L2]){ F(Z_L1_M1,Z_L1_M1)}
+e.g.Sum(L[0-2],M[0-L]){Z_L_M}^2 = Sum(L[0-2],M[0-L]){F(Z_L_M,Z_L_M)} + 2*Sum(L1[0-2],M1[0-L1],L2[1-2]<L1,M2[0-L2]<M1){ F(Z_L1_M1,Z_L1_M1)}
+=F(Z_0_0,Z_0_0)+F(Z_1_0,Z_1_0)+F(Z_1_1,Z_1_1)+F(Z_2_0,Z_2_0)+F(Z_2_1,Z_2_1)+F(Z_2_2,Z_2_2)
++2{F(Z_1_0,Z_0_0)+F(Z_1_1,Z_0_0)+F(Z_1_1,Z_1_0)
++F(Z_2_0,Z_0_0)+F(Z_2_1,Z_0_0)+F(Z_2_2,Z_0_0)
++F(Z_2_0,Z_1_0)+F(Z_2_1,Z_1_0)+F(Z_2_2,Z_1_0)
++F(Z_2_0,Z_1_1)+F(Z_2_1,Z_1_1)+F(Z_2_2,Z_1_1)
+
+
+
+Sum(L[0-2],M[0-L]){Z_L_M}^  2
+if Z_L= A_L*B_L =>A_L1*B_L1*(A_L2^*)*(B_L2^*) = A_L1*(A_L2^*)*B_L1*(B_L2^*)
+then 2 * (ReZ_L1_i1*ReZ_L2_i2 + ImZ_L1_i1*ImZ_L2_i2) = 2(Re(A_L1*B_L1)*Re(A_L2*B_L2) + Im(A_L1*B_L1)*Im(A_L2*B_L2))
+ = 2((ReA_L1*ReB_L1 + ImA_L1*ImB_L1)*(ReA_L2*ReB_L2 + ImA_L2*ImB_L2) + 
+ 
+=> Sum(L,i){Z_L_i} + 2 * Sum(L1,L2<L1,i1,12<i1){Z_L_i} = Sum(L,i){ReZ_L_i*ReZ_L_i + ImZ_L_i*ImZ_L_i} +  2 * Sum(L1,L2<L1,i1,12<i1){ReZ_L1_i1*ReZ_L2_i2 + ImZ_L1_i1*ImZ_L2_i2}
+
+But how to write product of 3 complex numbers,....? Don't care, take like terms together...
 
 Load Formula =>
 RooComplexFunc:RooComplexSphHarmonic Y11("Y11");
@@ -90,3 +157,48 @@ vector<vector<int&>> recurs;
 		if( recurs[icomp][iterm] )expre[icomp][iterm]=recurs[icomp][iterm];
 		else expre[icomp][iterm]=*term.get();
   	}
+
+Vincent eqn 4a :
+
+I0 = SUM(Lam,Lam1,Lam2){A(Lam,Lam1,Lam2)(CosTh,Phi)A^*(Lam,Lam1,Lam2)(CosTh,Phi)}
+
+A(Lam,Lam1,Lam2)(CosTh,Phi)=SUM(L,M){T^L_Lam,M,Lam1,Lam2}YLM(CosThPhi)
+
+T^L_Lam,M,Lam1,Lam2 -> l(eps,nucflip,L,M)
+
+Vincent main2.cpp :
+I0 = SUM(L[0-2],M[-L,L])U1(L,M,CosTh,Phi)^2   + SUM(L[0-2],M[-L,L])U2(L,M,CosTh,Phi)^2
+U1 = l(+1,L,M)YLM(CosTh,Phi)  U2= l(-1,L,M)YLM^*(CosTh,Phi)
+
+Moments :
+I= I0+I1+I2
+I0 = SUM(L[0-2],M[0-L]){H0(L,M)*YLM(L,M,CosTh,Phi)}
+I1 = SUM(L[0-2],M[0-L]){H1(L,M)*YLM(L,M,CosTh,Phi)*cos(2*PolPhi)}
+I2 = -SUM(L[0-2],M[1-L]){H2(L,M)*YLM(L,M,CosTh,Phi)*sin(2*PolPhi)}
+
+ylm = alm*(cosmphi+i*sinmphi) ylm^*= alm*(cosmphi-i*sinmphi)
+ylm^2 = alm^2
+yLM*ylm*=aLM*alM
+
+Example
+  W^1_-1 = A^1_-1 * Y^1_-1  ..             .W^1_1 = ...
+         =A^1_-1*(sinTh*e^iPhi)
+	 =A-1*sinTh*(cosPhi + i*sinPhi)        = A1*sinTh*(CosPhi-i*sinPhi)
+(W_-1 +W_1)^2 = W_-1^2 + W_1^2 + 2W_1*W_-1^*
+
+=A-1*A-1^* *sin^2Th*(1) +A1*A1*Sin^2Th*(1) +
+  + A1*A-1*sin^Th*(cos^2Phi+sin^2Phi +2i*cosPhi*sinPhi)
+
+
+(W_-1 +W_1)^2 = [sinTh*(A-1*e^iPhi + A1*e^-iPhi)]^2
+ = [sinTh(cosPhi*(A-1+A1) + i*sinPhi*(A-1-A1))]^2
+ =sin^2Th*(Ap^2*cos^2Phi + Am^2*sin^2Phi )
+
+Sum(L,i){Z_L_i}^2 = Sum(L,M){W} =:F(C1,C2) = (ReC1*ReC2 + ImC1*ImC2)
+=F(A_-1,A_-1)F(Y_-1,Y_-1) + F(A_1,A_1)*F(Y_1,Y_1) + 2(F(A_-1,A1)*F(Y_-1,Y_1))
+
+=A_-1^2*[sin^2Th*[cos^2Phi+sin^2Phi]] +A1^2*sin^2Th +
+ + 2[(ReA_-1*ReA_1+ImA_-1*ImA_1)*sin^2Th*(cos^2Phi-sin^2Phi))
+ 
+=(A_-1^2+A1^2 + 2*(ReA_-1*ReA_1+ImA_-1*ImA_1)*(2cos^2Phi-1))*sin^2Th 
+=(ReA_-1*ReA_-1+ImA_-1*ImA_-1) + (ReA_1*ReA_1+ImA_1*ImA_1) + 2*(ReA_-1*ReA_1+ImA_-1*ImA_1)*(2cos^2Phi-1))*sin^2Th 
