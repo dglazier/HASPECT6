@@ -70,11 +70,14 @@
   Fitter.SetUp().LoadVariable("PolPhi[-3.14159,3.14159]");
   Fitter.SetUp().LoadVariable("Pol[0.5,0.2,0.6]");
  
-  auto configFitPDF=HS::FIT::EXPAND::ComponentsPolSphHarmonic(Fitter.SetUp(),"Moments","CosTh","Phi","PolPhi","Pol",3,2);
+   auto configFitPDF=HS::FIT::EXPAND::ComponentsPolSphHarmonic(Fitter.SetUp(),"Moments","CosTh","Phi","PolPhi","Pol",3,2);
+   //auto configFitPDF=HS::FIT::EXPAND::ComponentsPolSphHarmonic(Fitter.SetUp(),"Moments","CosTh","Phi","PolPhi","Pol",3,2.kTRUE); //Even waves only
 
 
-  Fitter.SetUp().FactoryPDF(configGenPDF);
-
+  Fitter.SetUp().FactoryPDF(configFitPDF);
+  // Fitter.SetUp().FactoryPDF("RooComponentsPDF::Moments(0,{CosTh,Phi,PolPhi,Pol},=K_0;H0_0_0;Y_0_0_Re:K_2;H0_2_0;Y_2_0_Re:K_2;H0_2_1;Y_2_1_Re:K_2;H0_2_2;Y_2_2_Re:K_0;H1_0_0;Y_0_0_Re;POL_COS2PHI:K_2;H1_2_0;Y_2_0_Re;POL_COS2PHI:K_2;H1_2_1;Y_2_1_Re;POL_COS2PHI:K_2;H1_2_2;Y_2_2_Re;POL_COS2PHI:K_2;H2_2_1;Y_2_1_Im;POL_SIN2PHI:K_2;H2_2_2;Y_2_2_Im;POL_SIN2PHI)");
+  
+  
   Fitter.SetUp().LoadSpeciesPDF("Moments",1); //2000 events
 
 
