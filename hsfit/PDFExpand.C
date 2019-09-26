@@ -14,7 +14,7 @@ namespace HS{
       TString LoadPolSphHarmonic(Setup &setup,TString cth,TString phi,Int_t L,Int_t M,Int_t set,TString part);
       TString  ComponentsPolSphHarmonic(Setup &setup,TString name,TString cth,TString phi,TString phiPol,TString Pol,Int_t Lmax,Int_t Mmax,Bool_t isEven);
       TString  ComponentsPolSphHarmonicPolStateFixPol(Setup &setup,TString name,TString cth,TString phi,TString phiPol,TString PolState,TString Pol,TString Plane,Int_t Lmax,Int_t Mmax,Bool_t isEven);
-      
+      TString  ComponentsPolSphHarmonicFixPol(Setup &setup,TString name,TString cth,TString phi,TString phiPol,TString PolState,TString Pol,Int_t Lmax,Int_t Mmax,Bool_t isEven);
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////
       TString  ComponentsRealSphHarmonic(Setup &setup,TString name,TString cth,TString phi,Int_t Lmax,Int_t Mmax){
 
@@ -71,6 +71,23 @@ namespace HS{
 	TString sphharm2=ExpandPolSphHarmonic(setup,cth,phi,Lmax,Mmax,2,"Im",isEven);
 
 	TString expr=Form("RooComponentsPDF::%s(0,{%s,%s,%s,%s},=%s:%s:%s)",name.Data(),cth.Data(),phi.Data(),phiPol.Data(),PolState.Data(),sphharm0.Data(),sphharm1.Data(),sphharm2.Data());
+	cout<<"ComponentsRealSphHarmonic    : "<<endl<<"          "<<expr<<endl;
+	return expr;
+      }
+      TString  ComponentsPolSphHarmonicFixPol(Setup &setup,TString name,TString cth,TString phi,TString phiPol,TString PolState,TString Pol,Int_t Lmax,Int_t Mmax,Bool_t isEven=kFALSE){
+	//From eqn a15a,b  https://arxiv.org/pdf/1906.04841.pdf 
+	///setup.LoadFormula(Form("POL_COS2PHI=@%s[]*cos(2*(@%s[]))",Pol.Data(),phiPol.Data())); //2-ves =>+ve
+	//setup.LoadFormula(Form("POL_SIN2PHI=-@%s[]*sin(2*(@%s[]))",Pol.Data(),phiPol.Data()));
+	setup.LoadFormula(Form("POL_COS2PHI=@%s[]*cos(2*(@%s[]))",Pol.Data(),phiPol.Data())); //2-ves =>+ve
+	setup.LoadFormula(Form("POL_SIN2PHI=-@%s[]*sin(2*(@%s[]))",Pol.Data(),phiPol.Data()));
+	//I0
+	TString sphharm0=ExpandPolSphHarmonic(setup,cth,phi,Lmax,Mmax,0,"Re",isEven);
+	//I1
+	TString sphharm1=ExpandPolSphHarmonic(setup,cth,phi,Lmax,Mmax,1,"Re",isEven);
+	//I1
+	TString sphharm2=ExpandPolSphHarmonic(setup,cth,phi,Lmax,Mmax,2,"Im",isEven);
+
+	TString expr=Form("RooComponentsPDF::%s(0,{%s,%s,%s},=%s:%s:%s)",name.Data(),cth.Data(),phi.Data(),phiPol.Data(),sphharm0.Data(),sphharm1.Data(),sphharm2.Data());
 	cout<<"ComponentsRealSphHarmonic    : "<<endl<<"          "<<expr<<endl;
 	return expr;
       }
