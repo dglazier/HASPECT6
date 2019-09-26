@@ -149,7 +149,7 @@ namespace HS{
      }
     ////////////////////////////////////////////////////////////
     /// Load a formulaVar e.g s.LoadFormula("name=@v1[1,0,2]+@v2[]");
-    /// Fit a variable in your tree called X between -1 and 1
+    ///
     void Setup::LoadFormula(TString formu){
       fFormString.push_back(formu);
       //get formula name
@@ -324,11 +324,15 @@ namespace HS{
       TString sobs=opt(opt.First("{")+1,opt.First("}")-opt.First("{")-1);
       auto obsStrings=sobs.Tokenize(",");
       RooArgList obsList("RooComponentsPDF::ComponentObservables");
-      auto varsAndCats=FitVarsAndCats();
+      
+      RooArgSet varsAndCatsAndPars(FitVarsAndCats());
+      varsAndCatsAndPars.add(Parameters());
+      varsAndCatsAndPars.add(Formulas());
+
       //cout<<"Observable String "<<sobs<<endl;
       for(Int_t i=0;i<obsStrings->GetEntries();i++ ){
 	//cout<<"      "<<obsStrings->At(i)->GetName()<<endl;
-	obsList.add(*varsAndCats.find(obsStrings->At(i)->GetName()));
+	obsList.add(*varsAndCatsAndPars.find(obsStrings->At(i)->GetName()));
       }
       delete obsStrings;
       
