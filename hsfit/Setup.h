@@ -76,15 +76,22 @@ namespace HS{
 
 
       
-      const TString Cut() const {return fCut;}
-      void AddCut(TString cut){if(fCut.Sizeof()>1){fCut+="&&";}fCut+=cut;};
+      const TString Cut() const {
+	if(fAddCut.Sizeof()>1&&fVarCut.Sizeof()>1)
+	  return fAddCut+"&&"+fVarCut;
+	else 	if(fAddCut.Sizeof()>1) return fAddCut;
+	else 	if(fVarCut.Sizeof()>1) return fVarCut;
+	else return TString();
+      }	
+      void AddCut(TString cut){if(fAddCut.Sizeof()>1){fAddCut+="&&";}fAddCut+=cut;};
      
       void SetDataOnlyCut(TString cut) {fDataOnlyCut=cut;}
       const TString DataCut() const {
 	//in case you want to cut on variable not in simulated data
-	if(fCut.Sizeof()>1&&fDataOnlyCut.Sizeof()>1)
-	  return fCut+"&&"+fDataOnlyCut;
-	else 	if(fCut.Sizeof()>1) return fCut;
+	auto cut=Cut();
+	if(cut.Sizeof()>1&&fDataOnlyCut.Sizeof()>1)
+	  return cut+"&&"+fDataOnlyCut;
+	else 	if(cut.Sizeof()>1) return cut;
 	else 	if(fDataOnlyCut.Sizeof()>1) return fDataOnlyCut;
 	else return TString();
       }
@@ -184,7 +191,8 @@ namespace HS{
       RooAbsPdf* fModel=nullptr; //!owned by workspace
  
       RooWorkspace fWS;
-      TString fCut;
+      TString fVarCut;
+      TString fAddCut;
       TString fIDBranchName="UID";
       TString fOutDir;
       TString fDataOnlyCut;

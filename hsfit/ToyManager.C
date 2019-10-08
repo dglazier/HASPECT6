@@ -42,9 +42,9 @@ namespace HS{
       // Long64_t nexp=RooRandom::randomGenerator()->Poisson(model->expectedEvents(fitpars));
       Long64_t nexp=RooRandom::randomGenerator()->Poisson(fCurrSetup->SumOfYields());
 
-      // model->Print("v");
+      model->Print("v");
       //fitvars.Print("v");
-      
+      cout<<"ToyManager::Generate() "<<GetFiti()<<endl;
       fGenData=model->generate(fitvars,nexp);
       fGenData->SetName("ToyData");
       //fGenData->Print();

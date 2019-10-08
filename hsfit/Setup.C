@@ -27,9 +27,10 @@ namespace HS{
       //       fWS={"HSWS"};
        fFitOptions=other.fFitOptions;
        fConstraints=other.fConstraints;   
-       fCut=other.fCut;
+       fAddCut=other.fAddCut;
+       fVarCut=""; //contructed from LoadAuxVar
        fDataOnlyCut=other.fDataOnlyCut;
-
+       cout<<Cut()<<""<<endl;
        fIDBranchName=other.fIDBranchName;
        fOutDir=other.fOutDir;
        for(auto &parStr: other.fParString)
@@ -61,7 +62,8 @@ namespace HS{
     Setup& Setup::operator=(const Setup& other){
       fFitOptions=other.fFitOptions;
       fConstraints=other.fConstraints;
-      fCut=other.fCut;
+      fAddCut=other.fAddCut;
+      fVarCut=""; //contructed from LoadAuxVar
       fIDBranchName=other.fIDBranchName;
       fOutDir=other.fOutDir;
       //fWS={"HSWS"};
@@ -194,24 +196,24 @@ namespace HS{
 	return;
       }
  
+      if(fVarCut.Sizeof()>1)fVarCut+="&&";
       auto typeIter=cat->typeIterator();
-      if(fCut.Sizeof()>1)fCut+="&&";
-      fCut+="(";
+      cout<<"FGERGRGFFER&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& "<<Cut()<<endl;
+      fVarCut+="(";
       Bool_t first=kTRUE;
       while(auto type=dynamic_cast<RooCatType*>(typeIter->Next())){
 	if(first){
-	  fCut+=Form("%s==%d",cat->GetName(),type->getVal());
+	  fVarCut+=Form("%s==%d",cat->GetName(),type->getVal());
 	  first=kFALSE;
 	}
 	else
-	  fCut+=Form("||%s==%d",cat->GetName(),type->getVal());
-	  
+	  fVarCut+=Form("||%s==%d",cat->GetName(),type->getVal());
+	
       }
-      fCut+=")";
-     
+      fVarCut+=")";
       
-     fCatString.push_back(opt);
-     fFitCats.push_back(cat);
+      fCatString.push_back(opt);
+      fFitCats.push_back(cat);
    
     }
     /////////////////////////////////////////////////////////
@@ -225,8 +227,8 @@ namespace HS{
       RooRealVar* varreal=nullptr;
  
       if((varreal=dynamic_cast<RooRealVar*>(var))){
-	if(fCut.Sizeof()>1)fCut+="&&";
-	fCut+=Form("%s>=%lf&&%s<=%lf",varreal->GetName(),varreal->getMin(),varreal->GetName(),varreal->getMax());   
+	if(fVarCut.Sizeof()>1)fVarCut+="&&";
+	fVarCut+=Form("%s>=%lf&&%s<=%lf",varreal->GetName(),varreal->getMin(),varreal->GetName(),varreal->getMax());   
       }
       fAuxVarString.push_back(opt);
     }

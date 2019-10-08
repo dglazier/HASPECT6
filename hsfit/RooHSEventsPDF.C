@@ -117,6 +117,7 @@ RooArgSet RooHSEventsPDF::VarSet(Int_t iset) const{
 }
   Int_t RooHSEventsPDF::getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK) const
 {
+  cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!RooHSEventsPDF::getGenerator "<<fEvTree<<" "<<fvecReal.size()<<endl;
   Info("RooHSEventsPDF::getGenerator","Looking for generator");
   if(!fEvTree) return 0; //no MC events to generate from
   //case generate all variables
@@ -445,6 +446,7 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
 	TString newcut=fCut;
 	newcut.Replace(newcut.Index(fProxSet[i]->GetName())-2,2,"");
 	newcut.Replace(newcut.Index(TString(fProxSet[i]->GetName())+">"),(newcut.Index(TString(fProxSet[i]->GetName())+"<")-newcut.Index(TString(fProxSet[i]->GetName())+">"))*2-1,"");
+	if(newcut==TString("&&"))newcut="";
 	fCut=newcut;
 	cout<<"RooHSEventsPDF::SetEvTree Ammended cut "<<fCut<<endl;
       }
@@ -470,8 +472,22 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
       //have Cut applied to it
       if(fCut.Contains(fCatSet[i]->GetName())){
 	TString newcut=fCut;
-	newcut.Replace(newcut.Index(fCatSet[i]->GetName())-2,2,fCatSet[i]->GetName());
-	newcut.Replace(newcut.Index(TString(fCatSet[i]->GetName())+"<"),(newcut.Index(TString(fCatSet[i]->GetName())+">")-newcut.Index(TString(fCatSet[i]->GetName())+"<"))*2-1,"");
+	TString catCut;
+	auto typeIter=fCatSet[i]->arg().typeIterator();
+	catCut+="(";
+	Bool_t first=kTRUE;
+	while(auto type=dynamic_cast<RooCatType*>(typeIter->Next())){
+	  if(first){
+	    catCut+=Form("%s==%d",fCatSet[i]->GetName(),type->getVal());
+	    first=kFALSE;
+	  }
+	  else
+	    catCut+=Form("||%s==%d",fCatSet[i]->GetName(),type->getVal());
+	  
+	}	
+	catCut+=")";
+	newcut.ReplaceAll(catCut,"");
+	if(newcut==TString("&&"))newcut="";
 	fCut=newcut;
 	cout<<"RooHSEventsPDF::SetEvTree Ammended cut "<<fCut<<endl;
       }
@@ -713,7 +729,7 @@ Bool_t RooHSEventsPDF::AddProtoData(const RooDataSet* data){
     for(UInt_t ip=0;ip<protoDataForCat.size();ip++){
       Int_t val=dataVars->getCatIndex(fCatSet[protoDataForCat[ip]]->GetName());
       fvecCat[id*fNcats+protoDataForCat[ip]]=val;
-      fvecCatGen[id*fNcats+protoDataForCat[ip]]=val;       
+      fvecCatGen[id*fNcats+protoDataForCat[ip]]=val;     
     }
     
     if(idata==(Long64_t)vrandom.size()-1){//Need to reuse data until done all MC events
