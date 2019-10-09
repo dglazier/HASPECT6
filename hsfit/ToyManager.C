@@ -104,7 +104,7 @@ namespace HS{
     ///////////////////////////////////////////////////////////////
     void ToyManager::InitSummary(){
       std::unique_ptr<TFile> resFile{TFile::Open(SetUp().GetOutDir()+GetCurrName()+"/ToySummary.root","recreate")};
-      auto initpars=SetUp().ParsAndYields();
+      auto initpars=*((RooArgSet*)(SetUp().ParsAndYields().selectByAttrib("Constant",kFALSE)));
       cout<<"ToyManager::InitSummary()"<<endl;
       initpars.Print("v");
       initpars.setName(InitialParsName());
