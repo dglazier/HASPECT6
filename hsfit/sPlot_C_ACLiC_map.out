@@ -1,4 +1,0 @@
- libCore.so  libHist.so  libMathCore.so  libRIO.so  libRooFitCore.so  libTree.so  libTreePlayer.so  libROOTDataFrame.so  libMatrix.so  libGraf.so  libRooStats.so  libRooFit.so  libNet.so  libThread.so  libROOTVecOps.so  libGpad.so
-# Now the list of classes
-vector<pair<TString,float> >
-HS::FIT::sPlot
