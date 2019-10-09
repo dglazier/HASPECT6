@@ -139,6 +139,16 @@ namespace HS{
 	}
       InitSets();
     }
+    Int_t RooComponentsPDF::getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK) const
+    {	
+      cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!RooComponentsPDF::getGenerator "<<fEvTree<<" "<<fvecReal.size()<<endl;
+      Info("RooHSEventsPDF::getGenerator","Looking for generator");
+      if(!fEvTree) return 0; //no MC events to generate from
+      //case generate all variables
+      if (matchArgs(directVars,generateVars,VarSet(0))) return 1 ;
+      return 0;
+
+    }
 
 
 
@@ -156,6 +166,27 @@ namespace HS{
       }
      
       return val;
+    }
+
+    void RooComponentsPDF::RedirectServersToPdf(){
+      cout<<"                 RooComponentsPDF::RedirectServersToPdf()"<<endl;
+      //point the terms to the integral events rather than data events
+      for(UInt_t icomp=0;icomp<fNComps;icomp++){
+	for(const auto &term:fDependentTermProxy[icomp]){
+	  auto unconstTerm=const_cast<RooAbsReal*>(&term->arg());
+	  unconstTerm->recursiveRedirectServers(fIntegrateSet);
+	}	
+      }	
+    }
+    void RooComponentsPDF::RedirectServersToData(){
+      //point the terms back to the data events rather than integral events
+      for(UInt_t icomp=0;icomp<fNComps;icomp++){
+	for(const auto &term:fDependentTermProxy[icomp]){
+	  auto unconstTerm=const_cast<RooAbsReal*>(&term->arg());
+	  unconstTerm->recursiveRedirectServers(fActualObs);
+	}	
+      }	
+      
     }
 
     void RooComponentsPDF::HistIntegrals(const char* rangeName) const{
@@ -180,15 +211,26 @@ namespace HS{
     Double_t RooComponentsPDF::evaluateMC(const vector<Float_t> *vars,const  vector<Int_t> *cats) const
     {
       //read in observable value for this event
-      for(Int_t ii=0;ii<fNvars;ii++)
+      for(Int_t ii=0;ii<fNvars;ii++){
 	fIntegrateObs[ii]->setVal(fvecReal[fTreeEntry*fNvars+ii]);
+      }
       for(Int_t ii=0;ii<fNcats;ii++){
 	fIntegrateCats[ii]->setIndex(fvecCat[fTreeEntry*fNcats+ii]);
       }
+   
       return evaluateData();
     }
-  
+    Bool_t RooComponentsPDF::isDirectGenSafe(const RooAbsArg& arg) const {
+      if(fActualObs.find(arg.GetName())) return kTRUE;
+      if(fActualCats.find(arg.GetName())) return kTRUE;
+      return kFALSE;
+    }
 
+    void RooComponentsPDF::initGenerator(Int_t code)
+    {
+      RedirectServersToPdf();
+      RooHSEventsPDF::initGenerator(code);
+    }
     void RooComponentsPDF::initIntegrator()
     {
       //Each Component is arranged in terms which are

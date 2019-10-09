@@ -124,9 +124,9 @@ namespace HS{
       TString GetMinimiserType() const {return fMinimiserType;}
       //    Minimiser* GetMinimiser() const {return fMinimiser;}
       
-      void FillEventsPDFs();
+      virtual void FillEventsPDFs();
       void PlotDataModel(){
-	fPlots.push_back(std::move(plotresult_uptr{new PlotResults(fCurrSetup.get(),fCurrDataSet.get())}));
+	fPlots.push_back((plotresult_uptr{new PlotResults(fCurrSetup.get(),fCurrDataSet.get(),GetCurrName()+GetCurrTitle())}));
       }
       void RedirectOutput(TString log="");
       void SetRedirectOutput(){fRedirect=kTRUE;}

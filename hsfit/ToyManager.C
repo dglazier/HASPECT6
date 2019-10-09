@@ -1,6 +1,7 @@
 #include "ToyManager.h"
 #include "RooHSEventsPDF.h"
 #include "RooHSEventsHistPDF.h"
+#include "RooComponentsPDF.h"
 #include <TH1.h>
 #include <TDirectory.h>
 #include <RooRandom.h>
@@ -42,16 +43,27 @@ namespace HS{
       // Long64_t nexp=RooRandom::randomGenerator()->Poisson(model->expectedEvents(fitpars));
       Long64_t nexp=RooRandom::randomGenerator()->Poisson(fCurrSetup->SumOfYields());
 
-      model->Print("v");
+ 
       //fitvars.Print("v");
-      cout<<"ToyManager::Generate() "<<GetFiti()<<endl;
-      fGenData=model->generate(fitvars,nexp);
-      fGenData->SetName("ToyData");
-      //fGenData->Print();
+      auto iter=fitvars.iterator();
+      const RooAbsArg *tmp=0;
+      while ((tmp = (RooAbsArg*)iter.Next())){
+	auto arg=fitvars.find(tmp->GetName());
+	cout<<"ToyManager::Generate() "<<tmp->GetName()<<" "<<model->isDirectGenSafe(*arg)<<endl;
+      }
+
+      while(fToyi<fNToys){
+	fGenData=model->generate(fitvars,nexp);
+	fGenData->SetName("ToyData");
+	SaveResults();
+	fToyi++;
+      }
+      fToyi=0;
       
     }
     void ToyManager::SaveResults(){
-      
+      if(!fGenData) return;
+
       TString fileName=Form("%s%s/%s.root",fCurrSetup->GetOutDir().Data(),GetCurrName().Data(),GetCurrTitle().Data());
       
       fToyFileNames.push_back(fileName);
@@ -93,9 +105,18 @@ namespace HS{
     void ToyManager::InitSummary(){
       std::unique_ptr<TFile> resFile{TFile::Open(SetUp().GetOutDir()+GetCurrName()+"/ToySummary.root","recreate")};
       auto initpars=SetUp().ParsAndYields();
+      cout<<"ToyManager::InitSummary()"<<endl;
+      initpars.Print("v");
       initpars.setName(InitialParsName());
       //initpars.Write();//commented out for amplitudes test as crashing?!>
-      
+      //resFile->WriteObject(&initpars,InitialParsName());//crahss when RooFormulaVar is used....
+      //cant save pars to file directly if got formulavar connected 
+      //dont know why
+      RooDataSet d(InitialParsName(),InitialParsName(),initpars);
+      d.fill();
+      d.Print("v");
+      d.Write();
+
     }
     ////////////////////////////////////////////////////////////////
     void ToyManager::PreRun(){
@@ -168,8 +189,10 @@ namespace HS{
       auto tree=resChain.CloneTree();
        
       //Loop over all parameters
-      std::unique_ptr<RooArgSet> pars{dynamic_cast<RooArgSet*>( resFile->Get(InitialParsName()))};
+      std::unique_ptr<RooDataSet> parsData{dynamic_cast<RooDataSet*>( resFile->Get(InitialParsName()))};
       cout<<" ToyManager::Summarise() Initial Parameters"<<endl;
+      if(!parsData.get()) return;
+      auto pars=parsData->get();
       pars->Print("v");
       // auto pars = SetUp().ParsAndYields();   
       TIter iter=pars->createIterator();
@@ -226,5 +249,8 @@ namespace HS{
       }
 
     }
+
+   
+   
   }
-}
+}	

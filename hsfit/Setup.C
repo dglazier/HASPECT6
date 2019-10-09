@@ -198,7 +198,7 @@ namespace HS{
  
       if(fVarCut.Sizeof()>1)fVarCut+="&&";
       auto typeIter=cat->typeIterator();
-      cout<<"FGERGRGFFER&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& "<<Cut()<<endl;
+      
       fVarCut+="(";
       Bool_t first=kTRUE;
       while(auto type=dynamic_cast<RooCatType*>(typeIter->Next())){

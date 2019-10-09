@@ -22,69 +22,69 @@
 using namespace HS::FIT;
 
 RooHSEventsPDF::RooHSEventsPDF(const RooHSEventsPDF& other, const char* name) :  RooAbsPdf(other,name) 
-  {
-    // cout<<"RooHSEventsPDF::RooHSEventsPDF "<<GetName()<<other.fNTreeEntries<< " "<<other.fvecReal.size()<<endl;
-    fIsClone=kTRUE;
-    fParent=const_cast<RooHSEventsPDF*>(&other);
+{
+  // cout<<"RooHSEventsPDF::RooHSEventsPDF "<<GetName()<<other.fNTreeEntries<< " "<<other.fvecReal.size()<<endl;
+  fIsClone=kTRUE;
+  fParent=const_cast<RooHSEventsPDF*>(&other);
   
-    fvecReal=other.fvecReal;
-    fvecCat=other.fvecCat;
-    fvecRealGen=other.fvecRealGen;
-    fvecCatGen=other.fvecCatGen;
-    fNTreeEntries=other.fNTreeEntries;
+  fvecReal=other.fvecReal;
+  fvecCat=other.fvecCat;
+  fvecRealGen=other.fvecRealGen;
+  fvecCatGen=other.fvecCatGen;
+  fNTreeEntries=other.fNTreeEntries;
 
     
-    if(other.fEvTree)fEvTree=other.fEvTree->CopyTree("");
-    //    if(other.fInWeights) fInWeights=other.fInWeights; //probably need to clone this
-    fNInt=other.fNInt;
-    fGeni=other.fGeni;
-    //if(other.fEntryList)fEntryList=(TEntryList*)other.fEntryList->Clone();
-    fForceConstInt=other.fForceConstInt;
-    fForceNumInt=other.fForceNumInt;
-    fConstInt=other.fConstInt;
-    fCheckInt=other.fCheckInt;
-    fUseWeightsGen=other.fUseWeightsGen;
-    fCut=other.fCut;
-    fInWeightCut=other.fInWeightCut;
-    fIsValid=other.fIsValid;
-    fUseEvWeights=other.fUseEvWeights;
+  if(other.fEvTree)fEvTree=other.fEvTree->CopyTree("");
+  //    if(other.fInWeights) fInWeights=other.fInWeights; //probably need to clone this
+  fNInt=other.fNInt;
+  fGeni=other.fGeni;
+  //if(other.fEntryList)fEntryList=(TEntryList*)other.fEntryList->Clone();
+  fForceConstInt=other.fForceConstInt;
+  fForceNumInt=other.fForceNumInt;
+  fConstInt=other.fConstInt;
+  fCheckInt=other.fCheckInt;
+  fUseWeightsGen=other.fUseWeightsGen;
+  fCut=other.fCut;
+  fInWeightCut=other.fInWeightCut;
+  fIsValid=other.fIsValid;
+  fUseEvWeights=other.fUseEvWeights;
     
-    fWgtsConf=other.fWgtsConf;
+  fWgtsConf=other.fWgtsConf;
 									     
-    fEvWeights=other.fEvWeights;
-    fHistIntegrals=other.fHistIntegrals;
-    //fWgtSpecies=other.fWgtSpecies;
-    //fWgtsFile=other.fWgtsFile;
-    //fWgtsName=other.fWgtsName;
-    fMaxValue=other.fMaxValue;
-    fIntRangeLow=other.fIntRangeLow;
-    fIntRangeHigh=other.fIntRangeHigh;
-    }
+  fEvWeights=other.fEvWeights;
+  fHistIntegrals=other.fHistIntegrals;
+  //fWgtSpecies=other.fWgtSpecies;
+  //fWgtsFile=other.fWgtsFile;
+  //fWgtsName=other.fWgtsName;
+  fMaxValue=other.fMaxValue;
+  fIntRangeLow=other.fIntRangeLow;
+  fIntRangeHigh=other.fIntRangeHigh;
+}
 RooHSEventsPDF::~RooHSEventsPDF(){
   //RooFit clones everything so I need to give the original
-    //object the entrylist if I want to use it!
-     if(fIsClone&&fParent&&fEntryList){
-      if(fMaxValue){//has this clone used generator?
-	fParent->SetEntryList(fEntryList);
- 	fParent->SetGeni(fGeni);
-     }
-    }
-   if(fEntryList) delete fEntryList;
-   if(fLast) delete fLast;
-   if(fEvTree) delete fEvTree;
+  //object the entrylist if I want to use it!
+  //  if(fIsClone&&fParent&&fEntryList){
+  //   if(fMaxValue){//has this clone used generator?
+  // 	//	fParent->SetEntryList(fEntryList);
+  // 	//fParent->SetGeni(fGeni);
+  //  }
+  // }
+  if(fEntryList) delete fEntryList;
+  if(fLast) delete fLast;
+  if(fEvTree) delete fEvTree;
    
-    if(fWeights){
-      fWeights->Save();
-      delete fWeights;
-    }
-    if(fInWeights){
-      delete fInWeights;
-    }
-     for(UInt_t i=0;i<fVarSet.size();i++)
-      delete fVarSet[i];
- 
-    fVarSet.clear();
+  if(fWeights){
+    fWeights->Save();
+    delete fWeights;
   }
+  if(fInWeights){
+    delete fInWeights;
+  }
+  for(UInt_t i=0;i<fVarSet.size();i++)
+    delete fVarSet[i];
+ 
+  fVarSet.clear();
+}
 
 void RooHSEventsPDF::InitSets(){
   fNpars=fParSet.size();
@@ -107,7 +107,7 @@ RooArgSet RooHSEventsPDF::VarSet(Int_t iset) const{
   }
   else{
     for(UInt_t j=0;j<fProxSet.size();j++){//add if not proxy being removed
-       if(fProxSet[iset-1]->GetName()!=fProxSet[j]->GetName()) aset.add(fProxSet.at(j)->arg());
+      if(fProxSet[iset-1]->GetName()!=fProxSet[j]->GetName()) aset.add(fProxSet.at(j)->arg());
     }
     for(UInt_t i=0;i<fCatSet.size();i++){ //Just add all categories
       aset.add(fCatSet.at(i)->arg());
@@ -115,7 +115,7 @@ RooArgSet RooHSEventsPDF::VarSet(Int_t iset) const{
   }
   return aset;
 }
-  Int_t RooHSEventsPDF::getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK) const
+Int_t RooHSEventsPDF::getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK) const
 {
   cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!RooHSEventsPDF::getGenerator "<<fEvTree<<" "<<fvecReal.size()<<endl;
   Info("RooHSEventsPDF::getGenerator","Looking for generator");
@@ -138,13 +138,15 @@ void RooHSEventsPDF::initGenerator(Int_t code)
   if(fParent->GetMaxValue()==0||fParent->CheckChange()){	
     Double_t value=0;		
     if(code==1){	
-       //Brute force find maximum value
+      //Brute force find maximum value
       fMaxValue=0;
       for(Int_t i=0;i<fNTreeEntries;i++){
 	fTreeEntry=i;
 	value=evaluateMC(&fvecRealGen,&fvecCatGen);
+       
 	if(value>fMaxValue)fMaxValue=value*1.01;//make it a little larger
       }
+ 
       fParent->SetMaxValue(fMaxValue);
     }
   }		
@@ -163,7 +165,7 @@ void RooHSEventsPDF::initGenerator(Int_t code)
     fWeights->SetFile(TString(GetName())+"Weights.root");
   }
   Info("RooHSEventsPDF::initGenerator","Max value %lf",fMaxValue);
- }
+}
 void RooHSEventsPDF::generateEvent(Int_t code){
   // Info("RooHSEventsPDF::generateEvent","Going to generate starting from %lld with ",fGeni);
   
@@ -188,14 +190,14 @@ void RooHSEventsPDF::generateEvent(Int_t code){
   else{
     //using weights
     while(fGeni<fNTreeEntries){
-      //fParent->SetGeni(fGeni);
+      fParent->SetGeni(fGeni);
       //fEvTree->GetEntry(fGeni++);
       fTreeEntry=fGeni++;
       if(!CheckRange("")) continue;
       value=evaluateMC(&fvecRealGen,&fvecCatGen);
       for(Int_t i=0;i<fNvars;i++)
 	(*(fProxSet[i]))=fvecReal[fTreeEntry*fNvars+i];
-     for(Int_t i=0;i<fNcats;i++)
+      for(Int_t i=0;i<fNcats;i++)
 	(*(fCatSet[i]))=fvecCat[fTreeEntry*fNcats+i];
       fWeights->FillWeight(fGeni-1,value); 
       fEntryList->Enter(fGeni-1);
@@ -221,7 +223,7 @@ Int_t RooHSEventsPDF::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analV
       // allVars.Print();analVars.Print();
       // if(RooHSEventsPDF_IsPlotting) {return 1;}
       //else return 1 ;
-       //if now plotting create histograms
+      //if now plotting create histograms
       if(HS::FIT::RooHSEventsPDF_IsPlotting&&fHistIntegrals.size()==0)
 	HistIntegrals(rangeName);
 
@@ -271,13 +273,13 @@ Double_t RooHSEventsPDF::analyticalIntegral(Int_t code,const char* rangeName) co
     }
     integral/=accepted;
   }
-   else{
-     if(fHistIntegrals.size()==0)
-       HistIntegrals(rangeName);
-     Int_t vindex=code-2;
-     Double_t vval=*(fProxSet[vindex]);
-     integral=fHistIntegrals[vindex].Interpolate(vval);
-   }
+  else{
+    if(fHistIntegrals.size()==0)
+      HistIntegrals(rangeName);
+    Int_t vindex=code-2;
+    Double_t vval=*(fProxSet[vindex]);
+    integral=fHistIntegrals[vindex].Interpolate(vval);
+  }
   // else {
   //   //inegrate over other variables for one variable fixed
   //   //index given by code -2 (defintion of code in getAnalyticalIntegral
@@ -311,7 +313,7 @@ Double_t RooHSEventsPDF::analyticalIntegral(Int_t code,const char* rangeName) co
   // }
   //else return 1;
   // Set Last[0] so we can just return that if no parameter changes
-   fLast[0]=integral;
+  fLast[0]=integral;
 
   return fLast[0];
 }
@@ -353,8 +355,8 @@ void RooHSEventsPDF::SetLowHighVals(Long64_t& ilow,Long64_t& ihigh) const{
     ihigh=fParent->GetIntRangeHigh();
   }
   else{
-   ilow=GetIntRangeLow();
-   ihigh=GetIntRangeHigh();
+    ilow=GetIntRangeLow();
+    ihigh=GetIntRangeHigh();
   }
 
   if(ihigh==0&&fNInt>-1) ihigh=fNInt;
@@ -496,7 +498,7 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   }
   fEvTree->GetEntry(0);
  
- //Loop over tree, extracting values into vector
+  //Loop over tree, extracting values into vector
   UInt_t ProxSize=fNvars;
   UInt_t CatSize=fNcats;
   fNTreeEntries=fEvTree->GetEntries();
@@ -504,7 +506,7 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
   fvecRealGen.resize(fNTreeEntries*ProxSize);
   fvecCat.resize(fNTreeEntries*CatSize);
   fvecCatGen.resize(fNTreeEntries*CatSize);
- //Get entries that pass cut
+  //Get entries that pass cut
   //A little subtle but this must be done before SetMakeClass or it
   //doesn't find any entries
   tree->Draw(">>elist", fCut, "entrylist");
@@ -535,7 +537,7 @@ Bool_t RooHSEventsPDF::SetEvTree(TTree* tree,TString cut,Long64_t ngen){
       fvecCat[iEvent*CatSize+ip]=MCCat[ip];
       if(!fGotGenCat[ip]) fvecCatGen[iEvent*CatSize+ip]=MCCat[ip];
       else fvecCatGen[iEvent*CatSize+ip]=GenCat[ip];
-   }
+    }
   }
   fEvTree->SetEntryList(0);
   delete elist;elist=nullptr;
@@ -583,7 +585,7 @@ void  RooHSEventsPDF::LoadInWeights(){
     fInWeights->Print();
     fIsValid=kFALSE;
   }
- }
+}
 
 void  RooHSEventsPDF::CheckIntegralParDep(Int_t Ntests){
   fCheckInt=Ntests;
@@ -600,15 +602,15 @@ void  RooHSEventsPDF::CheckIntegralParDep(Int_t Ntests){
   
   RooRealVar integral("integral","integral",0,0,2);
   integral.setError(sqrt(fNInt)/fNInt); //Error needs to be set before entering in ds
- RooDataSet ds("intds","intds",RooArgSet(integral));
+  RooDataSet ds("intds","intds",RooArgSet(integral));
   //want to set random paramter values
   //loop over each paramter and calculate integral
- vector<Double_t> SavedPars;
- for(UInt_t ip=0;ip<fParSet.size();ip++){//first save parameters
-   RooRealVar* par=((RooRealVar*)(&(fParSet[ip]->arg())));
-   SavedPars.push_back(par->getValV());
- }
- for(Int_t ir=0;ir<Ntests;ir++){ //loop over tests
+  vector<Double_t> SavedPars;
+  for(UInt_t ip=0;ip<fParSet.size();ip++){//first save parameters
+    RooRealVar* par=((RooRealVar*)(&(fParSet[ip]->arg())));
+    SavedPars.push_back(par->getValV());
+  }
+  for(Int_t ir=0;ir<Ntests;ir++){ //loop over tests
     for(UInt_t ip=0;ip<fParSet.size();ip++){//loop over parameters
       RooRealVar* par=((RooRealVar*)(&(fParSet[ip]->arg())));
       par->setVal((par->getMax("")-par->getMin(""))*RooRandom::uniform()+par->getMin(""));

@@ -158,7 +158,7 @@ namespace HS{
       void SetUseWeightsGen(Bool_t use=kTRUE){fUseWeightsGen=use;}
       Bool_t UseWeightsGen(){return fUseWeightsGen;}
       HS::Weights* GetWeights(){return fWeights;}
-      void SetGeni(Long64_t gi){fGeni=gi;};
+      void SetGeni(Long64_t gi){fGeni=gi;if(fParent)fParent->SetGeni(gi);};
       Long64_t GetGeni(){return fGeni;}
       
       void SetConstInt(Bool_t force=kTRUE){fForceConstInt=force;}
