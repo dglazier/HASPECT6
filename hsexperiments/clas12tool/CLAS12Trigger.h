@@ -14,8 +14,8 @@ namespace HS{
       
     public :
       CLAS12Trigger()=default;
-      ~CLAS12Trigger()=default;
-      
+      ~CLAS12Trigger()=default;      
+
       void EventReset();
       Bool_t TrigStatus(Short_t status);
       
@@ -41,6 +41,7 @@ namespace HS{
       
       /* Short_t  TrigNSectors(); */
       /* Short_t  TrigNSectorsRoads(); */
+      Short_t NFDSectorsHit();
       
       void SubtractStartTime(THSParticle* part); //subtract from HSParticle  
       void SubtractStartTime(THSParticle* part0,THSParticle* part1);
@@ -78,7 +79,6 @@ namespace HS{
       //Float_t fStartTime=124.25; //GEMC
       //Float_t fSTimePeak=124.25; //GEMC
       //Float_t fTimeShiftFT=0; // GEMC
-      
     };
   }//namespace CLAS12
 }//namespace HS
@@ -109,6 +109,7 @@ inline void  HS::CLAS12::CLAS12Trigger::EventReset(){
 for(UInt_t i=0;i<fEventSectors.size();i++)
   fEventSectors[i]=0;
 }
+
 Bool_t  HS::CLAS12::CLAS12Trigger::TrigStatus(Short_t status){
 //Use the EB status to tell what CAL,TOF fired
 if(status==4010) return kFALSE; //No CD TOF
@@ -120,5 +121,15 @@ if(status>2090&&status<3000) //FD with TOF
 
 return kFALSE; //everything else
 }
+
+// number of forward detector sector hits (first 6 sectors)
+Short_t HS::CLAS12::CLAS12Trigger::NFDSectorsHit(){
+  // all the following come out as zero
+  //cout << fEventSectors << endl;
+  //cout << std::accumulate(fEventSectors.begin(), fEventSectors.end(), 0) << endl;
+  //cout << std::count_if(fEventSectors.begin(), fEventSectors.begin()+6, [](Int_t i){return i > 0;}) << endl;
+  return std::count_if(fEventSectors.begin(), fEventSectors.begin()+6, [](Int_t i){return i > 0;});
+}
+
 
 #endif
