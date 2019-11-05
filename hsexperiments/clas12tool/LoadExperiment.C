@@ -22,24 +22,31 @@ void LoadExperiment(){
     gROOT->SetMacroPath(Form("%s:%s",gROOT->GetMacroPath(),(HSEXP+"/scripts").Data()));
   }
   //Add CLAS12TOOL paths.
-  TString C12TOOL=gSystem->Getenv("CLAS12TOOL");
+  //TString C12TOOL=gSystem->Getenv("CLAS12TOOL");
+  TString C12TOOL=gSystem->Getenv("CLAS12ROOT");
+  TString HIPO=gSystem->Getenv("HIPO");
   cout<<C12TOOL<<" "<<endl;
   if(C12TOOL!=TString("")) {
-    TString USE_HIPO4=gSystem->Getenv("USE_HIPO4");
+    //   TString USE_HIPO4=gSystem->Getenv("USE_HIPO4");
     TString LIB=C12TOOL+"/lib/";
     gSystem->Load(LIB+"liblz4");
-    if(USE_HIPO4!=TString()){
-      gSystem->Load(LIB+"libHipo4");
-      gSystem->Load(LIB+"libClas12Banks4");
-    }
-    else{
-      cout<<"ADD CLAS12 3 "<<endl;
-      gInterpreter->AddIncludePath(C12TOOL+"/Clas12Banks3");
-      gSystem->Load(LIB+"libHipo3");
-      gSystem->Load(LIB+"libClas12Banks3");
-    }
+    // if(USE_HIPO4!=TString()){
+    //   gSystem->Load(LIB+"libHipo4");
+    //   gSystem->Load(LIB+"libClas12Banks4");
+    // }
+    // else{
+    //   cout<<"ADD CLAS12 3 "<<endl;
+    //   gInterpreter->AddIncludePath(C12TOOL+"/Clas12Banks3");
+    //   gSystem->Load(LIB+"libHipo3");
+    //   gSystem->Load(LIB+"libClas12Banks3");
+    // }
+    cout<<"ADD CLAS12 3 "<<endl;
+    gInterpreter->AddIncludePath(C12TOOL+"/Clas12Banks");
+    gInterpreter->AddIncludePath(HIPO+"/hipo4");
+    gSystem->Load(LIB+"libHipo4");
+    gSystem->Load(LIB+"libClas12Banks");
     
-  }
+  }	
   else{
     cout<<"Warning : LoadExperiment() You need to set CLAS12TOOL"<<endl;
   }

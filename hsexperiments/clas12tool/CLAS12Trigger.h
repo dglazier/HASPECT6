@@ -16,6 +16,10 @@ namespace HS{
       CLAS12Trigger()=default;
       ~CLAS12Trigger()=default;      
 
+      //before event reset
+      Short_t CheckSectorsFD(vector<THSParticle>* parts);
+      
+      //clears sector hits
       void EventReset();
       Bool_t TrigStatus(Short_t status);
       
@@ -41,7 +45,6 @@ namespace HS{
       
       /* Short_t  TrigNSectors(); */
       /* Short_t  TrigNSectorsRoads(); */
-      Short_t NFDSectorsHit();
       
       void SubtractStartTime(THSParticle* part); //subtract from HSParticle  
       void SubtractStartTime(THSParticle* part0,THSParticle* part1);
@@ -122,14 +125,19 @@ if(status>2090&&status<3000) //FD with TOF
 return kFALSE; //everything else
 }
 
-// number of forward detector sector hits (first 6 sectors)
-Short_t HS::CLAS12::CLAS12Trigger::NFDSectorsHit(){
-  // all the following come out as zero
-  //cout << fEventSectors << endl;
-  //cout << std::accumulate(fEventSectors.begin(), fEventSectors.end(), 0) << endl;
-  //cout << std::count_if(fEventSectors.begin(), fEventSectors.begin()+6, [](Int_t i){return i > 0;}) << endl;
-  return std::count_if(fEventSectors.begin(), fEventSectors.begin()+6, [](Int_t i){return i > 0;});
+//return number of hits in FD sectors from given vector of particles
+Short_t HS::CLAS12::CLAS12Trigger::CheckSectorsFD(vector<THSParticle>* parts){
+  EventReset(); //clear out values before loop
+  for(auto& p : *parts){ //loop over particles
+    if(p.CLAS12()->getRegion()==clas12::FD) { //clas12::FD may need #include "clas12defs.h"
+      auto status=p.CLAS12()->par()->getStatus();//p.Status(); 
+      cout<<status<<endl; //always zero?
+      if(status>2090&&status<3000&&status%100){ //FD with TOF and CAL
+	auto sector=p.CLAS12()->getSector();
+	fEventSectors[sector]++;
+      }
+    }
+  }
+  return std::count_if(fEventSectors.begin()+1, fEventSectors.begin()+7, [](Int_t i){return i > 0;});
 }
-
-
 #endif
