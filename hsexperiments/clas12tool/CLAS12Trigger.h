@@ -131,7 +131,6 @@ Short_t HS::CLAS12::CLAS12Trigger::CheckSectorsFD(vector<THSParticle>* parts){
   for(auto& p : *parts){ //loop over particles
     if(p.CLAS12()->getRegion()==clas12::FD) { //clas12::FD may need #include "clas12defs.h"
       auto status=p.CLAS12()->par()->getStatus();//p.Status(); 
-      cout<<status<<endl; //always zero?
       if(status>2090&&status<3000&&status%100){ //FD with TOF and CAL
 	auto sector=p.CLAS12()->getSector();
 	fEventSectors[sector]++;
