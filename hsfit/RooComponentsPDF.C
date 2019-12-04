@@ -212,10 +212,10 @@ namespace HS{
     {
       //read in observable value for this event
       for(Int_t ii=0;ii<fNvars;ii++){
-	fIntegrateObs[ii]->setVal(fvecReal[fTreeEntry*fNvars+ii]);
+	fIntegrateObs[ii]->setVal(vars->at(fTreeEntry*fNvars+ii));
       }
       for(Int_t ii=0;ii<fNcats;ii++){
-	fIntegrateCats[ii]->setIndex(fvecCat[fTreeEntry*fNcats+ii]);
+	fIntegrateCats[ii]->setIndex(cats->at(fTreeEntry*fNcats+ii));
       }
    
       return evaluateData();
