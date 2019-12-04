@@ -40,10 +40,13 @@ namespace HS{
 
     //Function required to set tree branches
     //This should not need changed
-    void Branches(TTree* tree) override{
+    /* void Branches(TTree* tree) override{ */
+    /*   TreeData::Branches(tree,Class()->GetListOfDataMembers()); */
+    /* } */
+       void Branches(ttree_ptr tree) override{
       TreeData::Branches(tree,Class()->GetListOfDataMembers());
     }
-    
+
  
   private:
     
