@@ -371,8 +371,17 @@ namespace HS{
 	  }
 	  // else cout<<"Will look for "<<vname<<endl;
 	  if( dynamic_cast<RooRealVar*>(fWS.var(vname))){
-	    //cout<<"GOT PAR "<<endl;
-	    termList.add(*fWS.var(vname));
+	    auto fitVars=FitVarsAndCats();
+	    if(fitVars.find(vname)){
+	      //To redirect servers need vars as formula's rather than RooRealVars
+	      auto formVarStr=Form("form%s=@%s[]",vname.Data(),vname.Data());
+	      vname=Form("form%s",vname.Data());;
+	      if(fWS.function(vname)==nullptr)LoadFormula(formVarStr);
+	      
+	      termList.add(*fWS.function(vname));
+	    }
+	    else	
+	      termList.add(*fWS.var(vname));
 	  }
 	  else if( dynamic_cast<RooCategory*>(fWS.cat(vname))) termList.add(*fWS.cat(vname));
 	  else if ( dynamic_cast<RooFormulaVar*>(fWS.function(vname))) termList.add(*fWS.function(vname));
