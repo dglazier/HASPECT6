@@ -68,6 +68,9 @@ namespace HS{
       for(auto &vname : fVarNames) {//only copy variable branches for speed
 	tree->SetBranchStatus(vname,1);
       }
+      for(auto &vname : fKeepBranches) {//plus any others 
+	if(tree->GetBranch(vname))tree->SetBranchStatus(vname,1);
+      }
       cout<<"SplitData "<<fOutDir<<" "<<fBins.GetN()<<endl;
       //now split the tree into bins and save in subdirs of fOutDir
       fBins.SetOutDir(fOutDir);
