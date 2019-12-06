@@ -118,7 +118,7 @@ namespace HS{
       //the means as parameter values does not seem to work...
       RooArgList saveFloatFinalList(*fChainData->get()) ;
   
- 
+      AddFormulaToMCMCTree();
       //set paramters to mean values of post burn in distributions
       //     RooArgList saveFloatFinalList(*fChainData->get()) ;
       for(Int_t i=0;i<fParams->getSize();i++){
@@ -131,7 +131,7 @@ namespace HS{
       }
       fChainData->covarianceMatrix()->Print();
 
-      AddFormulaToMCMCTree();
+      // AddFormulaToMCMCTree();
 
       //look for the best likelihood
 
