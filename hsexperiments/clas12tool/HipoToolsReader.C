@@ -107,16 +107,15 @@ void CLAS12::HipoToolsReader::FillParticles(){
     fParticle.SetVertex(pbank->getVx()/100 ,pbank->getVy()/100 ,pbank->getVz()/100);
     //fParticle.SetStatus(pbank->getStatus());
 
-    Short_t pid=0;
-    if(p->ftbpar()->getRows()==0)
-      pid=pbank->getPid();
-    else 	     
-      pid=pbank->getFTBPid();
+     Short_t pid=pbank->getPid();
+    //  Short_t pid=0;
+    // if(p->ftbpar()->getRows()==0)
+    //   pid=pbank->getPid();
+    // else 	     
+    //   pid=pbank->getFTBPid();
     
     if(pid==45) continue;
-    //if(TMath::Abs(pid)!=321&&TMath::Abs(pid)!=221&&TMath::Abs(pid)!=22&&TMath::Abs(pid)!=0&&TMath::Abs(pid)!=2212&&TMath::Abs(pid)!=2112&&TMath::Abs(pid)!=11)
-    //continue;
-    // cout<<pid<<" "<<pbank->getFTBPid()<<" "<<pbank->getFTBPid()<<" "<<p->ftbpar()->getRows()<<" "<<p->par()->getRows()<<endl;
+  
     if(!pid) fParticle.SetPDGcode(pbank->getCharge()*HS::UndefinedPDG);
     else  fParticle.SetPDGcode(pid);
     

@@ -1,3 +1,4 @@
+
 #ifndef HS_CLAS12TRIGGER_h
 #define HS_CLAS12TRIGGER_h
 
@@ -14,12 +15,8 @@ namespace HS{
       
     public :
       CLAS12Trigger()=default;
-      ~CLAS12Trigger()=default;      
-
-      //before event reset
-      Short_t CheckSectorsFD(vector<THSParticle>* parts);
+      ~CLAS12Trigger()=default;
       
-      //clears sector hits
       void EventReset();
       Bool_t TrigStatus(Short_t status);
       
@@ -82,6 +79,7 @@ namespace HS{
       //Float_t fStartTime=124.25; //GEMC
       //Float_t fSTimePeak=124.25; //GEMC
       //Float_t fTimeShiftFT=0; // GEMC
+      
     };
   }//namespace CLAS12
 }//namespace HS
@@ -96,7 +94,7 @@ inline Float_t HS::CLAS12::CLAS12Trigger::StartTime(Float_t ptime){
   //supply chosen (e-) particle vertex time
   Float_t rftime=fEventInfo->fRFTime;
   //Find the nearest rf beam bucket
-  fStartTime=fSTimePeak-2.0080160*((Int_t)(std::round(((fSTimePeak-(ptime-rftime))/2.0080160))))+rftime;
+  fStartTime=fSTimePeak-4.0080160*((Int_t)(std::round(((fSTimePeak-(ptime-rftime))/4.0080160))))+rftime;
   return fStartTime;
 }
 inline Float_t HS::CLAS12::CLAS12Trigger::FDBStartTime(){
@@ -112,7 +110,6 @@ inline void  HS::CLAS12::CLAS12Trigger::EventReset(){
 for(UInt_t i=0;i<fEventSectors.size();i++)
   fEventSectors[i]=0;
 }
-
 Bool_t  HS::CLAS12::CLAS12Trigger::TrigStatus(Short_t status){
 //Use the EB status to tell what CAL,TOF fired
 if(status==4010) return kFALSE; //No CD TOF
@@ -125,24 +122,5 @@ if(status>2090&&status<3000) //FD with TOF
 return kFALSE; //everything else
 }
 
-//return number of hits in FD sectors from given vector of particles
-Short_t HS::CLAS12::CLAS12Trigger::CheckSectorsFD(vector<THSParticle>* parts){
-  EventReset(); //clear out values before loop
-  for(auto& p : *parts){ //loop over particles
-    if(p.CLAS12()->getRegion()==clas12::FD) { //clas12::FD may need #include "clas12defs.h"
-      // auto status=p.CLAS12()->par()->getStatus();//p.Status(); 
-      //if(status>2090&&status<3000&&status%100){ //FD with TOF and CAL
-	auto sector=p.CLAS12()->getSector();
-	fEventSectors[sector]++;
-	//      }
-	if(p.CLAS12()->getRegion()==clas12::FT) fEventSectors[7]++;
-	if(p.CLAS12()->getRegion()==clas12::FD) fEventSectors[8]++;
-	if(p.CLAS12()->getRegion()==clas12::CD) fEventSectors[9]++;
-    }
-  }
-
-  // cout<<"parts "<<parts->size()<<" "<<fEventSectors[1]<<" "<<fEventSectors[2]<<" "<<fEventSectors[3]<<" "<<fEventSectors[4]<<" "<<fEventSectors[5]<<" "<<fEventSectors[6]<<endl;
-  return std::count_if(fEventSectors.begin()+1, fEventSectors.begin()+7, [](Int_t i){return i > 0;});
-}
 #endif
 
