@@ -127,6 +127,7 @@ namespace HS{
     
     
     HSLorentzVector Gamma(){return fGamma;}
+    HSMomentum BoostToCM(){return fCMBoost;}
     Double_t W(){ return fCM.M();}
     Double_t Q2() {return -fGamma.M2();}
     Double_t GammaE() {return fGamma.E();}

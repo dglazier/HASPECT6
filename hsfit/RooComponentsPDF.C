@@ -21,7 +21,7 @@ namespace HS{
 	//case real variable
 	if(dynamic_cast<RooRealVar*>(&obsList[i])){
 	unique_ptr<RooRealProxy> tempR{new RooRealProxy(obsList[i].GetName(),obsList[i].GetName(),this,static_cast<RooAbsReal&>(obsList[i]))};
-	  cout<<"adding obs "<<obsList[i].GetName()<<" "<<dynamic_cast<RooRealVar*>(&obsList[i])<<" "<<dynamic_cast<RooCategory*>(&obsList[i])<<endl;
+	//cout<<"adding obs "<<obsList[i].GetName()<<" "<<dynamic_cast<RooRealVar*>(&obsList[i])<<" "<<dynamic_cast<RooCategory*>(&obsList[i])<<endl;
 	  fNObs++;
 	  fActualObs.add((RooAbsReal&)obsList[i]);
 	  fObservables.push_back(std::move(tempR));
@@ -30,7 +30,7 @@ namespace HS{
 	//case category
 	if(dynamic_cast<RooCategory*>(&obsList[i])){
 	unique_ptr<RooCategoryProxy> tempC{new RooCategoryProxy(obsList[i].GetName(),obsList[i].GetName(),this,static_cast<RooAbsCategory&>(obsList[i]))};
-	  cout<<"adding cat "<<obsList[i].GetName()<<endl;
+	//cout<<"adding cat "<<obsList[i].GetName()<<endl;
 	  fNCats++;
 	  fActualCats.add((RooAbsCategory&)obsList[i]);
 	  fCategories.push_back(std::move(tempC));
@@ -139,6 +139,16 @@ namespace HS{
 	}
       InitSets();
     }
+    Int_t RooComponentsPDF::getGenerator(const RooArgSet& directVars, RooArgSet &generateVars, Bool_t staticInitOK) const
+    {	
+      cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!RooComponentsPDF::getGenerator "<<fEvTree<<" "<<fvecReal.size()<<endl;
+      Info("RooHSEventsPDF::getGenerator","Looking for generator");
+      if(!fEvTree) return 0; //no MC events to generate from
+      //case generate all variables
+      if (matchArgs(directVars,generateVars,VarSet(0))) return 1 ;
+      return 0;
+
+    }
 
 
 
@@ -148,13 +158,35 @@ namespace HS{
        for(auto &comp: fComponents){
 	Double_t product=1;
 	for(auto &term: comp){
-	  
+	  // cout<<"term "<<term->GetName()<<" "<< *term.get()<<endl;
 	  product*= *term.get(); //take the product of all the terms for this component
 	}
+	//	cout<<"product "<<product<<endl;
 	val+=product; //add them to total
       }
      
       return val;
+    }
+
+    void RooComponentsPDF::RedirectServersToPdf(){
+      cout<<"                 RooComponentsPDF::RedirectServersToPdf()"<<endl;
+      //point the terms to the integral events rather than data events
+      for(UInt_t icomp=0;icomp<fNComps;icomp++){
+	for(const auto &term:fDependentTermProxy[icomp]){
+	  auto unconstTerm=const_cast<RooAbsReal*>(&term->arg());
+	  unconstTerm->recursiveRedirectServers(fIntegrateSet);
+	}	
+      }	
+    }
+    void RooComponentsPDF::RedirectServersToData(){
+      //point the terms back to the data events rather than integral events
+      for(UInt_t icomp=0;icomp<fNComps;icomp++){
+	for(const auto &term:fDependentTermProxy[icomp]){
+	  auto unconstTerm=const_cast<RooAbsReal*>(&term->arg());
+	  unconstTerm->recursiveRedirectServers(fActualObs);
+	}	
+      }	
+      
     }
 
     void RooComponentsPDF::HistIntegrals(const char* rangeName) const{
@@ -179,15 +211,26 @@ namespace HS{
     Double_t RooComponentsPDF::evaluateMC(const vector<Float_t> *vars,const  vector<Int_t> *cats) const
     {
       //read in observable value for this event
-      for(Int_t ii=0;ii<fNvars;ii++)
-	fIntegrateObs[ii]->setVal(fvecReal[fTreeEntry*fNvars+ii]);
-      for(Int_t ii=0;ii<fNcats;ii++){
-	fIntegrateCats[ii]->setIndex(fvecCat[fTreeEntry*fNcats+ii]);
+      for(Int_t ii=0;ii<fNvars;ii++){
+	fIntegrateObs[ii]->setVal(vars->at(fTreeEntry*fNvars+ii));
       }
+      for(Int_t ii=0;ii<fNcats;ii++){
+	fIntegrateCats[ii]->setIndex(cats->at(fTreeEntry*fNcats+ii));
+      }
+   
       return evaluateData();
     }
-  
+    Bool_t RooComponentsPDF::isDirectGenSafe(const RooAbsArg& arg) const {
+      if(fActualObs.find(arg.GetName())) return kTRUE;
+      if(fActualCats.find(arg.GetName())) return kTRUE;
+      return kFALSE;
+    }
 
+    void RooComponentsPDF::initGenerator(Int_t code)
+    {
+      RedirectServersToPdf();
+      RooHSEventsPDF::initGenerator(code);
+    }
     void RooComponentsPDF::initIntegrator()
     {
       //Each Component is arranged in terms which are
@@ -299,7 +342,8 @@ namespace HS{
     
       for(UInt_t icomp=0;icomp<fNComps;icomp++)
 	integral+=componentIntegral(icomp);
-
+      // cout<<"                   INTEGRAL "<<integral<<endl;
+      //   exit(0);
       return integral;
     }
     

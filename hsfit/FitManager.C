@@ -1,6 +1,7 @@
 #include "FitManager.h"
 #include "RooHSEventsPDF.h"
 #include "RooHSEventsHistPDF.h"
+#include "RooComponentsPDF.h"
 #include "TSystem.h"
 
 
@@ -46,7 +47,7 @@ namespace HS{
 	SetAllValLimits(fCurrSetup->Yields(),
 			fCurrDataSet->sumEntries()/2,0,fCurrDataSet->sumEntries()*1.2);
       //create extended max likelihood pdf
-      fCurrSetup->Parameters().Print("v");
+      //fCurrSetup->Parameters().Print("v");
       fCurrSetup->TotalPDF();
       FitTo();
     }
@@ -66,7 +67,7 @@ namespace HS{
     /////////////////////////////////////////////////////////////
     void FitManager::RunAll(){
 
-      // PreRun();
+      PreRun();
 
       UInt_t Nf=GetN();
       for(UInt_t i=0;i<Nf;i++){
@@ -82,7 +83,7 @@ namespace HS{
       
       ///////////////////////////
       //Plot best fit and return
-      // PlotDataModel();
+      PlotDataModel();
 
     }
     void FitManager::RunOne(Int_t ifit){
@@ -103,7 +104,6 @@ namespace HS{
 
       auto savedir=gDirectory;
       
-      cout<<" FitManager::FillEventsPDFs "<<pdfs.getSize()<<endl;
       for(Int_t ip=0;ip<pdfs.getSize();ip++){
 	auto pdf=dynamic_cast<RooHSEventsPDF*>( &pdfs[ip]);
 
@@ -173,21 +173,23 @@ namespace HS{
     }
     
     void FitManager::LoadPrevResult(TString resultDir,TString resultMinimiser){
-   
       TString resultFile=resultDir+"/"+fCurrSetup->GetName()+"/Results"+fCurrSetup->GetTitle()+resultMinimiser+".root";
-	   
-      cout<<"LOAD  "<<resultFile<<endl;
-      //      TString resultFile=resultDir+Bins().BinName(GetDataBin(GetFiti()))+"/"+resultFileName;
+
+     
       std::unique_ptr<TFile> fitFile{TFile::Open(resultFile)};
       std::unique_ptr<RooDataSet> result{dynamic_cast<RooDataSet*>( fitFile->Get(Minimiser::FinalParName()))};
+      //fitFile.reset();
+      //      auto result=dynamic_cast<RooDataSet*>( fitFile->Get(Minimiser::FinalParName())->Clone());//**
       //Set the values of the paramteres to those in the given result
       if(result.get()){
+      //if(result){
 	auto newPars = fCurrSetup->ParsAndYields();
 	auto* resAll = result->get(); //get all result info
 	auto* resPars=resAll->selectCommon(newPars); //just select pars and yieds
-	newPars.assignFast(*resPars); //set values to results
+       	newPars.assignFast(*resPars); //set values to results
 	cout<<"FitManager::LoadResult setting values from fit results "<<resultFile<<" : "<<endl;
 	newPars.Print("v");
+	//	delete result;result=nullptr;
       }
     }
     void FitManager::WriteThis(){

@@ -36,6 +36,7 @@ namespace HS{
       void LoadBinVar(TString opt,Int_t nbins,Double_t min,Double_t max);
       void LoadBinVar(TString opt,Int_t nbins,Double_t* xbins);
 
+      void KeepBranch(TString name){fKeepBranches.push_back(name);}
       void AddCut(TString cut){fSelection=cut;}
       
       void LoadSetup(Setup &setup);
@@ -72,7 +73,7 @@ namespace HS{
       strings_t fVarNames;
       std::map<TString, strings_t> fNameToFiles;
       std::map<TString, TString> fNameToTree;
-  
+      std::vector<TString> fKeepBranches;
       TString fOutDir;
       TString fSelection;
       

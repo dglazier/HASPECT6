@@ -59,15 +59,18 @@ namespace HS{
       fFiledTrees.resize(fFileNames.size());
     }
     void  DataEvents::LoadWeights(TString wname,TString fname,TString wobj){
-      auto wcon=WeightsConfig{wname,fname,wobj};
+      fWgtsConf=WeightsConfig{wname,fname,wobj};
+      LoadWeights();
+    }
+    void  DataEvents::LoadWeights(){
       fInWeights.reset(new HS::Weights());
-      //fInWeights->LoadSaved(wcon.File(),wcon.ObjName());
-      fInWeights->LoadSavedDisc(wcon.File(),wcon.ObjName());
-      // fInWeights->PrintWeight();
-      fInWeightName=wcon.Species().Data();
-      fInWeightFile=wcon.File().Data();
-      fInWeightObjName=wcon.ObjName().Data();
-      cout<<"  DataEvents::LoadWeights using "<<fInWeightName<<" weights "<<endl;
+      //fInWeights->LoadSaved(fWgtsConf.File(),fWgtsConf.ObjName());
+      fInWeights->LoadSavedDisc(fWgtsConf.File(),fWgtsConf.ObjName());
+      fInWeights->PrintWeight();
+      fInWeightName=fWgtsConf.Species().Data();
+      fInWeightFile=fWgtsConf.File().Data();
+      fInWeightObjName=fWgtsConf.ObjName().Data();
+      cout<<"  DataEvents::LoadWeights using "<<fInWeightName<<" weights "<<fWgtsConf.File()<<" "<<fWgtsConf.ObjName()<<endl;
     }
  
     dset_uptr DataEvents::Get(const UInt_t iset) {
@@ -83,7 +86,7 @@ namespace HS{
      auto vars = fSetup->DataVars();
      
      if(!fInWeights.get()&&fInWeightName!=TString()){ //if Data object read from root file
-       LoadWeights(fInWeightName,fInWeightFile);
+       LoadWeights();
      }
      if(fInWeights.get()){//if weights add branches and vars
        //create a copy in a new file to append the weights to
@@ -95,14 +98,11 @@ namespace HS{
 
        rawtree= fFiledTrees[iset]->Tree().get() ;	
        //Add weights to tree
-       cout<<"           About to add weights to tree "<<endl;
        fInWeights->AddToTree(rawtree);	
       //fInWeights->AddToTreeDisc(rawtree,fSetup->GetOutDir()+"DataInWeights.root");	
        fWeightVar.reset(new RooRealVar(fInWeightName,fInWeightName,0));
-       fWeightVar->Print();
        vars.add(*fWeightVar.get());
      }
-     cout<< "                now get the data "<<endl;
      //only let datset clone active branches
      TIter iter=vars.createIterator();
      rawtree->SetBranchStatus("*",0);

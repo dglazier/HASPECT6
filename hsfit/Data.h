@@ -99,7 +99,8 @@ namespace HS{
       void LoadWeights(TString wname,TString fname,TString wobj="HSsWeights");
       
     protected:
-      
+      void LoadWeights();
+
     private:
  
       HS::FIT::Setup *fSetup=nullptr;//!
@@ -119,7 +120,8 @@ namespace HS{
       Int_t fNToys=-1;
       
       weights_uptr fInWeights;//!
-      
+      WeightsConfig fWgtsConf;
+
       unique_ptr<RooRealVar> fWeightVar;//!
       
       ClassDef(HS::FIT::DataEvents,1);

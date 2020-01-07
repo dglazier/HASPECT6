@@ -20,7 +20,7 @@ namespace HS{
     class PlotResults  {
       
     public:
-      PlotResults(const Setup *setup,const RooDataSet* data);
+      PlotResults(const Setup *setup,const RooDataSet* data,const TString tag);
       PlotResults()=default;
       PlotResults(const PlotResults&)=default;
       PlotResults(PlotResults&&)=default;
