@@ -16,10 +16,12 @@ namespace HS{
       CLAS12Trigger()=default;
       ~CLAS12Trigger()=default;      
 
-      //before event reset
       Short_t CheckSectorsFD(vector<THSParticle>* parts);
+      Float_t GetTotalEnergyFT(vector<THSParticle>* parts);
+      //Float_t PCALEnergy(vector<THSParticle>* parts);
+      //Float_t FTOF1BEnergy(vector<THSParticle>* parts);
+      //Float_t DCNDF0(vector<THSParticle>* parts);
       
-      //clears sector hits
       void EventReset();
       Bool_t TrigStatus(Short_t status);
       
@@ -125,18 +127,61 @@ if(status>2090&&status<3000) //FD with TOF
 return kFALSE; //everything else
 }
 
+//*************************
+//
+// mesonex trigger related
+//
+//
+
 //return number of hits in FD sectors from given vector of particles
 Short_t HS::CLAS12::CLAS12Trigger::CheckSectorsFD(vector<THSParticle>* parts){
   EventReset(); //clear out values before loop
   for(auto& p : *parts){ //loop over particles
     if(p.CLAS12()->getRegion()==clas12::FD) { //clas12::FD may need #include "clas12defs.h"
-      auto status=p.CLAS12()->par()->getStatus();//p.Status(); 
-      if(status>2090&&status<3000&&status%100){ //FD with TOF and CAL
-	auto sector=p.CLAS12()->getSector();
-	fEventSectors[sector]++;
-      }
+      auto sector=p.CLAS12()->getSector();
+      fEventSectors[sector]++;
     }
   }
   return std::count_if(fEventSectors.begin()+1, fEventSectors.begin()+7, [](Int_t i){return i > 0;});
 }
+
+//return total energy in the FT
+Float_t HS::CLAS12::CLAS12Trigger::GetTotalEnergyFT(vector<THSParticle>* parts){
+  Float_t total_energy=0;
+  for(auto& p : *parts){
+    if(p.CLAS12()->getRegion()==clas12::FT) {
+      //auto energy=p.CLAS12()->getDetEnergy();
+      auto energy=p.CLAS12()->ft(clas12::FTCAL)->getEnergy();
+      total_energy+=energy;
+    }
+  }
+  return total_energy;
+}
+
+//values used for actual mesonex trigger
+//Float_t HS::CLAS12::CLAS12Trigger::PCALEnergy(vector<THSParticle>* parts){
+//  Float_t total_energy=0;
+//  for(auto& p : *parts){
+//    total_energy+=p.CLAS12()->cal(clas12::PCAL)->getEnergy();
+//  }
+//  return total_energy;
+//}
+//Float_t HS::CLAS12::CLAS12Trigger::FTOF1BEnergy(vector<THSParticle>* parts){
+//  Float_t total_energy=0;
+//  for(auto& p : *parts){
+//    total_energy+=p.CLAS12()->scint(clas12::FTOF1B)->getEnergy();
+//  }
+//  return total_energy;
+//}
+//Float_t HS::CLAS12::CLAS12Trigger::DCNDF0(vector<THSParticle>* parts){
+//  Float_t total_energy=0;
+//  for(auto& p : *parts){
+//    total_energy+=p.CLAS12()->trck(clas12::DC)->NDF(0);
+//  }
+//  return total_energy;
+//}
+
+//
+//*********************
+
 #endif
