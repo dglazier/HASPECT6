@@ -8,7 +8,7 @@
 namespace HS{
   namespace FIT{
     
-    PlotResults::PlotResults(const Setup *setup,const RooDataSet* data){
+    PlotResults::PlotResults(const Setup *setup,const RooDataSet* data,const TString tag){
 
       using namespace RooFit;
       cout<<"PlotResults::PlotResults "<<fCanvases.get()<<" "<<setup<<" "<<endl;
@@ -26,7 +26,7 @@ namespace HS{
      
       for( auto *var : vars){
 	
-	auto canName=TString(setup->GetName())+ "_" + var->GetName();
+	auto canName=tag+"_"+ var->GetName();
 	auto canvas=new TCanvas(canName,canName);
 	fCanvases->Add(canvas);
 	

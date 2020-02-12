@@ -4,9 +4,10 @@
   //start with creating 1 data sample
   ToyManager toy(1);
 
-  TString PWD=gSystem->Getenv("PWD");
+  // TString PWD=gSystem->Getenv("PWD");
   
-  toy.SetUp().SetOutDir(PWD+"/outSimpleToys/");
+  //  toy.SetUp().SetOutDir(PWD+"/outSimpleToys/");
+  toy.SetUp().SetOutDir("outSimpleToys/");
   ///////////////////////////////Load Variables
   toy.SetUp().LoadVariable("Mmiss[0,10]");//should be same name as variable in tree  
   toy.SetUp().SetIDBranchName("fgID");
@@ -36,9 +37,10 @@
   //now create another toymanager from the results of the sample fit
   //and initialise it to create 20 toy datasets
   //Note Minuit2 comes from the default minimiser name
-  auto toy2=ToyManager::GetFromFit(10,fit,"ResultsToy0HSMinuit2.root");
+  auto toy2=ToyManager::GetFromFit(100,fit,"ResultsToy0HSMinuit2.root");
   //Give it a new output directory
-  toy2->SetUp().SetOutDir(PWD+"/outSimpleToy2");
+  toy2->SetUp().SetOutDir("outSimpleToy2");
+  //  toy2->SetUp().SetOutDir(PWD+"/outSimpleToy2");
   //create toy data
   Here::Go(toy2);
   //fit toy data
@@ -47,6 +49,6 @@
   //fit toy data
   Proof::Go(toy2->Fitter(),4);//or use proof with 4 workers
   //summarise, summary results will be saved to outSimpleToy2/ToySummary.root
-  toy2->Summarise();
+  //  toy2->Summarise();
   
 }

@@ -8,7 +8,7 @@
 
   //get the current directory where the data is (PROOF needs full path)
   TString pwd = TString(gSystem->Getenv("PWD"))+"/";
-  toys.SetUp().SetOutDir(pwd+"ToysAcc/");
+  toys.SetUp().SetOutDir(pwd+"ToysSmall/");
   
   ///////////////////////////////Load Variables
   toys.SetUp().LoadVariable("Phi[-180,180]"); 
@@ -18,8 +18,9 @@
   toys.SetUp().LoadFormula("A=(@a[0.5,-1,1]*@a[])");// A=a^2
 
   //define function pdf
-  toys.SetUp().FactoryPDF("EXPR::amplitude('sin(Phi/57.29578)*sin(Phi/57.29578)*(1+A*cos(2*Phi/57.29578))',Phi,A)");
-  toys.SetUp().LoadSpeciesPDF("amplitude",2000000); //1000 events
+  //toys.SetUp().FactoryPDF("EXPR::amplitude('sin(Phi/57.29578)*sin(Phi/57.29578)*(1+A*cos(2*Phi/57.29578))',Phi,A)");
+ toys.SetUp().FactoryPDF("EXPR::amplitude('(1+A*cos(2*Phi/57.29578))',Phi,A)");
+  toys.SetUp().LoadSpeciesPDF("amplitude",100); //1000 events
 
   //Create a sample of data
   Here::Go(&toys);

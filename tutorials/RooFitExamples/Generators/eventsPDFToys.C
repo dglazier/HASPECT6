@@ -1,5 +1,5 @@
 //Run with 
-//root --hsfit FitObsBins.C
+//root --hsfit eventsPDFToys.C
 {
  
   Loader::Compile("PhiAsymmetry.cxx");
@@ -18,13 +18,12 @@
 
   ///////////////////////////////Make additional cut on an AuxVar
   //RF.SetUp().AddCut("AUX>2"); //Additional cut based on vars or aux vars
-
   /////////////////////////////Make Model Signal
-  RF.SetUp().FactoryPDF("PhiAsymmetry::SigAsym( Phi,Pol,PolState,A[0,-1,1],B[0,-1,1] )");
+  RF.SetUp().FactoryPDF("PhiAsymmetry::SigAsym( Phi,Pol,PolState,A[0,-1,1],B[0,-1,1])");
   RF.SetUp().LoadSpeciesPDF("SigAsym",1);
 
   ////////////////////////////Make Bins
-  // RF.Bins().LoadBinVar("Eg",4,3,4);
+  RF.Bins().LoadBinVar("Eg",4,3,4);
    
   ///////////////////////////Load Data
   //RF.Data().BootStrap(2);
@@ -42,10 +41,12 @@
   Here::Go(&RF);
   //OR run with PROOF-LITE on N=4 cores (you can change the 4)
   // Proof::Go(&RF,4);
-  auto toy=ToyManager::GetFromFit(10,RF,"outEventsToy/ResultsHSMinuit2.root");
-  toy->SetUp().SetOutDir(pwd+"outEventsToy2");
-  toy->LoadData("MyModel",pwd+"DataSignal.root");//need data for protodata PolState and Pol
-  toy->LoadSimulated("MyModel",pwd+"MC.root","SigAsym");
+  auto toy=ToyManager::GetFromFit(2,RF,"ResultsHSMinuit2.root");
+  toy->SetUp().SetOutDir("outEventsToy2");
+  toy->LoadData("MyModel","DataSignal.root");//need data for protodata PolState and Pol
+  toy->LoadSimulated("MyModel","MC.root","SigAsym");
+  RooMsgService::instance().addStream(RooFit::DEBUG,Topic(RooFit::Generation));
+  RooMsgService::instance().getStream(0).addTopic(RooFit::Generation) ;
   Here::Go(toy); //generate toys
   Here::Go(toy->Fitter()); //fit toys
   toy->Summarise();

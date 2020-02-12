@@ -33,7 +33,7 @@ void LoadDataManager(TString Selection=""){
   }
 
   //Add classes
-  std::vector<TString > DMClasses={"FiledTree","TreeData","BaseParticleData","BaseEventInfo","BaseRunInfo","Weights","Bins","DataManager","LundReader"};
+  std::vector<TString > DMClasses={"FiledTree","TreeData","BaseParticleData","BaseEventInfo","BaseRunInfo","Weights","Bins","DataManager","LundReader","StarLightReader"};
 
   for(auto const& name : DMClasses){
     if(Selection!=TString())

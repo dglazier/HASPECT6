@@ -49,22 +49,24 @@ std::complex <double> Ylm(int L, int M, double theta, double phi){
 vector<vector<Double_t>> fevalN;
 
 Double_t evalN(Int_t _L,Int_t _M) {
-  return sqrt( double(2*_L+1)/(4*TMath::Pi())*TMath::Factorial(_L-(_M))/TMath::Factorial(_L+(_M)) );
+  // return 1;
+  return sqrt( double(2*_L+1)/(4*TMath::Pi())*TMath::Factorial(_L-TMath::Abs(_M))/TMath::Factorial(_L+TMath::Abs(_M)) );
 }
 
 Double_t evalRealSphHarmonic(Double_t _Z,Double_t _Phi,Int_t _L,Int_t _M) {
   Double_t val=1;
   if(_M%2==1)val*=-1;
-  return val*=fevalN[_L-1][_M-1]*ROOT::Math::assoc_legendre(_L,(_M),_Z)*cos(_M*_Phi);//I think evalN is done in assoc_legendre
+  return val*=fevalN[_L-1][TMath::Abs(_M)]*ROOT::Math::assoc_legendre(_L,TMath::Abs(_M),_Z)*cos(_M*_Phi);//I think evalN is done in assoc_legendre
 }
 Double_t evalImSphHarmonic(Double_t _Z,Double_t _Phi,Int_t _L,Int_t _M) {
   Double_t val=1;
   if(_M%2==1)val*=-1;
-  return val*=fevalN[_L-1][_M-1]*ROOT::Math::assoc_legendre(_L,(_M),_Z)*sin(_M*_Phi);//I think evalN is done in assoc_legendre
+  return val*=fevalN[_L-1][TMath::Abs(_M)]*ROOT::Math::assoc_legendre(_L,TMath::Abs(_M),_Z)*sin(_M*_Phi);//I think evalN is done in assoc_legendre
 }
 std::complex<double>  evalSphHarmonic(Double_t _Z,Double_t _Phi,Int_t _L,Int_t _M) {
-  Double_t val=fevalN[_L-1][_M-1]*ROOT::Math::assoc_legendre(_L,(_M),_Z);
-  if(_M%2==1)val*=-1;
+  Double_t val=fevalN[_L-1][TMath::Abs(_M)]*ROOT::Math::assoc_legendre(_L,TMath::Abs(_M),_Z);
+  if( _M>0&&TMath::Abs(_M%2)==1 )val*=-1;
+  // if( _M<0&&TMath::Abs(_M%2)==1 )val*=-1;
   std::complex <double> ui (val*cos(_M*_Phi),val*sin(_M*_Phi));
   return ui;
 }
@@ -207,18 +209,20 @@ std::complex< double > ATY( int l, int m, double cosTheta, double phi ){
 }
 void TestFunctionSpeed(){
 
-  Int_t L=2;
-  Int_t M=1;
+  Int_t L=1;
+  Int_t M=-1;
   fevalN.resize(L);
-  fevalN[L-1].resize(M);
+  fevalN[L-1].resize(TMath::Abs(M)+1);
   
-  fevalN[L-1][M-1]=evalN(L,M);
-  
-  std::cout<<Ylm(L,M,acos(0.5),0.5)<<" "<<Ylm(L,M,acos(0.8),0.5)<<" "<<Ylm(L,M,acos(-0.6),0.5)<<std::endl;;
-  std::cout<<ATY(L,M,0.5,0.5)<<" "<<ATY(L,M,0.8,0.5)<<" "<<ATY(L,M,-0.6,0.5)<<std::endl;;
-  std::cout<<evalRealSphHarmonic(0.5,0.5,L,M)<<" "<<evalRealSphHarmonic(0.8,0.5,L,M)<<" "<<evalRealSphHarmonic(-0.6,0.5,L,M)<<std::endl;
-  std::cout<<evalSphHarmonic(0.5,0.5,L,M)<<" "<<evalSphHarmonic(0.8,0.5,L,M)<<" "<<evalSphHarmonic(-0.6,0.5,L,M)<<std::endl;
+  fevalN[L-1][TMath::Abs(M)]=evalN(L,M);
+ 
+  std::cout<<Ylm(L,M,acos(-0.5),0.)<<" "<<Ylm(L,M,acos(0.8),0.5)<<" "<<Ylm(L,M,acos(-0.6),0.5)<<std::endl;;
+  std::cout<<ATY(L,M,-0.5,0.)<<" "<<ATY(L,M,0.8,0.5)<<" "<<ATY(L,M,-0.6,0.5)<<std::endl;;
+  std::cout<<evalRealSphHarmonic(-0.5,0.,L,M)<<" "<<evalRealSphHarmonic(0.8,0.5,L,M)<<" "<<evalRealSphHarmonic(-0.6,0.5,L,M)<<std::endl;
+  std::cout<<evalSphHarmonic(-0.5,0.0,L,M)<<" "<<evalSphHarmonic(0.8,0.5,L,M)<<" "<<evalSphHarmonic(-0.6,0.5,L,M)<<std::endl;
 
+  return;
+  
   const Long64_t NEvents=1E7;
   vector<Double_t> Theta(NEvents);
   vector<Double_t> CosTheta(NEvents);

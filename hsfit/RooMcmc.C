@@ -117,22 +117,22 @@ namespace HS{
       //Need to get a copy of variables first or setting
       //the means as parameter values does not seem to work...
       RooArgList saveFloatFinalList(*fChainData->get()) ;
+  
       AddFormulaToMCMCTree();
-
- 
       //set paramters to mean values of post burn in distributions
       //     RooArgList saveFloatFinalList(*fChainData->get()) ;
       for(Int_t i=0;i<fParams->getSize();i++){
 
 	RooRealVar* var=dynamic_cast<RooRealVar*>(saveFloatFinalList.at(i));
-	//	cout<<var->GetName()<<" "<<var->getVal()<<" "<<fChainData->mean(*var)<<" +- "<<fChainData->sigma(*var)<<endl;
+      	cout<<var->GetName()<<" "<<var->getVal()<<" "<<fChainData->mean(*var)<<" +- "<<fChainData->sigma(*var)<<endl;
 	auto var2=dynamic_cast<RooRealVar*>(fParams->find(var->GetName()));
 	var2->setVal(fChainData->mean(*var));
 	var2->setError(fChainData->sigma(*var));
       }
       fChainData->covarianceMatrix()->Print();
 
-  
+      // AddFormulaToMCMCTree();
+
       //look for the best likelihood
 
       //It is not recommended to use the best likelihood

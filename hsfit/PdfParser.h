@@ -36,7 +36,7 @@ namespace HS{
       string SumOverIndex(string subject, SumIndices sumIndices,uint Ni);
  
       //Complex summation
-      string ReplaceComplexSummations(string str);
+      string ReplaceComplexSumSqd(string str);
       
       //Parameter,Functions, Formulas...
       void AddParameter(string par);
@@ -47,6 +47,7 @@ namespace HS{
       bool CheckParameterList(string par);
 
       void AddFunctionTemplate(string func,string temp);
+      void AddComplexFunctionTemplate(string func,string temp);
 
       const strings_std GetParameters() const {return _parList;}
       const strings_std GetFunctions() const {return _funList;}
@@ -55,13 +56,16 @@ namespace HS{
       string GetName(){return _name;}
       string GetPDF(){return _pdfString;}
 
-      void SetVars(string vars){_varsString=vars;}
+      void SetVars(string vars){_varsString="{"+vars+"}";}
+      
+      void ParseTerm(string term);
       
     protected :
 
       strings_std _parList;
       strings_std _funList;
       strings_std _formList;
+      strings_std _complexArgs;
 
       std::map<string,string> _funNames; //map full strings to just names
       
@@ -122,7 +126,7 @@ namespace HS{
     string StringReplaceFirst(string str,string s1,string s2);
     string StringReplaceAll(string str,string s1,string s2);
     string StringToNext(string str,size_t &pos,string s1);
-    int StringWhichIsNext(string str, size_t &pos, string s1,string s2);
+    int StringWhichIsNext(string str, size_t &pos, string s1,string s2,string s3=string());
     string StringToNext(string str,string s1);
     string StringBetweenFirst(string str,string s1,string s2);
     bool StringIsNumber(string str);

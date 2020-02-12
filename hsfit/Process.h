@@ -50,10 +50,14 @@ namespace HS{
 	static void Go(std::shared_ptr<FitManager> fm,Int_t N){
 	  Go(fm.get(),N);
 	}
+	static void Go(FitManager& fm,Int_t N){
+	  Go(&fm,N);
+	}
 	
 	static void Go(FitManager* fm,Int_t N){
 	  if(!fm) return;
 	  fm->WriteThis();
+	  cout<<" Proof :: Go "<<gProof<<endl;
 	  if(!gProof){
 	    TProof*  proof = TProof::Open("://lite");
 	    gROOT->ProcessLine(Form(".x LoadFitProof.C+(%d)",N));

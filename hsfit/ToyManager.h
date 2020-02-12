@@ -30,22 +30,23 @@ namespace HS{
       
       void Run() override;
       void SaveResults() override;
-      Int_t GetN() override {
-	if(!(Bins().GetSize()))
-	  Bins().InitBins();
-	if(Bins().GetSize())return fNToys*Bins().GetSize();
-	return fNToys;
-      }
-      Int_t GetCurrToy(){ return GetFiti()%fNToys;}
+      /* Int_t GetN() override { */
+      /* 	if(!(Bins().GetSize())) */
+      /* 	  Bins().InitBins(); */
+      /* 	if(Bins().GetSize())return fNToys*Bins().GetSize(); */
+      /* 	return fNToys; */
+      /* } */
+      //  Int_t GetCurrToy(){ return GetFiti()%fNToys;}
+      Int_t GetCurrToy(){ return fToyi;}
       TString GetCurrTitle() override {return Form("Toy%d",GetCurrToy());}
       TString GetDataTreeName() override{return "ToyData";}
       strings_t GetDataFileNames() override{return fToyFileNames;}
 
-      Int_t GetDataBin(Int_t ii) override{
-	if(fNToys>0)
-	  return (int)std::round(ii/fNToys);
-	return ii;
-      }
+      /* Int_t GetDataBin(Int_t ii) override{ */
+      /* 	if(fNToys>0) */
+      /* 	  return (int)std::round(ii/fNToys); */
+      /* 	return ii; */
+      /* } */
       strings_t GetToyFileNames(){return fToyFileNames;}
       
       void  Generate();
@@ -75,7 +76,8 @@ namespace HS{
       TString fResultFileName;
       
       Int_t fNToys=1;
-      
+      Int_t fToyi=0;
+
       ClassDefOverride(HS::FIT::ToyManager,1);
     };
     

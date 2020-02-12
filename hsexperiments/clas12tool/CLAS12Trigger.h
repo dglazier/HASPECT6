@@ -16,12 +16,18 @@ namespace HS{
       CLAS12Trigger()=default;
       ~CLAS12Trigger()=default;      
 
+<<<<<<< HEAD
       Short_t CheckSectorsFD(vector<THSParticle>* parts);
       Float_t GetTotalEnergyFT(vector<THSParticle>* parts);
       //Float_t PCALEnergy(vector<THSParticle>* parts);
       //Float_t FTOF1BEnergy(vector<THSParticle>* parts);
       //Float_t DCNDF0(vector<THSParticle>* parts);
+=======
+      //before event reset
+      Short_t CheckSectorsFD(vector<THSParticle>* parts);
+>>>>>>> hsfarm
       
+      //clears sector hits
       void EventReset();
       Bool_t TrigStatus(Short_t status);
       
@@ -98,7 +104,7 @@ inline Float_t HS::CLAS12::CLAS12Trigger::StartTime(Float_t ptime){
   //supply chosen (e-) particle vertex time
   Float_t rftime=fEventInfo->fRFTime;
   //Find the nearest rf beam bucket
-  fStartTime=fSTimePeak-4.0080160*((Int_t)(std::round(((fSTimePeak-(ptime-rftime))/4.0080160))))+rftime;
+  fStartTime=fSTimePeak-2.0080160*((Int_t)(std::round(((fSTimePeak-(ptime-rftime))/2.0080160))))+rftime;
   return fStartTime;
 }
 inline Float_t HS::CLAS12::CLAS12Trigger::FDBStartTime(){
@@ -127,12 +133,12 @@ if(status>2090&&status<3000) //FD with TOF
 return kFALSE; //everything else
 }
 
+
 //*************************
 //
 // mesonex trigger related
 //
 //
-
 //return number of hits in FD sectors from given vector of particles
 Short_t HS::CLAS12::CLAS12Trigger::CheckSectorsFD(vector<THSParticle>* parts){
   EventReset(); //clear out values before loop
