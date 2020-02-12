@@ -29,7 +29,7 @@ namespace HS{
       void FillParticles();
       void FillGenerated();
       
-      // const hipo::reader* GetHipoReader()const {return &fReader;}
+      clas12::clas12reader& GetHipoReader()const {return *fEvent.get();}
       
     private :
       
