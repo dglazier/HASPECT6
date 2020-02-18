@@ -76,7 +76,7 @@ inline void HS::THSParticle::MinorClear(){
   //Reset any additional data members here
   fPath=0;
   fIndex=-1;
-  fC12Particle.reset();
+  fC12Particle=nullptr;//.reset();
 }
 inline void HS::THSParticle::CopyTransient(const THSParticle* part){
   BaseParticle::CopyTransient(part);

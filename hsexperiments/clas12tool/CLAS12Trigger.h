@@ -16,16 +16,16 @@ namespace HS{
       CLAS12Trigger()=default;
       ~CLAS12Trigger()=default;      
 
-<<<<<<< HEAD
+
       Short_t CheckSectorsFD(vector<THSParticle>* parts);
       Float_t GetTotalEnergyFT(vector<THSParticle>* parts);
       //Float_t PCALEnergy(vector<THSParticle>* parts);
       //Float_t FTOF1BEnergy(vector<THSParticle>* parts);
       //Float_t DCNDF0(vector<THSParticle>* parts);
-=======
+
       //before event reset
-      Short_t CheckSectorsFD(vector<THSParticle>* parts);
->>>>>>> hsfarm
+      //      Short_t CheckSectorsFD(vector<THSParticle>* parts);
+
       
       //clears sector hits
       void EventReset();
